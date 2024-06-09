@@ -13,6 +13,6 @@ case class InsnFetcher(cfg: NebulaCfg) extends Component {
         /** Program memory interface. */
         val ibus    = master port NebulaMemBus(cfg)
         /** Fetched instructions. */
-        val dout    = master port Stream(FetchedInsn(cfg))
+        val dout    = Vec.fill(cfg.frontendWidth)(master port Stream(FetchedInsn(cfg)))
     }
 }

@@ -64,12 +64,6 @@ case class NebulaCfg(
     /** Number of IRQ channels including the disabled channel 0. */
     irqCount:       Int         = 32,
     
-    /* ==== Pipeline topology ==== */
-    /** Merge multiplier and divider into one stage. */
-    mergeMulDiv:    Boolean     = false,
-    /** Merge ALU and the memory stages into one stage. */
-    mergeALUMem:    Boolean     = false,
-    
     /* ==== Tuning parameters ==== */
     /** Multiplier delay / latency. */
     mulLatency:     Int         = 2,
@@ -81,6 +75,8 @@ case class NebulaCfg(
     divPipelined:   Boolean     = false,
     
     /* ==== Miscellaneous ==== */
+    /** Frontend (fetch, decode and issue) width. */
+    frontendWidth:  Int         = 2,
     /** Entrypoint address at reset. */
     entrypoint:     BigInt      = 0x10000000l,
 ) {
