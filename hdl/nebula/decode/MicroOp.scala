@@ -40,25 +40,44 @@ trait RegFileAccess {
 object IntRegFileAccess extends RegFileAccess with AreaObject {
   def TypeR(key : MaskedLiteral) = SingleDecoding(
     key = key, 
-    // resources = List(RS1,RS2, RD).map()
-    resources = List(RS1, RS2, RD).map(this -> _)
+    // resources = List(RS1, RS2, RD).map(this -> _)
+    resources = List(
+      RfResource(IntRegFileAccess, RS1),
+      RfResource(IntRegFileAccess, RS2),
+      RfResource(IntRegFileAccess, RD)
+    )
   )
   def TypeI(key : MaskedLiteral) = SingleDecoding(
     key = key,
-    resources = List(RS1, RD).map(this -> _)
+    // resources = List(RS1, RD).map(this -> _)
+    resources = List(
+      RfResource(IntRegFileAccess, RS1),
+      RfResource(IntRegFileAccess, RD)
+    )
   )
   def TypeJ(key : MaskedLiteral) = SingleDecoding(
     key = key,
-    resources = List(RD).map(this -> _)
+    // resources = List(RD).map(this -> _)
+    resources = List(
+      RfResource(IntRegFileAccess, RD)
+    )
   )
   def TypeB(key : MaskedLiteral) = SingleDecoding(
     key = key,
-    resources = List(RS1, RS2).map(this -> _) :+ PC_READ 
+    // resources = List(RS1, RS2).map(this -> _) :+ PC_READ 
+    resources = List(
+      RfResource(IntRegFileAccess, RS1),
+      RfResource(IntRegFileAccess, RS2),
+      PC_READ
+    )
   )
   def TypeU(key : MaskedLiteral) = SingleDecoding(
     key = key,
     // resources = List(RD).map(this -> _)
-    resources = List(RfResource(RD))
+    // resources = List(RfResource(RD))
+    resources = List(
+      RfResource(IntRegFileAccess, RD)
+    )
   )
   def TypeUPC(key : MaskedLiteral) = SingleDecoding(
     key = key,
