@@ -25,7 +25,7 @@ object SQ  extends Resource with AreaObject
 object FPU extends Resource with AreaObject
 object RM  extends Resource with AreaObject // RM = Rounding Mode
 object VPU extends Resource with AreaObject
-object LMUL extends Resource with AreaObject
+// object LMUL extends Resource with AreaObject
 
 abstract class MicroOp(val resources : Seq[Resource]) {
   def key : MaskedLiteral
