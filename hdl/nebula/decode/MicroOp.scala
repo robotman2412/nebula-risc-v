@@ -36,8 +36,17 @@ case class MultiDecoding(key: MaskedLiteral, uop : Seq[MicroOp])
 
 trait RegFileAccess {
   // def -> (access : RfAccess) = RfResource(this, access)
+  // 
+  def sizeArch : Int
+  def width : Int
+  def x0AlwaysZero : Boolean 
 }
 object IntRegFileAccess extends RegFileAccess with AreaObject {
+  override def sizeArch: Int = 64
+  override def width: Int = 64
+  override def x0AlwaysZero: Boolean = true
+  
+  
   def TypeR(key : MaskedLiteral) = SingleDecoding(
     key = key, 
     // resources = List(RS1, RS2, RD).map(this -> _)
@@ -110,12 +119,11 @@ object IntRegFileAccess extends RegFileAccess with AreaObject {
 }
 
 // object FloatRegFileAccess extends RegfileSpec with AreaObject {
-  // override def sizeArch = 32
-  // override def width = if(Riscv.RVD) 64 else 32
   // override def x0AlwaysZero = false
-  // override def getName() = "float"
-  // override def initialValue: BigInt = 0 //if(Riscv.RVD) 0x7FF8000000000000l else 0x7fc00000l
 
+  override def sizeArch: Int = 64
+  override def width: Int = 64
+  override def x0AlwaysZero: Boolean = false
   // def TypeR(key : MaskedLiteral) = SingleDecoding(
   //   key = key,
   //   resources = List(RS1, RS2, RD).map(this -> _) :+ FPU
