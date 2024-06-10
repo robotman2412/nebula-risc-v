@@ -10,10 +10,9 @@ import spinal.lib.bus.amba3.ahblite._
 
 
 object NebulaMemBus {
-    val IDLE  = B"00"
-    val WRITE = B"01"
-    val READ  = B"10"
-    val EXEC  = B"11"
+    object Mode extends SpinalEnum(defaultEncoding = binarySequential) {
+        val IDLE, WRITE, READ, EXEC = newElement()
+    }
 }
 
 /**
@@ -28,9 +27,9 @@ case class NebulaMemBus(
     insnOnly:   Boolean = false
 ) extends Bundle with IMasterSlave {
     /** Transaction state. */
-    val mode    = Bits(2 bits)
+    val mode    = NebulaMemBus.Mode()
     /** Access size in log2(bytes) */
-    val asize   = UInt(2 bits)
+    val asize   = UInt(3 bits)
     /** Memory address. */
     val addr    = UInt(cfg.vaddrWidth bits)
     /** Memory write data. */
@@ -56,23 +55,27 @@ case class NebulaMemBus(
         
         // Request translation.
         if (insnOnly) {
-            ahb.HTRANS := B"1010"
+            ahb.HPROT := B"1110"
         } else {
-            ahb.HTRANS := B"1011"
+            ahb.HPROT := B"1111"
         }
         ahb.HMASTLOCK := False
         ahb.HSIZE     := asize.asBits
         ahb.HTRANS    := mode.mux(
-            NebulaMemBus.IDLE  -> AhbLite3.IDLE,
-            NebulaMemBus.WRITE -> AhbLite3.NONSEQ,
-            NebulaMemBus.READ  -> AhbLite3.NONSEQ,
-            NebulaMemBus.EXEC  -> AhbLite3.NONSEQ,
+            NebulaMemBus.Mode.IDLE  -> AhbLite3.IDLE,
+            NebulaMemBus.Mode.WRITE -> AhbLite3.NONSEQ,
+            NebulaMemBus.Mode.READ  -> AhbLite3.NONSEQ,
+            NebulaMemBus.Mode.EXEC  -> AhbLite3.NONSEQ,
         )
-        ahb.HWRITE := mode === NebulaMemBus.WRITE
+        ahb.HBURST := B"000"
+        ahb.HWRITE := mode === NebulaMemBus.Mode.WRITE
         if (insnOnly) {
             ahb.HWDATA.assignDontCare()
         } else {
-            ahb.HWDATA := wdata
+            ahb.HWDATA.setAsReg()
+            when (ahb.HREADY) {
+                ahb.HWDATA := wdata
+            }
         }
         ahb.HADDR := addr
         
