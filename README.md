@@ -1,6 +1,6 @@
 # Nebula RISC-V CPU
 
-Nebula is a collaborative project aiming to be a Linux-capable CPU supporting the `RV64IMAFDCV_Zicsr_Zifencei` and virtal memory. It will support 32-bit or 64-bit, optionally multiply/divide (M), atomics (A), float (FD)m compressed instructions (C) and vector instructions (V). Nebula will be superscalar in-order and may later become out-of-order.
+Nebula is a collaborative project aiming to be a Linux-capable CPU supporting the `RV64IMAFDCV_Zicsr_Zifencei` and virtal memory. It will support 32-bit or 64-bit, optionally multiply/divide (M), atomics (A), float (FD), compressed instructions (C) and vector instructions (V). Nebula will be superscalar in-order and may later become out-of-order.
 
 # License
 
