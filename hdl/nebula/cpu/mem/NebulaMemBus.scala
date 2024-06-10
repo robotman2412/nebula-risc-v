@@ -5,9 +5,7 @@ package nebula.cpu.mem
 import nebula.cpu._
 import spinal.core._
 import spinal.lib._
-import spinal.lib.bus.amba3.ahblite.AhbLite3Master
-import spinal.lib.bus.amba3.ahblite.AhbLite3Config
-import _root_.spinal.lib.bus.amba3.ahblite.AhbLite3
+import spinal.lib.bus.amba3.ahblite._
 
 
 

@@ -54,7 +54,7 @@ case class NebulaPriv(
 case class NebulaCfg(
     /* ==== Supported RISC-V features ==== */
     /** Supported instruction sets. */
-    isa:            RiscvISA    = ISA"RV64GC",
+    isa:            RiscvISA    = ISA"RV64I",
     /** Supported privileged features. */
     priv:           NebulaPriv   = NebulaPriv(),
     
@@ -79,6 +79,8 @@ case class NebulaCfg(
     frontendWidth:  Int         = 2,
     /** Entrypoint address at reset. */
     entrypoint:     BigInt      = 0x10000000l,
+    /** Vector register width in bits. */
+    VLEN:           Int         = 128,
 ) {
     assert(priv.pmpGrain < paddrWidth, "PMP granularity must be less then address width")
     if (isa.RV64) {
@@ -89,6 +91,8 @@ case class NebulaCfg(
         assert(paddrWidth <= 32, "Maximum supported RV32 without S-mode physical address width is 32")
     }
     assert(paddrWidth >= 16, "Minimum supported physical address width is 16")
+    assert(VLEN >= 128, "Minimum supported VLEN is 128")
+    assert((VLEN & (VLEN-1)) == 0, "VLEN must be a power of two")
     /** Width of integer registers and CSRs. */
     val XLEN        = isa.XLEN
     /** Width of floating-point registers. */
@@ -98,7 +102,7 @@ case class NebulaCfg(
     /** Derived maximum virtual address width. */
     val vaddrWidth  = if (!priv.S_mode) paddrWidth else if (isa.RV64) 56 else 32
     /** Derived maximum virtual page number width. */
-    val vpnWidth    = if (!priv.S_mode) paddrWidth-12 else if (isa.RV64) 45 else 20
+    val vpnWidth    = vaddrWidth - 12
     /** Derived maximum physical page number width. */
-    val ppnWidth    = if (!priv.S_mode) paddrWidth-12 else if (isa.RV64) 44 else 22
+    val ppnWidth    = paddrWidth - 12
 }
