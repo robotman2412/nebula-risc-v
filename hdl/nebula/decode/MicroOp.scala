@@ -5,7 +5,7 @@ import spinal.lib._
 
 
 class Resource
-case class RfResource(acess: RfAccess) extends Resource
+case class RfResource(rf: RegFileAccess, acess: RfAccess) extends Resource
 class RfAccess
 class RfRead extends RfAccess
 class RfWrite extends RfAccess
