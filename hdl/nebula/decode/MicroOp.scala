@@ -3,187 +3,298 @@ package nebula.decode
 import spinal.core._
 import spinal.lib._
 
-
 class Resource
-case class RfResource(rf : RegFileAccess, acess: RfAccess) extends Resource
+case class RfResource(rf: RegFileAccess, acess: RfAccess) extends Resource
 class RfAccess
-class RfRead extends RfAccess 
+class RfRead extends RfAccess
 class RfWrite extends RfAccess
 
 object RS1 extends RfRead with AreaObject
 object RS2 extends RfRead with AreaObject
 object RS3 extends RfRead with AreaObject
-object RD  extends RfWrite with AreaObject
+object RD extends RfWrite with AreaObject
 object VS1 extends RfRead with AreaObject
 object VS2 extends RfRead with AreaObject
+object VS3 extends RfRead with AreaObject
 object VD extends RfWrite with AreaObject
-object PC_READ  extends Resource with AreaObject
+object PC_READ extends Resource with AreaObject
 // object PC_NEXT extends Resource with AreaObject
-// object INSTRUCTION_SIZE  extends Resource with AreaObject
-object LQ  extends Resource with AreaObject
-object SQ  extends Resource with AreaObject
+// object INSTRUCTION_SIZE    extends Resource with AreaObject
+object LQ extends Resource with AreaObject
+object SQ extends Resource with AreaObject
 object FPU extends Resource with AreaObject
-object RM  extends Resource with AreaObject // RM = Rounding Mode
+object RM extends Resource with AreaObject // RM = Rounding Mode
 object VPU extends Resource with AreaObject
 // object LMUL extends Resource with AreaObject
 
-abstract class MicroOp(val resources : Seq[Resource]) {
-  def key : MaskedLiteral
+abstract class MicroOp(val resources: Seq[Resource]) {
+    def key: MaskedLiteral
 }
 
-case class SingleDecoding(key : MaskedLiteral, override val resources : Seq[Resource]) extends MicroOp(resources)
-case class MultiDecoding(key: MaskedLiteral, uop : Seq[MicroOp])
+case class SingleDecoding(
+        key: MaskedLiteral,
+        override val resources: Seq[Resource]
+) extends MicroOp(resources)
+case class MultiDecoding(key: MaskedLiteral, uop: Seq[MicroOp])
 
 trait RegFileAccess {
-  // def -> (access : RfAccess) = RfResource(this, access)
-  // 
-  def sizeArch : Int
-  def width : Int
-  def x0AlwaysZero : Boolean 
+    // def -> (access : RfAccess) = RfResource(this, access)
+    //
+    def sizeArch: Int
+    def width: Int
+    def x0AlwaysZero: Boolean
 }
 object IntRegFileAccess extends RegFileAccess with AreaObject {
-  override def sizeArch: Int = 64
-  override def width: Int = 64
-  override def x0AlwaysZero: Boolean = true
-  
-  
-  def TypeR(key : MaskedLiteral) = SingleDecoding(
-    key = key, 
-    // resources = List(RS1, RS2, RD).map(this -> _)
-    resources = List(
-      RfResource(IntRegFileAccess, RS1),
-      RfResource(IntRegFileAccess, RS2),
-      RfResource(IntRegFileAccess, RD)
+    override def sizeArch: Int = 64
+    override def width: Int = 64
+    override def x0AlwaysZero: Boolean = true
+
+    def TypeR(key: MaskedLiteral) = SingleDecoding(
+        key = key,
+        // resources = List(RS1, RS2, RD).map(this -> _)
+        resources = List(
+            RfResource(IntRegFileAccess, RS1),
+            RfResource(IntRegFileAccess, RS2),
+            RfResource(IntRegFileAccess, RD)
+        )
     )
-  )
-  def TypeI(key : MaskedLiteral) = SingleDecoding(
-    key = key,
-    // resources = List(RS1, RD).map(this -> _)
-    resources = List(
-      RfResource(IntRegFileAccess, RS1),
-      RfResource(IntRegFileAccess, RD)
+    def TypeI(key: MaskedLiteral) = SingleDecoding(
+        key = key,
+        // resources = List(RS1, RD).map(this -> _)
+        resources = List(
+            RfResource(IntRegFileAccess, RS1),
+            RfResource(IntRegFileAccess, RD)
+        )
     )
-  )
-  def TypeJ(key : MaskedLiteral) = SingleDecoding(
-    key = key,
-    // resources = List(RD).map(this -> _)
-    resources = List(
-      RfResource(IntRegFileAccess, RD)
+    def TypeJ(key: MaskedLiteral) = SingleDecoding(
+        key = key,
+        // resources = List(RD).map(this -> _)
+        resources = List(
+            RfResource(IntRegFileAccess, RD)
+        )
     )
-  )
-  def TypeB(key : MaskedLiteral) = SingleDecoding(
-    key = key,
-    // resources = List(RS1, RS2).map(this -> _) :+ PC_READ 
-    resources = List(
-      RfResource(IntRegFileAccess, RS1),
-      RfResource(IntRegFileAccess, RS2),
-      PC_READ
+    def TypeB(key: MaskedLiteral) = SingleDecoding(
+        key = key,
+        // resources = List(RS1, RS2).map(this -> _) :+ PC_READ
+        resources = List(
+            RfResource(IntRegFileAccess, RS1),
+            RfResource(IntRegFileAccess, RS2),
+            PC_READ
+        )
     )
-  )
-  def TypeU(key : MaskedLiteral) = SingleDecoding(
-    key = key,
-    // resources = List(RD).map(this -> _)
-    // resources = List(RfResource(RD))
-    resources = List(
-      RfResource(IntRegFileAccess, RD)
+    def TypeU(key: MaskedLiteral) = SingleDecoding(
+        key = key,
+        // resources = List(RD).map(this -> _)
+        // resources = List(RfResource(RD))
+        resources = List(
+            RfResource(IntRegFileAccess, RD)
+        )
     )
-  )
-  def TypeUPC(key : MaskedLiteral) = SingleDecoding(
-    key = key,
-    // resources = List(RD).map(this -> _) :+ PC_READ
-    resources = List(
-      RfResource(IntRegFileAccess, RD),
-      PC_READ
+    def TypeUPC(key: MaskedLiteral) = SingleDecoding(
+        key = key,
+        // resources = List(RD).map(this -> _) :+ PC_READ
+        resources = List(
+            RfResource(IntRegFileAccess, RD),
+            PC_READ
+        )
     )
-  )
-  // def TypeILQ(key : MaskedLiteral) = SingleDecoding(
-  //   key = key,
-  //   resources = List(RS1, RD).map(this -> _) :+ LQ :+ PC_READ //PC_READ is used to reschedule a load which had some store hazard
-  // )
-  // def TypeSSQ(key : MaskedLiteral) = SingleDecoding(
-  //   key = key,
-  //   resources = List(RS1, RS2).map(this -> _) :+ SQ
-  // )
-  // def TypeASQ(key : MaskedLiteral) = SingleDecoding(
-  //   key = key,
-  //   resources = List(RS1, RS2, RD).map(this -> _) :+ SQ
-  // )
-  // def TypeIC(key : MaskedLiteral) = SingleDecoding(
-  //   key = key,
-  //   resources = List(RD).map(this -> _)
-  // )
-  // def TypeNone(key : MaskedLiteral) = SingleDecoding(
-  //   key = key,
-  //   resources = Nil
-  // ) 
+    // def TypeILQ(key : MaskedLiteral) = SingleDecoding(
+    //     key = key,
+    //     resources = List(RS1, RD).map(this -> _) :+ LQ :+ PC_READ //PC_READ is used to reschedule a load which had some store hazard
+    // )
+    // def TypeSSQ(key : MaskedLiteral) = SingleDecoding(
+    //     key = key,
+    //     resources = List(RS1, RS2).map(this -> _) :+ SQ
+    // )
+    // def TypeASQ(key : MaskedLiteral) = SingleDecoding(
+    //     key = key,
+    //     resources = List(RS1, RS2, RD).map(this -> _) :+ SQ
+    // )
+    // def TypeIC(key : MaskedLiteral) = SingleDecoding(
+    //     key = key,
+    //     resources = List(RD).map(this -> _)
+    // )
+    // def TypeNone(key : MaskedLiteral) = SingleDecoding(
+    //     key = key,
+    //     resources = Nil
+    // )
 }
 
 // object FloatRegFileAccess extends RegfileSpec with AreaObject {
-  // override def x0AlwaysZero = false
+// override def x0AlwaysZero = false
 
-  override def sizeArch: Int = 64
-  override def width: Int = 64
-  override def x0AlwaysZero: Boolean = false
-  // def TypeR(key : MaskedLiteral) = SingleDecoding(
-  //   key = key,
-  //   resources = List(RS1, RS2, RD).map(this -> _) :+ FPU
-  // )
-  // def TypeR_RM(key : MaskedLiteral) = SingleDecoding(
-  //   key = key,
-  //   resources = List(RS1, RS2, RD).map(this -> _) :+ FPU :+ RM
-  // )
-  // def TypeR3_RM(key : MaskedLiteral) = SingleDecoding(
-  //   key = key,
-  //   resources = List(RS1, RS2, RS3, RD).map(this -> _) :+ FPU :+ RM
-  // )
-  // def TypeR1_RM(key : MaskedLiteral) = SingleDecoding(
-  //   key = key,
-  //   resources = List(RS1, RD).map(this -> _) :+ FPU :+ RM
-  // )
-  // def TypeR1(key : MaskedLiteral) = SingleDecoding(
-  //   key = key,
-  //   resources = List(RS1, RD).map(this -> _) :+ FPU
-  // )
+override def sizeArch: Int = 64
+override def width: Int = 64
+override def x0AlwaysZero: Boolean = false
+// def TypeR(key : MaskedLiteral) = SingleDecoding(
+//     key = key,
+//     resources = List(RS1, RS2, RD).map(this -> _) :+ FPU
+// )
+// def TypeR_RM(key : MaskedLiteral) = SingleDecoding(
+//     key = key,
+//     resources = List(RS1, RS2, RD).map(this -> _) :+ FPU :+ RM
+// )
+// def TypeR3_RM(key : MaskedLiteral) = SingleDecoding(
+//     key = key,
+//     resources = List(RS1, RS2, RS3, RD).map(this -> _) :+ FPU :+ RM
+// )
+// def TypeR1_RM(key : MaskedLiteral) = SingleDecoding(
+//     key = key,
+//     resources = List(RS1, RD).map(this -> _) :+ FPU :+ RM
+// )
+// def TypeR1(key : MaskedLiteral) = SingleDecoding(
+//     key = key,
+//     resources = List(RS1, RD).map(this -> _) :+ FPU
+// )
 
-  // def TypeILQ(key : MaskedLiteral) = SingleDecoding(
-  //   key = key,
-  //   resources = List(IntRegFile -> RS1, FloatRegFile -> RD, LQ, PC_READ)  :+ FPU//PC_READ is used to reschedule a load which had some store hazard
-  // )
-  // def TypeSSQ(key : MaskedLiteral) = SingleDecoding(
-  //   key = key,
-  //   resources = List(IntRegFile -> RS1, FloatRegFile -> RS2, SQ) :+ FPU
-  // )
+// def TypeILQ(key : MaskedLiteral) = SingleDecoding(
+//     key = key,
+//     resources = List(IntRegFile -> RS1, FloatRegFile -> RD, LQ, PC_READ)    :+ FPU//PC_READ is used to reschedule a load which had some store hazard
+// )
+// def TypeSSQ(key : MaskedLiteral) = SingleDecoding(
+//     key = key,
+//     resources = List(IntRegFile -> RS1, FloatRegFile -> RS2, SQ) :+ FPU
+// )
 
-  // def TypeF2I(key : MaskedLiteral) = SingleDecoding(
-  //   key = key,
-  //   resources = List(this -> RS1, IntRegFile -> RD) :+ FPU
-  // )
-  // def TypeF2I_RM(key : MaskedLiteral) = SingleDecoding(
-  //   key = key,
-  //   resources = List(this -> RS1, IntRegFile -> RD) :+ FPU :+ RM
-  // )
-  // def TypeI2F(key : MaskedLiteral) = SingleDecoding(
-  //   key = key,
-  //   resources = List(IntRegFile -> RS1, this -> RD) :+ FPU
-  // )
-  // def TypeI2F_RM(key : MaskedLiteral) = SingleDecoding(
-  //   key = key,
-  //   resources = List(IntRegFile -> RS1, this -> RD) :+ FPU :+ RM
-  // )
-  // def TypeFCI(key : MaskedLiteral) = SingleDecoding(
-  //   key = key,
-  //   resources = List(this -> RS1, this -> RS2, IntRegFile -> RD) :+ FPU
-  // )
+// def TypeF2I(key : MaskedLiteral) = SingleDecoding(
+//     key = key,
+//     resources = List(this -> RS1, IntRegFile -> RD) :+ FPU
+// )
+// def TypeF2I_RM(key : MaskedLiteral) = SingleDecoding(
+//     key = key,
+//     resources = List(this -> RS1, IntRegFile -> RD) :+ FPU :+ RM
+// )
+// def TypeI2F(key : MaskedLiteral) = SingleDecoding(
+//     key = key,
+//     resources = List(IntRegFile -> RS1, this -> RD) :+ FPU
+// )
+// def TypeI2F_RM(key : MaskedLiteral) = SingleDecoding(
+//     key = key,
+//     resources = List(IntRegFile -> RS1, this -> RD) :+ FPU :+ RM
+// )
+// def TypeFCI(key : MaskedLiteral) = SingleDecoding(
+//     key = key,
+//     resources = List(this -> RS1, this -> RS2, IntRegFile -> RD) :+ FPU
+// )
 // }
-// 
+//
 
 object VectorRegFileAccess extends RegFileAccess with AreaObject {
-  def TypeVL(key : MaskedLiteral) = SingleDecoding(
-    key = key,
-    resources = List(
-      RfResource(VectorRegFileAccess, VD), 
-      RfResource(IntRegFileAccess, RS1)
-      )
-  )
+    override def sizeArch: Int = 64
+    override def width: Int = ???
+    override def x0AlwaysZero: Boolean = false
+
+    def TypeVL(key: MaskedLiteral) = SingleDecoding(
+        key = key,
+        resources = List(
+            RfResource(VectorRegFileAccess, VD),
+            RfResource(FloatRegFileAccess, RS1)
+        )
+    )
+    def TypeVLS(key: MaskedLiteral) = SingleDecoding(
+        key = key,
+        resources = List(
+            RfResource(VectorRegFileAccess, VD),
+            RfResource(FloatRegFileAccess, RS1)
+                RfResource (FloatRegFileAccess, RS2)
+        )
+    )
+    def TypeVLX(key: MaskedLiteral) = SingleDecoding(
+        key = key,
+        resources = List(
+            RfResource(VectorRegFileAccess, VD),
+            RfResource(FloatRegFileAccess, RS1)
+                RfResource (FloatRegFileAccess, VS2)
+        )
+    )
+    def TypeVS(key: MaskedLiteral) = SingleDecoding(
+        key = key,
+        resources = List(
+            RfResource(VectorRegFileAccess, VS3),
+            RfResource(FloatRegFileAccess, RS1)
+        )
+    )
+    def TypeVSS(key: MaskedLiteral) = SingleDecoding(
+        key = key,
+        resources = List(
+            RfResource(VectorRegFileAccess, VS3),
+            RfResource(FloatRegFileAccess, RS1)
+                RfResource (FloatRegFileAccess, RS2)
+        )
+    )
+    def TypeVSX(key: MaskedLiteral) = SingleDecoding(
+        key = key,
+        resources = List(
+            RfResource(VectorRegFileAccess, VS3),
+            RfResource(FloatRegFileAccess, RS1)
+                RfResource (VectorRegFileAccess, VS2)
+        )
+    )
+
+    def TypeOPIVV(key: MaskedLiteral) = SingleDecoding(
+        key = key,
+        resources = List(
+            RfResource(VectorRegFileAccess, VD),
+            RfResource(VectorRegFileAccess, VS1)
+                RfResource (VectorRegFileAccess, VS2)
+        )
+    )
+    def TypeOPFVV(key: MaskedLiteral) = SingleDecoding(
+        key = key,
+        resources = List(
+            RfResource(VectorRegFileAccess, VD),
+            RfResource(FloatRegFileAccess, RD),
+            RfResource(VectorRegFileAccess, VS1)
+                RfResource (VectorRegFileAccess, VS2)
+        )
+    )
+    def TypeOPMVV(key: MaskedLiteral) = SingleDecoding(
+        key = key,
+        resources = List(
+            RfResource(VectorRegFileAccess, VD),
+            RfResource(FloatRegFileAccess, RD),
+            RfResource(VectorRegFileAccess, VS1)
+                RfResource (VectorRegFileAccess, VS2)
+        )
+    )
+    def TypeOPIVI(key: MaskedLiteral) = SingleDecoding(
+        key = key,
+        resources = List(
+            RfResource(VectorRegFileAccess, VD),
+            RfResource(VectorRegFileAccess, VS2)
+        )
+    )
+    def TypeOPIVX(key: MaskedLiteral) = SingleDecoding(
+        key = key,
+        resources = List(
+            RfResource(VectorRegFileAccess, VD),
+            RfResource(FloatRegFileAccess, RS1)
+                RfResource (VectorRegFileAccess, VS2)
+        )
+    )
+    def TypeOPFVF(key: MaskedLiteral) = SingleDecoding(
+        key = key,
+        resources = List(
+            RfResource(VectorRegFileAccess, VD),
+            RfResource(FloatRegFileAccess, RS1)
+                RfResource (VectorRegFileAccess, VS2)
+        )
+    )
+    def TypeOPMVX(key: MaskedLiteral) = SingleDecoding(
+        key = key,
+        resources = List(
+            RfResource(VectorRegFileAccess, VD),
+            RfResource(FloatRegFileAccess, RD),
+            RfResource(FloatRegFileAccess, RS1)
+                RfResource (VectorRegFileAccess, VS2)
+        )
+    )
+
+    def TypeVSETVLI(key: MaskedLiteral) = SingleDecoding(
+        key = key,
+        resources = List(
+            RfResource()
+        )
+    )
 
 }

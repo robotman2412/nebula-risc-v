@@ -202,3 +202,7 @@ object Rvf extends AreaObject {
   def FSW                = TypeSSQ(M"-----------------010-----0100111")
   def FSD                = TypeSSQ(M"-----------------011-----0100111") 
 }
+
+object Rvv extends AreaObject {
+  import VectorRegFileAccess._
+}

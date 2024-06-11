@@ -8,8 +8,11 @@ Effectively initial decode control signals
 object IntRegFileAccess extends RegFileAccess with AreaObject {
   def TypeR(key : MaskedLiteral) = SingleDecoding(
     key = key, 
-    // resources = List(RS1,RS2, RD).map()
-    resources = List(RS1, RS2, RD).map(this -> _)
+    resources = List(
+      RfResource(IntRegFileAccess, RS1),
+      RfResource(IntRegFileAccess, RS2),
+      RfResource(IntRegFileAccess, RD)
+    )
   )
 }
   
