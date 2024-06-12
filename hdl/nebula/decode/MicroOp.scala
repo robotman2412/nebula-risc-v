@@ -35,7 +35,7 @@ case class SingleDecoding(
         key: MaskedLiteral,
         override val resources: Seq[Resource]
 ) extends MicroOp(resources)
-case class MultiDecoding(key: MaskedLiteral, uop: Seq[MicroOp])
+// case class MultiDecoding(key: MaskedLiteral, uop: Seq[MicroOp])
 
 trait RegFileAccess {
     // def -> (access : RfAccess) = RfResource(this, access)
@@ -105,22 +105,42 @@ object IntRegFileAccess extends RegFileAccess with AreaObject {
     //Integer Load Queue?
     def TypeILQ(key : MaskedLiteral) = SingleDecoding(
         key = key,
-        resources = List(RS1, RD).map(this -> _) :+ LQ :+ PC_READ //PC_READ is used to reschedule a load which had some store hazard
+        // resources = List(RS1, RD).map(this -> _) :+ LQ :+ PC_READ //PC_READ is used to reschedule a load which had some store hazard
+        resources = List(
+            RfResource(IntRegFileAccess, RS1),
+            RfResource(IntRegFileAccess, RD),
+            LQ,
+            PC_READ
+        )
     )
     // Int store Queue
     def TypeSSQ(key : MaskedLiteral) = SingleDecoding(
         key = key,
-        resources = List(RS1, RS2).map(this -> _) :+ SQ
+        // resources = List(RS1, RS2).map(this -> _) :+ SQ
+        resources = List(
+            RfResource(IntRegFileAccess, RS1),
+            RfResource(IntRegFileAccess, RS2),
+            SQ
+        )
     )
     // Atomic store queue
     def TypeASQ(key : MaskedLiteral) = SingleDecoding(
         key = key,
-        resources = List(RS1, RS2, RD).map(this -> _) :+ SQ
+        // resources = List(RS1, RS2, RD).map(this -> _) :+ SQ
+        resources = List(
+            RfResource(IntRegFileAccess, RS1),
+            RfResource(IntRegFileAccess, RS2),
+            RfResource(IntRegFileAccess, RD),
+            SQ,
+        )
     )
     // Status registers
     def TypeIC(key : MaskedLiteral) = SingleDecoding(
         key = key,
-        resources = List(RD).map(this -> _)
+        // resources = List(RD).map(this -> _)
+        resources = List(
+            RfResource(IntRegFileAccess, RD),
+        )
     )
     def TypeNone(key : MaskedLiteral) = SingleDecoding(
         key = key,
@@ -356,11 +376,11 @@ object VectorRegFileAccess extends RegFileAccess with AreaObject {
         )
     )
 
-    def TypeVSETVLI(key: MaskedLiteral) = SingleDecoding(
-        key = key,
-        resources = List(
-            RfResource()
-        )
-    )
+    // def TypeVSETVLI(key: MaskedLiteral) = SingleDecoding(
+    //     key = key,
+    //     resources = List(
+    //         RfResource()
+    //     )
+    // )
 
 }
