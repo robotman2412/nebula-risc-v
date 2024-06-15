@@ -4,8 +4,8 @@ import spinal.core._
 import spinal.lib._
 
 class Resource
-case class RfResource(rf: RegFileAccess, acess: RfAccess) extends Resource
-class RfAccess
+case class RfResource(rf: RegFileAccess, access: RfAccess) extends Resource
+class RfAccess extends Nameable
 class RfRead extends RfAccess
 class RfWrite extends RfAccess
 

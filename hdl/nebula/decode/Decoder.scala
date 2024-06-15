@@ -2,48 +2,86 @@ package nebula.decode
 
 import spinal.core._
 import spinal.lib._
+import spinal.lib.misc.pipeline._
 import spinal.lib.logic.Masked._
 import spinal.lib.logic._
-import nebula.decode.Rv32i.TypeRuops
-import nebula.decode.Rv32i.TypeIuops
-// import nebula.decode.Rv32i.TypeRuops
-// import spinal.lib.com.usb.phy.UsbHubLsFs.Ctrl
+import scala.collection.mutable
 
-// object Decoder extends AreaObject {
-//   // println(decode_rv32) 
-// }
 
-// object rv32enum extends SpinalEnum {
-//   val ADD = newElement()
-// }
-
-// class CtrlSigs extends Bundle {
-//   val alu = Bool()
-// }
-
-class Decoder() extends Area {
-  val io = new Bundle {
-    val instr = in port(Bits(32 bits))
-    val result = out port(Bits(16 bits))
-  }
-  
-  
-  
-  // val masked_ADD = Masked(rv32enum.ADD)
-
-  val decode_rv32 = new DecodingSpec(Bits(16 bits))
-  
-  // val ctrl = new CtrlSigs
-  
-  // decode_rv32.addNeeds(TypeRuops, Masked(Rv32i.ADD.resources))
-  // decode_rv32.addNeeds(TypeRuops, Masked(U"000111000"))
-  decode_rv32.addNeeds(TypeRuops, Masked(U"000111000"))
-  decode_rv32.addNeeds(TypeIuops, Masked(U"100111000"))
-  decode_rv32.setDefault(Masked(U"111111111111"))
-  
-  io.result := decode_rv32.build(io.instr, TypeRuops)
-    
-  // io.result := decode_rv32.build(io.instr,TypeRuops)
+package object decode{
+  type DecodeListType = Seq[(Payload[_ <: BaseType], Any)]
 }
 
+case class AccessKeys(rfa : RfAccess, physWidth : Int, rfMapping : Seq[RegFileAccess]) extends Area {
+  // how many bits to access RFAccess def
+  val rfIdWidth = log2Up(rfMapping.size)
+  // Checks whether given UInt mapping maps to RegFile
+  def is(rfs: RegFileAccess, that: UInt) = that === idOf(rfs)
+  // gets ID of RegFile
+  def idOf(rfs: RegFileAccess) = rfMapping.indexOf(rfs)
+  
 
+  val ENABLE = Payload(Bool()) // signals enable to given regfile
+  val PHYS = Payload(UInt(physWidth bits)) // physical register file access
+  val RFID = Payload(UInt(rfIdWidth bits)) // which RegFile
+}
+
+class Decoder() {
+  import decode._
+  val decodingSpecs = mutable.LinkedHashMap[Payload[_ <: BaseType], DecodingSpec[_ <: BaseType]]()
+  def getDecodingSpec(key: Payload[_ <:BaseType]) = decodingSpecs.getOrElseUpdate(key, new DecodingSpec(key))
+  def setDecodingDefault(key: Payload[_ <: BaseType], value: BaseType): Unit = {
+    getDecodingSpec(key).setDefault(Masked(value))
+  }
+  
+  def addMicroOpDecoding(microOp: MicroOp, decoding: DecodeListType) = {
+    val op = Masked(microOp.key)
+    for ((key, value) <- decoding) {
+      getDecodingSpec(key).addNeeds(op, Masked(value))
+    }
+  }
+  
+  def addMicroOpDecodingDefault(key: Payload[_ <: BaseType], value: BaseType) = {
+    getDecodingSpec(key).setDefault(Masked(value))
+  }
+  
+  def covers(uops: Seq[MicroOp]) = {
+    uops.map(e => Masked(e.key))
+  }
+
+  val logic = new Area {
+    val INSTRUCTION_WIDTH = 32
+
+    def microOps : Seq[MicroOp] = ???
+    def resources = microOps.flatMap(_.resources).distinctLinked
+    val rfAccesses = mutable.LinkedHashSet[RfAccess]()
+    resources.foreach{
+      case r : RfResource => rfAccesses += r.access
+      case _ =>
+    }
+
+    val rfaKeys = mutable.LinkedHashMap[RfAccess, AccessKeys]()
+    for (rfa <- rfAccesses) {
+      val physWidth = 5
+      val rfMapping = resources.collect{case r : RfResource => r.rf}.toList
+      val ak = AccessKeys(rfa, physWidth, rfMapping)
+      ak.setPartialName(rfa)
+      rfaKeys(rfa) = ak
+    }
+
+    val singleDecodings = mutable.LinkedHashSet[SingleDecoding]()
+    microOps.foreach {
+      case sd: SingleDecoding => singleDecodings += sd
+    }
+
+    val NEED_FPU = Payload(Bool())
+    val NEED_RM = Payload(Bool())
+    addMicroOpDecodingDefault(NEED_FPU, False)
+    addMicroOpDecodingDefault(NEED_RM, False) 
+    val encodings = new Area {
+      val all = mutable.LinkedHashSet[Maked]()
+    }
+
+
+  }
+}
