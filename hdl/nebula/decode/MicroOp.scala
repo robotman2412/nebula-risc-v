@@ -5,6 +5,7 @@ import spinal.lib._
 
 class Resource
 case class RfResource(rf: RegFileAccess, access: RfAccess) extends Resource
+case class AluOp(fu : Resource, op: Resource) extends Resource
 class RfAccess extends Nameable
 class RfRead extends RfAccess
 class RfWrite extends RfAccess
@@ -13,10 +14,10 @@ object RS1 extends RfRead with AreaObject
 object RS2 extends RfRead with AreaObject
 object RS3 extends RfRead with AreaObject
 object RD extends RfWrite with AreaObject
-object VS1 extends RfRead with AreaObject
-object VS2 extends RfRead with AreaObject
-object VS3 extends RfRead with AreaObject
-object VD extends RfWrite with AreaObject
+// object VS1 extends RfRead with AreaObject
+// object VS2 extends RfRead with AreaObject
+// object VS3 extends RfRead with AreaObject
+// object VD extends RfWrite with AreaObjecperft
 object PC_READ extends Resource with AreaObject
 // object PC_NEXT extends Resource with AreaObject
 // object INSTRUCTION_SIZE    extends Resource with AreaObject
@@ -25,7 +26,14 @@ object SQ extends Resource with AreaObject
 object FPU extends Resource with AreaObject
 object RM extends Resource with AreaObject // RM = Rounding Mode
 object VPU extends Resource with AreaObject
+object IMM extends Resource with AreaObject
+object funct3 extends Resource with AreaObject
+object funct7 extends Resource with AreaObject
+
+
 // object LMUL extends Resource with AreaObject
+
+
 
 abstract class MicroOp(val resources: Seq[Resource]) {
     def key: MaskedLiteral

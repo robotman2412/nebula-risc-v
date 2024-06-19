@@ -9,7 +9,7 @@ import spinal.lib.sim._
 
 
 case class TestDecoder() extends Component {
-  val decoder = new Decoder()
+  // val decoder = new Decoder()
 
 }
 
