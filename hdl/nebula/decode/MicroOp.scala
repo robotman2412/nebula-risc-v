@@ -14,17 +14,12 @@ object RS1 extends RfRead with AreaObject
 object RS2 extends RfRead with AreaObject
 object RS3 extends RfRead with AreaObject
 object RD extends RfWrite with AreaObject
-// object RS1 extends RfRead with AreaObject
-// object RS2 extends RfRead with AreaObject
-// object RS3 extends RfRead with AreaObject
-// object RD extends RfWrite with AreaObjecperft
 object PC_READ extends Resource with AreaObject
 // object PC_NEXT extends Resource with AreaObject
-// object INSTRUCTION_SIZE    extends Resource with AreaObject
 object LQ extends Resource with AreaObject
 object SQ extends Resource with AreaObject
 object FPU extends Resource with AreaObject
-object RM extends Resource with AreaObject // RM = Rounding Mode
+object RM extends Resource with AreaObject 
 object VPU extends Resource with AreaObject
 object IMM extends Resource with AreaObject
 object funct3 extends Resource with AreaObject
