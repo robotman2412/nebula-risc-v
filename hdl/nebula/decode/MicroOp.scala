@@ -14,10 +14,10 @@ object RS1 extends RfRead with AreaObject
 object RS2 extends RfRead with AreaObject
 object RS3 extends RfRead with AreaObject
 object RD extends RfWrite with AreaObject
-// object VS1 extends RfRead with AreaObject
-// object VS2 extends RfRead with AreaObject
-// object VS3 extends RfRead with AreaObject
-// object VD extends RfWrite with AreaObjecperft
+// object RS1 extends RfRead with AreaObject
+// object RS2 extends RfRead with AreaObject
+// object RS3 extends RfRead with AreaObject
+// object RD extends RfWrite with AreaObjecperft
 object PC_READ extends Resource with AreaObject
 // object PC_NEXT extends Resource with AreaObject
 // object INSTRUCTION_SIZE    extends Resource with AreaObject
@@ -281,14 +281,14 @@ object VectorRegFileAccess extends RegFileAccess with AreaObject {
     def TypeVL(key: MaskedLiteral) = SingleDecoding(
         key = key,
         resources = List(
-            RfResource(VectorRegFileAccess, VD),
+            RfResource(VectorRegFileAccess, RD),
             RfResource(FloatRegFileAccess, RS1)
         )
     )
     def TypeVLS(key: MaskedLiteral) = SingleDecoding(
         key = key,
         resources = List(
-            RfResource(VectorRegFileAccess, VD),
+            RfResource(VectorRegFileAccess, RD),
             RfResource(FloatRegFileAccess, RS1),
             RfResource (FloatRegFileAccess, RS2)
         )
@@ -296,22 +296,22 @@ object VectorRegFileAccess extends RegFileAccess with AreaObject {
     def TypeVLX(key: MaskedLiteral) = SingleDecoding(
         key = key,
         resources = List(
-            RfResource(VectorRegFileAccess, VD),
+            RfResource(VectorRegFileAccess, RD),
             RfResource(FloatRegFileAccess, RS1),
-            RfResource (FloatRegFileAccess, VS2)
+            RfResource (FloatRegFileAccess, RS2)
         )
     )
     def TypeVS(key: MaskedLiteral) = SingleDecoding(
         key = key,
         resources = List(
-            RfResource(VectorRegFileAccess, VS3),
+            RfResource(VectorRegFileAccess, RS3),
             RfResource(FloatRegFileAccess, RS1)
         )
     )
     def TypeVSS(key: MaskedLiteral) = SingleDecoding(
         key = key,
         resources = List(
-            RfResource(VectorRegFileAccess, VS3),
+            RfResource(VectorRegFileAccess, RS3),
             RfResource(FloatRegFileAccess, RS1),
             RfResource (FloatRegFileAccess, RS2)
         )
@@ -319,68 +319,68 @@ object VectorRegFileAccess extends RegFileAccess with AreaObject {
     def TypeVSX(key: MaskedLiteral) = SingleDecoding(
         key = key,
         resources = List(
-            RfResource(VectorRegFileAccess, VS3),
+            RfResource(VectorRegFileAccess, RS3),
             RfResource(FloatRegFileAccess, RS1),
-            RfResource (VectorRegFileAccess, VS2)
+            RfResource (VectorRegFileAccess, RS2)
         )
     )
 
     def TypeOPIVV(key: MaskedLiteral) = SingleDecoding(
         key = key,
         resources = List(
-            RfResource(VectorRegFileAccess, VD),
-            RfResource(VectorRegFileAccess, VS1),
-            RfResource (VectorRegFileAccess, VS2)
+            RfResource(VectorRegFileAccess, RD),
+            RfResource(VectorRegFileAccess, RS1),
+            RfResource (VectorRegFileAccess, RS2)
         )
     )
     def TypeOPFVV(key: MaskedLiteral) = SingleDecoding(
         key = key,
         resources = List(
-            RfResource(VectorRegFileAccess, VD),
+            RfResource(VectorRegFileAccess, RD),
             RfResource(FloatRegFileAccess, RD),
-            RfResource(VectorRegFileAccess, VS1),
-            RfResource (VectorRegFileAccess, VS2)
+            RfResource(VectorRegFileAccess, RS1),
+            RfResource (VectorRegFileAccess, RS2)
         )
     )
     def TypeOPMVV(key: MaskedLiteral) = SingleDecoding(
         key = key,
         resources = List(
-            RfResource(VectorRegFileAccess, VD),
+            RfResource(VectorRegFileAccess, RD),
             RfResource(FloatRegFileAccess, RD),
-            RfResource(VectorRegFileAccess, VS1),
-            RfResource (VectorRegFileAccess, VS2)
+            RfResource(VectorRegFileAccess, RS1),
+            RfResource (VectorRegFileAccess, RS2)
         )
     )
     def TypeOPIVI(key: MaskedLiteral) = SingleDecoding(
         key = key,
         resources = List(
-            RfResource(VectorRegFileAccess, VD),
-            RfResource(VectorRegFileAccess, VS2)
+            RfResource(VectorRegFileAccess, RD),
+            RfResource(VectorRegFileAccess, RS2)
         )
     )
     def TypeOPIVX(key: MaskedLiteral) = SingleDecoding(
         key = key,
         resources = List(
-            RfResource(VectorRegFileAccess, VD),
+            RfResource(VectorRegFileAccess, RD),
             RfResource(FloatRegFileAccess, RS1),
-                RfResource (VectorRegFileAccess, VS2)
+                RfResource (VectorRegFileAccess, RS2)
         )
     )
     def TypeOPFVF(key: MaskedLiteral) = SingleDecoding(
         key = key,
         resources = List(
-            RfResource(VectorRegFileAccess, VD),
+            RfResource(VectorRegFileAccess, RD),
             RfResource(FloatRegFileAccess, RS1),
-            RfResource (VectorRegFileAccess, VS2)
+            RfResource (VectorRegFileAccess, RS2)
         )
     )
     def TypeOPMVX(key: MaskedLiteral) = SingleDecoding(
         key = key,
         resources = List(
-            RfResource(VectorRegFileAccess, VD),
+            RfResource(VectorRegFileAccess, RD),
             RfResource(FloatRegFileAccess, RD),
             RfResource(FloatRegFileAccess, RS1),
-            RfResource (VectorRegFileAccess, VS2)
+            RfResource (VectorRegFileAccess, RS2)
         )
     )
 
