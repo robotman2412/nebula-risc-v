@@ -38,22 +38,22 @@ class Decoder(thisNode: spinal.lib.misc.pipeline.Node, lane: Int) {
   val node = thisNode
   import Decode._
   val decodingSpecs = mutable.LinkedHashMap[Payload[_ <: BaseType], DecodingSpec[_ <: BaseType]]()
-  def getDecodingSpec(key: Payload[_ <:BaseType]) = decodingSpecs.getOrElseUpdate(key, new DecodingSpec(key))
+  // def getDecodingSpec(key: Payload[_ <:BaseType]) = decodingSpecs.getOrElseUpdate(key, new DecodingSpec(key))
   def setDecodingDefault(key: Payload[_ <: BaseType], value: BaseType): Unit = {
-    getDecodingSpec(key).setDefault(Masked(value))
+    decodingSpecs.getOrElseUpdate(key, new DecodingSpec(key)).setDefault(Masked(value))
   }
   //What is this doint
   def DecodeList(e: (Payload[_ <: BaseType], Any)*) = List(e: _*)
   def addMicroOpDecoding(microOp: MicroOp, decoding: DecodeListType) = {
     val op = Masked(microOp.key)
     for ((key, value) <- decoding) {
-      getDecodingSpec(key).addNeeds(op, Masked(value))
+      decodingSpecs.getOrElseUpdate(key, new DecodingSpec(key)).addNeeds(op, Masked(value))
     }
   }
   def addMicroOpDecoding[T <: BaseType](microOp: MicroOp, key : Payload[T], value: T) : Unit = addMicroOpDecoding(microOp, DecodeList(key -> value))
   
   def addMicroOpDecodingDefault(key: Payload[_ <: BaseType], value: BaseType) = {
-    getDecodingSpec(key).setDefault(Masked(value))
+    decodingSpecs.getOrElseUpdate(key, new DecodingSpec(key)).setDefault(Masked(value))
   }
   
   val logic = new Area {
@@ -63,21 +63,21 @@ class Decoder(thisNode: spinal.lib.misc.pipeline.Node, lane: Int) {
 
     def microOps : Seq[MicroOp] = ???
     def resources = microOps.flatMap(_.resources).distinctLinked
+
     // Linked Hash Set of all RFAccess stuff. So RS1, RS2, VS1, RD etc.
-    val rfAccesses = mutable.LinkedHashSet[RfAccess]()
-    resources.foreach{
-      case r : RfResource => rfAccesses += r.access
-      case _ =>
-    }
+    // val rfAccesses = mutable.LinkedHashSet[RfAccess]()
+    // resources.foreach{
+    //   case r : RfResource => rfAccesses += r.access
+    //   case _ =>
+    // }
+    
+    val rfAccesses: mutable.LinkedHashSet[RfAccess] = mutable.LinkedHashSet[RfAccess](RS1, RS2, RS3, RD)
 
     val rfaKeys = mutable.LinkedHashMap[RfAccess, AccessKeys]()
-    for (rfa <- rfAccesses) {
-      val physWidth = 5
-      val rfMapping = resources.collect{case r : RfResource => r.rf}.toList
-      val ak = AccessKeys(rfa, physWidth, rfMapping)
-      ak.setPartialName(rfa)
-      rfaKeys(rfa) = ak
-    }
+    rfaKeys(RS1) = AccessKeys(RS1, 5, List(IntRegFileAccess, FloatRegFileAccess, VectorRegFileAccess))
+    rfaKeys(RS2) = AccessKeys(RS2, 5, List(IntRegFileAccess, FloatRegFileAccess, VectorRegFileAccess))
+    rfaKeys(RS3) = AccessKeys(RS3, 5, List(IntRegFileAccess, FloatRegFileAccess, VectorRegFileAccess))
+    rfaKeys(RD)  = AccessKeys(RD , 5, List(IntRegFileAccess, FloatRegFileAccess, VectorRegFileAccess))
 
     val singleDecodings = mutable.LinkedHashSet[SingleDecoding]()
     microOps.foreach {
@@ -85,9 +85,15 @@ class Decoder(thisNode: spinal.lib.misc.pipeline.Node, lane: Int) {
     }
 
     val NEED_FPU = Payload(Bool())
-    val NEED_RM = Payload(Bool())
-    addMicroOpDecodingDefault(NEED_FPU, False)
-    addMicroOpDecodingDefault(NEED_RM, False) 
+    val NEED_RM  = Payload(Bool())
+    val NEED_VPU = Payload(Bool())
+
+    decodingSpecs.getOrElseUpdate(NEED_FPU, new DecodingSpec(NEED_FPU)).setDefault(Masked(False)) 
+    decodingSpecs.getOrElseUpdate(NEED_VPU, new DecodingSpec(NEED_VPU)).setDefault(Masked(False)) 
+    decodingSpecs.getOrElseUpdate(NEED_RM , new DecodingSpec(NEED_RM )).setDefault(Masked(False)) 
+
+
+
     val encodings = new Area {
       val all = mutable.LinkedHashSet[Masked]()
       // Creates a decoding spec that specifies access to which regfile
@@ -96,8 +102,8 @@ class Decoder(thisNode: spinal.lib.misc.pipeline.Node, lane: Int) {
         val read = new DecodingSpec(Bool()).setDefault(zero)
         val rfid = new DecodingSpec(UInt(rfaKey.rfIdWidth bits))
       }
-      val rfAccessDec = rfAccesses.map(rfa => rfa -> new RfAccessDecoding(rfa)).toMapLinked()
-      val rfAccessDec2: mutable.LinkedHashMap[RfAccess, RfAccessDecoding] = mutable.LinkedHashMap(RS1 -> new RfAccessDecoding(RS1), RS2 -> new RfAccessDecoding(RS2), RD -> new RfAccessDecoding(RD))
+      // val rfAccessDec = rfAccesses.map(rfa => rfa -> new RfAccessDecoding(rfa)).toMapLinked()
+      val rfAccessDec: mutable.LinkedHashMap[RfAccess, RfAccessDecoding] = mutable.LinkedHashMap(RS1 -> new RfAccessDecoding(RS1), RS2 -> new RfAccessDecoding(RS2), RS3 -> new RfAccessDecoding(RS3) ,RD -> new RfAccessDecoding(RD))
       for (e <- singleDecodings) {
         val key = Masked(e.key)
         all += key
@@ -106,8 +112,7 @@ class Decoder(thisNode: spinal.lib.misc.pipeline.Node, lane: Int) {
           case r: RfResource => {
             val dec = rfAccessDec(r.access)
             dec.read.addNeeds(key, Masked.one)
-            // wtf does this do?
-            dec.rfid.addNeeds(key, Masked(dec.rfaKey.idOf(r.rf), (1 << dec.rfaKey.rfIdWidth)-1))
+            dec.rfid.addNeeds(key, Masked(dec.rfaKey.idOf(r.rf), 3))
           }
           case PC_READ => 
           case LQ => 
@@ -121,13 +126,13 @@ class Decoder(thisNode: spinal.lib.misc.pipeline.Node, lane: Int) {
       //   for (x <- 1 to 3; y <- 1 to 3) getDecodingSpec(NEED_FPU).addNeeds(Masked(0x73 + (x << 20) + (y << 12), 0xFFF0307Fl), Masked.one)
       // }
     }
-    val predictionSpec = new Area {
-      val branchKeys = List(Rv32i.BEQ).map(e => Masked(e.key))
-      val jalKeys = List(Rv32i.JAL).map(e => Masked(e.key))
-      val any = new DecodingSpec(Bool()).setDefault(Masked.zero)
+    // val predictionSpec = new Area {
+    //   val branchKeys = List(Rv32i.BEQ).map(e => Masked(e.key))
+    //   val jalKeys = List(Rv32i.JAL).map(e => Masked(e.key))
+    //   val any = new DecodingSpec(Bool()).setDefault(Masked.zero)
 
-      any.addNeeds(branchKeys ++ jalKeys, Masked.one)
-    }
+    //   any.addNeeds(branchKeys ++ jalKeys, Masked.one)
+    // }
     
     val someLaneLogic = new node.Area {
       for (rfa <- rfAccesses) {
