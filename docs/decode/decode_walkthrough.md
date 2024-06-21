@@ -91,17 +91,22 @@ for each RfResource ....
 
 
 ```Scala
-val rfaKeys = mutable.LinkedHashMap[RfAccess, AccessKeys]()
-for (rfa <- rfAccesses) {
-  val physWidth = 5
-  val rfMapping = resources.collect{case r : RfResource => r.rf}.toList
-  val ak = AccessKeys(rfa, physWidth, rfMapping)
-  ak.setPartialName(rfa)
-  rfaKeys(rfa) = ak
-}
+  val rfaKeys = mutable.LinkedHashMap[RfAccess, AccessKeys]()
+  rfaKeys(RS1) = AccessKeys(RS1, 5, List(IntRegFileAccess, FloatRegFileAccess, VectorRegFileAccess))
+  rfaKeys(RS2) = AccessKeys(RS2, 5, List(IntRegFileAccess, FloatRegFileAccess, VectorRegFileAccess))
+  rfaKeys(RS3) = AccessKeys(RS3, 5, List(IntRegFileAccess, FloatRegFileAccess, VectorRegFileAccess))
+  rfaKeys(RD)  = AccessKeys(RD , 5, List(IntRegFileAccess, FloatRegFileAccess, VectorRegFileAccess)
 ```
 rfaKeys maps an rfAccess to AccessKeys
 
+```Scala
+
+rfaKeys(RS1).ENABLE
+rfaKeys(RS1).PHYS
+rfaKeys(RS1).RFID
+
+
+```
 
 
 
