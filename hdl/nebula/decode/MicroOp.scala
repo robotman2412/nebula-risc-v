@@ -10,6 +10,11 @@ class RfAccess extends Nameable
 class RfRead extends RfAccess
 class RfWrite extends RfAccess
 
+class ExecutionUnit extends Resource
+object FPU1 extends ExecutionUnit
+
+
+
 object RS1 extends RfRead with AreaObject
 object RS2 extends RfRead with AreaObject
 object RS3 extends RfRead with AreaObject
@@ -59,7 +64,8 @@ object IntRegFileAccess extends RegFileAccess with AreaObject {
         resources = List(
             RfResource(IntRegFileAccess, RS1),
             RfResource(IntRegFileAccess, RS2),
-            RfResource(IntRegFileAccess, RD)
+            RfResource(IntRegFileAccess, RD),
+            funct3
         )
     )
     // I-type
@@ -68,7 +74,8 @@ object IntRegFileAccess extends RegFileAccess with AreaObject {
         // resources = List(RS1, RD).map(this -> _)
         resources = List(
             RfResource(IntRegFileAccess, RS1),
-            RfResource(IntRegFileAccess, RD)
+            RfResource(IntRegFileAccess, RD),
+            funct3
         )
     )
     // J-type
@@ -86,7 +93,8 @@ object IntRegFileAccess extends RegFileAccess with AreaObject {
         resources = List(
             RfResource(IntRegFileAccess, RS1),
             RfResource(IntRegFileAccess, RS2),
-            PC_READ
+            PC_READ,
+            funct3
         )
     )
     def TypeU(key: MaskedLiteral) = SingleDecoding(
@@ -113,7 +121,8 @@ object IntRegFileAccess extends RegFileAccess with AreaObject {
             RfResource(IntRegFileAccess, RS1),
             RfResource(IntRegFileAccess, RD),
             LQ,
-            PC_READ
+            PC_READ,
+            funct3
         )
     )
     // Int store Queue
@@ -123,7 +132,8 @@ object IntRegFileAccess extends RegFileAccess with AreaObject {
         resources = List(
             RfResource(IntRegFileAccess, RS1),
             RfResource(IntRegFileAccess, RS2),
-            SQ
+            SQ,
+            funct3
         )
     )
     // Atomic store queue
