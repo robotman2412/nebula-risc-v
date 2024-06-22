@@ -32,8 +32,6 @@ package object Decode extends AreaObject {
   val FUNCT7 = Payload(Bits(7 bits))
   val OPCODE = Payload(Bits(7 bits))
 }
-// package object decode{
-// }
 
 case class AccessKeys(rfa : RfAccess, physWidth : Int, rfMapping : Seq[RegFileAccess]) extends Area {
   // how many bits to access RFAccess def
@@ -48,7 +46,7 @@ case class AccessKeys(rfa : RfAccess, physWidth : Int, rfMapping : Seq[RegFileAc
   val RFID = Payload(UInt(rfIdWidth bits)) // which RegFile
 }
 
-class Decoder(thisNode: Node, lane: Int) {
+class Decoder(thisNode: Node, lane: Int) extends Area {
   val node = thisNode
   import Decode._
   val decodingSpecs = mutable.LinkedHashMap[Payload[_ <: BaseType], DecodingSpec[_ <: BaseType]]()
