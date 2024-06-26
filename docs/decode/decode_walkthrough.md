@@ -100,12 +100,9 @@ for each RfResource ....
 rfaKeys maps an rfAccess to AccessKeys
 
 ```Scala
-
 rfaKeys(RS1).ENABLE
 rfaKeys(RS1).PHYS
 rfaKeys(RS1).RFID
-
-
 ```
 
 

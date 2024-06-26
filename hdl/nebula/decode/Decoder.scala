@@ -17,9 +17,21 @@ object Riscv extends AreaObject {
 package object Decode extends AreaObject {
   type DecodeListType = Seq[(Payload[_ <: BaseType], Any)]
   val INSTRUCTION = Payload(Bits(32 bits))
+
+  val IMM = new SpinalEnum() {
+    val NO_IMM, IS_I, IS_B = newElement()
+  }
+  
+
+  val NEED_PC  = Payload(Bool())
+  val NEED_FPU = Payload(Bool())
+  val NEED_RM  = Payload(Bool())
+  val NEED_VPU = Payload(Bool())
+  val IMM_SEL = Payload(IMM())
+  val FUNCT3 = Payload(Bits(3 bits))
+  val FUNCT7 = Payload(Bits(7 bits))
+  val OPCODE = Payload(Bits(7 bits))
 }
-// package object decode{
-// }
 
 case class AccessKeys(rfa : RfAccess, physWidth : Int, rfMapping : Seq[RegFileAccess]) extends Area {
   // how many bits to access RFAccess def
@@ -34,7 +46,7 @@ case class AccessKeys(rfa : RfAccess, physWidth : Int, rfMapping : Seq[RegFileAc
   val RFID = Payload(UInt(rfIdWidth bits)) // which RegFile
 }
 
-class Decoder(thisNode: Node, lane: Int) {
+class Decoder(thisNode: Node, lane: Int) extends Area {
   val node = thisNode
   import Decode._
   val decodingSpecs = mutable.LinkedHashMap[Payload[_ <: BaseType], DecodingSpec[_ <: BaseType]]()
@@ -58,14 +70,9 @@ class Decoder(thisNode: Node, lane: Int) {
   def addMicroOpDecoding[T <: BaseType](microOp: MicroOp, key : Payload[T], value: T) : Unit = addMicroOpDecoding(microOp, DecodeList(key -> value))
   
 
-  val IMM = new SpinalEnum() {
-    val NO_IMM, IS_I, IS_B = newElement()
-  }
 
   val logic = new Area {
-    val INSTRUCTION_WIDTH = 32
-
-    def microOps : Seq[MicroOp] = ???
+    def microOps : Seq[MicroOp] = Seq(Rv32i.ADD, Rv32i.ADDI, Rv32i.SUB, Rv32i.AUIPC, Rv32i.BEQ)
     def resources = microOps.flatMap(_.resources).distinctLinked
 
 
@@ -80,20 +87,12 @@ class Decoder(thisNode: Node, lane: Int) {
       case sd: SingleDecoding => singleDecodings += sd
     }
 
-    val NEED_FPU = Payload(Bool())
-    val NEED_RM  = Payload(Bool())
-    val NEED_VPU = Payload(Bool())
-    val IMM_SEL = Payload(IMM())
 
     addMicroOpDecodingDefault(NEED_FPU, False)
     addMicroOpDecodingDefault(NEED_RM , False)
     addMicroOpDecodingDefault(NEED_VPU, False)
     addMicroOpDecodingDefault(IMM_SEL, IMM.NO_IMM)
-
-    val FUNCT3 = Payload(Bits(3 bits))
-    val FUNCT7 = Payload(Bits(7 bits))
-
-    addMicroOpDecodingDefault(FUNCT3, Bits(3 bits).assignDontCare())
+    addMicroOpDecodingDefault(NEED_PC, False)
 
     val encodings = new Area {
       val all = mutable.LinkedHashSet[Masked]()
@@ -117,7 +116,7 @@ class Decoder(thisNode: Node, lane: Int) {
             dec.read.addNeeds(key, Masked.one)
             dec.rfid.addNeeds(key, Masked(dec.rfaKey.idOf(r.rf), 3))
           }
-          case PC_READ => 
+          case PC_READ => addMicroOpDecoding(e, NEED_PC, True)
           case LQ => 
           case FPU => addMicroOpDecoding(e, NEED_FPU, True)
           case RM => addMicroOpDecoding(e, NEED_RM, True)
@@ -151,6 +150,9 @@ class Decoder(thisNode: Node, lane: Int) {
           case RD  => 11 downto 7
         }).asUInt
       }
+      FUNCT3 := Decode.INSTRUCTION(14 downto 12)
+      FUNCT7 := Decode.INSTRUCTION(31 downto 25)
+      OPCODE := Decode.INSTRUCTION(6  downto 0)
 
       // LEGAL := Symplify(Decode.INSTRUCTION, encodings.all) && !Decode.DECOMPRESSION_FAULT
       // Checks if FP instr is valid??
@@ -166,7 +168,14 @@ class Decoder(thisNode: Node, lane: Int) {
     //   } 
     //   
 
+
     }
+    
+
+    // val predictionUpdated = new node.Area(lane) {
+
+    // }
+    
     val laneDecoding =  new node.Area(lane) {
       for ((key, spec) <- decodingSpecs) {
         key.assignFromBits(spec.build(Decode.INSTRUCTION, encodings.all).asBits)

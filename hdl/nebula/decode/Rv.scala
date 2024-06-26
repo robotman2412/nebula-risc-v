@@ -185,10 +185,10 @@ object Rv32f extends AreaObject {
   def FNMSUB_S           = TypeR4(M"-----00------------------1001011")
   def FNMADD_S           = TypeR4(M"-----00------------------1001111")
 
-  def FADD_S             = TypeR_RM(M"0000000------------------1010011")
-  def FSUB_S             = TypeR_RM(M"0000100------------------1010011")
-  def FMUL_S             = TypeR_RM(M"0001000------------------1010011")
-  def FDIV_S             = TypeR_RM(M"0001100------------------1010011")
+  def FADD_S             = TypeR_RM (M"0000000------------------1010011")
+  def FSUB_S             = TypeR_RM (M"0000100------------------1010011")
+  def FMUL_S             = TypeR_RM (M"0001000------------------1010011")
+  def FDIV_S             = TypeR_RM (M"0001100------------------1010011")
   def FSQRT_S            = TypeR1_RM(M"010110000000-------------1010011")
 
   def FSGNJ_S            = TypeR(M"0010000----------000-----1010011")
@@ -205,10 +205,10 @@ object Rv32f extends AreaObject {
   def FLT_S              = TypeFCI(M"1010000----------001-----1010011")
   def FLE_S              = TypeFCI(M"1010000----------000-----1010011")
 
-  def FCLASS_S           = TypeF2I(M"111000000000-----001-----1010011")
+  def FCLASS_S           = TypeF2I   (M"111000000000-----001-----1010011")
   def FCVT_S_W           = TypeI2F_RM(M"110100000000-------------1010011")
   def FCVT_S_WU          = TypeI2F_RM(M"110100000001-------------1010011")
-  def FMV_W_X            = TypeI2F(M"111100000000-----000-----1010011")
+  def FMV_W_X            = TypeI2F   (M"111100000000-----000-----1010011")
 
 }
 
