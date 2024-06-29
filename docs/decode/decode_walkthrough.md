@@ -82,11 +82,6 @@ resources.foreach{
   case _ =>
 }
 ```
-TODO:
-FlatMap data representation. DistinctLinked Data Representation.
-rfAccesses Data Representation
-for each RfResource ....
-
 
 
 
