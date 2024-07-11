@@ -6,7 +6,7 @@ import spinal.lib._
 class Resource
 case class RfResource(rf: RegFileAccess, access: RfAccess) extends Resource
 case class AluOp(fu : Resource, op: Resource) extends Resource
-class RfAccess extends Nameable
+class RfAccess 
 class RfRead extends RfAccess
 class RfWrite extends RfAccess
 
@@ -29,6 +29,7 @@ object VPU extends Resource with AreaObject
 object IMM extends Resource with AreaObject
 object funct3 extends Resource with AreaObject
 object funct7 extends Resource with AreaObject
+object INT extends Resource with AreaObject
 
 
 // object LMUL extends Resource with AreaObject
@@ -65,7 +66,8 @@ object IntRegFileAccess extends RegFileAccess with AreaObject {
             RfResource(IntRegFileAccess, RS1),
             RfResource(IntRegFileAccess, RS2),
             RfResource(IntRegFileAccess, RD),
-            funct3
+            funct3,
+            INT
         )
     )
     // I-type
