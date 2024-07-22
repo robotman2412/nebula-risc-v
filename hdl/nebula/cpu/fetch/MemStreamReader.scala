@@ -6,14 +6,14 @@ import nebula.cpu._
 import nebula.cpu.mem._
 import spinal.core._
 import spinal.lib._
-import _root_.nebula.cpu.mem.NebulaMemBus.Mode
+import nebula.cpu.mem.NebulaMemBus.Mode
 
 
 
 /** Packet of memory stream data. */
 case class MemStreamPacket(cfg: NebulaCfg, width: Int) extends Bundle {
     /** Address of fetched word, always naturally aligned. */
-    val addr    = UInt(cfg.vaddrWidth bits)
+    val addr    = SInt(cfg.vaddrWidth bits)
     /** Fetched word. */
     val data    = Bits(width bits)
     /** Access generated trap. */
@@ -36,7 +36,7 @@ case class MemStreamReader(cfg: NebulaCfg, width: Int, entrypoint: BigInt, isCod
         /** Switch address to fetch from. */
         val jump = in     port Bool()
         /** The address to jump to. */
-        val addr = in     port UInt(cfg.vaddrWidth bits)
+        val addr = in     port SInt(cfg.vaddrWidth bits)
         /** Output data stream. */
         val dout = master port Stream(MemStreamPacket(cfg, width))
     }
@@ -44,9 +44,9 @@ case class MemStreamReader(cfg: NebulaCfg, width: Int, entrypoint: BigInt, isCod
     val subWord = log2Up(width/8)
     
     /** Current address. */
-    val pc      = RegInit(U(entrypoint >> subWord << subWord, cfg.vaddrWidth bits))
+    val pc      = RegInit(S(entrypoint >> subWord << subWord, cfg.vaddrWidth bits))
     /** Address of memory response. */
-    val oldpc   = Reg(UInt(cfg.vaddrWidth bits))
+    val oldpc   = Reg(SInt(cfg.vaddrWidth bits))
     /** Whether the buffer contains any data. */
     val hasBuf  = RegInit(False)
     /** Buffer used in case the next stage isn't ready. */

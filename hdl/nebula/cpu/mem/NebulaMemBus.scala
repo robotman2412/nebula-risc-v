@@ -30,7 +30,7 @@ case class NebulaMemBus(
     /** Access size in log2(bytes) */
     val asize   = UInt(3 bits)
     /** Memory address. */
-    val addr    = UInt(cfg.vaddrWidth bits)
+    val addr    = SInt(cfg.vaddrWidth bits)
     /** Memory write data. */
     val wdata   = !readonly generate Bits(cfg.memWidth bits)
     
@@ -78,7 +78,7 @@ case class NebulaMemBus(
                 ahb.HWDATA := wdata
             }
         }
-        ahb.HADDR := addr
+        ahb.HADDR := addr.asUInt
         
         // Response translation.
         ready := ahb.HREADY

@@ -4,7 +4,10 @@ package nebula.cpu
 
 import nebula.cpu._
 import spinal.core._
-import spinal.lib.bus.amba3.ahblite.AhbLite3Config
+import spinal.lib.misc.pipeline._
+import spinal.lib._
+import nebula.cpu.fetch.FetchData
+import nebula.cpu.fetch.FetchFrag
 
 
 
@@ -84,6 +87,7 @@ case class NebulaCfg(
     /** Vector register width in bits. */
     VLEN:           Int         = 128,
 ) {
+    private val cfg = this
     /** Width of integer registers and CSRs. */
     val XLEN        = isa.XLEN
     /** Width of floating-point registers. */
@@ -96,6 +100,20 @@ case class NebulaCfg(
     val vpnWidth    = vaddrWidth - 12
     /** Derived maximum physical page number width. */
     val ppnWidth    = paddrWidth - 12
+    
+    /** How many chunks a fetch packet is broken into. */
+    val fetchChunks = if (isa.C) 2*frontendWidth else frontendWidth
+    
+    object payload {
+        /** Base address of current instruction or fetch packet. */
+        val PC = Payload(SInt(vaddrWidth bits))
+        /** Raw fetch packet data. */
+        val FETCH_PACKET = Payload(Vec.fill(fetchChunks)(Flow(FetchFrag(cfg))))
+        /** Raw instructions not compacted yet, used in fetch pipeline. */
+        val UNPACKED_RAW_INSNS = Payload(Vec.fill(fetchChunks)(Flow(FetchData(cfg))))
+        /** Raw instructions extracted from fetch packet. */
+        val RAW_INSNS = Payload(Vec.fill(frontendWidth)(Stream(FetchData(cfg))))
+    }
     
     assert(priv.pmpGrain < paddrWidth, "PMP granularity must be less then address width")
     if (isa.RV64) {

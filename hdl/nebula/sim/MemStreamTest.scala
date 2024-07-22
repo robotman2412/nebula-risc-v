@@ -15,7 +15,7 @@ import nebula.util._
 case class MemStreamBench(cfg: NebulaCfg, width: Int) extends Component {
     val io = new Bundle {
         val jump = in     port Bool()
-        val addr = in     port UInt(cfg.vaddrWidth bits)
+        val addr = in     port SInt(cfg.vaddrWidth bits)
         val dout = master port Stream(MemStreamPacket(cfg, width))
     }
     val reader = MemStreamReader(cfg, width, 0, true)
