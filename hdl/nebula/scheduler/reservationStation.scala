@@ -19,6 +19,11 @@ class reservationStation() extends Area {
 
 }
 
+case class RSAccessKeys(rsMapping : Seq[reservationStation]) extends Area {
+
+
+}
+
 class robLine() extends Bundle {
 
   val pc = Bits(40 bits)
