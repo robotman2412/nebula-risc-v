@@ -22,15 +22,6 @@ case class MemStreamBench(cfg: NebulaCfg, width: Int) extends Component {
     val mem    = new AlignedAhb3Rom(
         AhbLite3Config(cfg.vaddrWidth, cfg.memWidth),
         "Hello, World".getBytes()
-        // {
-        //     val raw = "Hello, World!"
-        //     val rom = Array.ofDim[BigInt]((raw.length * 8 - 1) / cfg.memWidth + 1)
-        //     for (i <- 0 until rom.length) rom(i) = 0
-        //     for (i <- 0 until raw.length) {
-        //         rom(i * 8 / cfg.memWidth) |= raw(i) << (i * 8 % cfg.memWidth)
-        //     }
-        //     for (x <- rom) yield B(x, cfg.memWidth bits)
-        // }
     )
     reader.io.mem.toAhbLite3 <> mem.io.ahb
     reader.io.jump           := io.jump

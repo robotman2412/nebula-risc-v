@@ -273,8 +273,3 @@ object Rv64D extends AreaObject {
 object Rvv extends AreaObject {
   import VectorRegFileAccess._
 }
-
-
-object Rvc extends AreaObject {
-  
-}

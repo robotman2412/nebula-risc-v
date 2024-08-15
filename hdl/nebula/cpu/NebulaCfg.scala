@@ -112,7 +112,7 @@ case class NebulaCfg(
         /** Raw instructions not compacted yet, used in fetch pipeline. */
         val UNPACKED_RAW_INSNS = Payload(Vec.fill(fetchChunks)(Flow(FetchData(cfg))))
         /** Raw instructions extracted from fetch packet. */
-        val RAW_INSNS = Payload(Vec.fill(frontendWidth)(Stream(FetchData(cfg))))
+        val RAW_INSNS = Payload(Vec.fill(frontendWidth)(Flow(FetchData(cfg))))
     }
     
     assert(priv.pmpGrain < paddrWidth, "PMP granularity must be less then address width")
