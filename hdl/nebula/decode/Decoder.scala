@@ -23,6 +23,7 @@ package object Decode extends AreaObject {
   }
   
 
+
   val NEED_PC  = Payload(Bool())
   val NEED_FPU = Payload(Bool())
   val NEED_RM  = Payload(Bool())
@@ -46,29 +47,22 @@ case class AccessKeys(rfa : RfAccess, physWidth : Int, rfMapping : Seq[RegFileAc
   val RFID = Payload(UInt(rfIdWidth bits)) // which RegFile
 }
 
-class Decoder(thisNode: Node, lane: Int) extends Area {
-  val node = thisNode
+class Decoder(decodeNode : Node, lane : Int) extends Area {
   import Decode._
   val decodingSpecs = mutable.LinkedHashMap[Payload[_ <: BaseType], DecodingSpec[_ <: BaseType]]()
   def getDecodingSpec(key: Payload[_ <:BaseType]) = decodingSpecs.getOrElseUpdate(key, new DecodingSpec(key))
   def setDecodingDefault(key: Payload[_ <: BaseType], value: BaseType): Unit = {
     decodingSpecs.getOrElseUpdate(key, new DecodingSpec(key)).setDefault(Masked(value))
   }
-  //What is this doint
   def DecodeList(e: (Payload[_ <: BaseType], Any)*) = List(e: _*)
-  def addMicroOpDecoding(microOp: MicroOp, decoding: DecodeListType) = {
+  def addMicroOpDecoding[T <: BaseType](microOp: MicroOp, key : Payload[T], value : T) = {
     val op = Masked(microOp.key)
-    for ((key, value) <- decoding) {
-      decodingSpecs.getOrElseUpdate(key, new DecodingSpec(key)).addNeeds(op, Masked(value))
-    }
+    decodingSpecs.getOrElseUpdate(key, new DecodingSpec(key)).addNeeds(op, Masked(value))
   }
   
   def addMicroOpDecodingDefault(key: Payload[_ <: BaseType], value: BaseType) = {
     getDecodingSpec(key).setDefault(Masked(value))
   }
-
-  def addMicroOpDecoding[T <: BaseType](microOp: MicroOp, key : Payload[T], value: T) : Unit = addMicroOpDecoding(microOp, DecodeList(key -> value))
-  
 
 
   val logic = new Area {
@@ -137,7 +131,7 @@ class Decoder(thisNode: Node, lane: Int) extends Area {
     //   any.addNeeds(branchKeys ++ jalKeys, Masked.one)
     // }
     
-    val someLaneLogic = new node.Area(lane) {
+    val someLaneLogic = new decodeNode.Area(lane) {
       for (rfa <- rfaKeys) {
         val keys = rfa
         val dec = encodings.rfAccessDec(keys._1)
@@ -176,7 +170,7 @@ class Decoder(thisNode: Node, lane: Int) extends Area {
 
     // }
     
-    val laneDecoding =  new node.Area(lane) {
+    val laneDecoding =  new decodeNode.Area(lane) {
       for ((key, spec) <- decodingSpecs) {
         key.assignFromBits(spec.build(Decode.INSTRUCTION, encodings.all).asBits)
       }

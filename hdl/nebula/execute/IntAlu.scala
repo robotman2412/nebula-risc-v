@@ -16,12 +16,11 @@ object IntAluCtrl extends AreaObject {
   
 }
 
-class IntAlu(thisNode : Node, SRC1 : Payload[SInt],SRC2 : Payload[SInt]) extends Area {
+class IntAlu(aluNode : Node, SRC1 : Payload[SInt],SRC2 : Payload[SInt]) extends Area {
   import IntAluCtrl._
-  val node = thisNode
 
   val RESULT = Payload(Bits(32 bits))
-  val logit = new node.Area {
+  val logic = new aluNode.Area {
     RESULT.mux(
       BitWiseCtrl.XOR  -> (SRC1 ^ SRC2),
       BitWiseCtrl.OR   -> (SRC1 | SRC2),
