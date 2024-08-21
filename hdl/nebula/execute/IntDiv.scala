@@ -12,7 +12,7 @@ object IntDiv extends AreaObject {
 
 
 
-class IntDiv(divNode : Node, SRC1 : Payload[Bits], SRC2 : Payload[Bits]) extends Area {
+case class IntDiv(divNode : Node, SRC1 : Payload[Bits], SRC2 : Payload[Bits]) extends Area {
   import IntDiv._
 
   val DIV_RESULT = Payload(SInt(64 bits))

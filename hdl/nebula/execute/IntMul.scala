@@ -12,7 +12,7 @@ object IntMul extends AreaObject {
 }
 
 
-class IntMul(mulNode : Node, SRC1 : Payload[Bits], SRC2 : Payload[Bits]) extends Area {
+case class IntMul(mulNode : Node, SRC1 : Payload[Bits], SRC2 : Payload[Bits]) extends Area {
   import IntMul._
 
   val MUL_RESULT = Payload(SInt(64 bits))

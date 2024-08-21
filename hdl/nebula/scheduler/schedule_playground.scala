@@ -1,7 +1,25 @@
-package nebula.schedule
+package nebula.scheduler
+
 
 import spinal.core._
 import spinal.lib._
+import spinal.lib.misc.pipeline._
+
+
+
+
+class RAT(regfilesize : Int) extends Area {
+
+  val ratsize = log2Up(regfilesize)
+  val freeList = ???
+  val RAT = Vec.fill(32)(UInt(ratsize bits))
+
+}
+
+
+
+
+
 
 
 class reserveLine() extends Bundle {
@@ -19,10 +37,7 @@ class reservationStation() extends Area {
 
 }
 
-case class RSAccessKeys(rsMapping : Seq[reservationStation]) extends Area {
 
-
-}
 
 class robLine() extends Bundle {
 
@@ -48,4 +63,3 @@ class ROB() extends Area {
   }
 
 }
-

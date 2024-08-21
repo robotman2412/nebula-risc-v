@@ -16,7 +16,7 @@ object IntAluCtrl extends AreaObject {
   
 }
 
-class IntAlu(aluNode : Node, SRC1 : Payload[SInt],SRC2 : Payload[SInt]) extends Area {
+case class IntAlu(aluNode : Node, SRC1 : Payload[SInt],SRC2 : Payload[SInt]) extends Area {
   import IntAluCtrl._
 
   val RESULT = Payload(Bits(32 bits))
