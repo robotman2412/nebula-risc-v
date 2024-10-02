@@ -67,7 +67,8 @@ case class Decoder(decodeNode : Node, lane : Int) extends Area {
 
   val rfaKeys = mutable.LinkedHashMap[RfAccess, AccessKeys]()
   val logic = new Area {
-    def microOps : Seq[MicroOp] = Seq(Rv32i.ADD, Rv32i.ADDI, Rv32i.SUB, Rv32i.AUIPC, Rv32i.BEQ)
+    def getMicroOps = ???
+    def microOps : Seq[MicroOp] = Seq(Rv32i.ADD, Rv32i.SUB, Rv32i.BEQ ,Rv32i.JAL ,Rv32i.ADDI ,Rv32i.SB ,Rv32i.LB ,Rv32i.AUIPC)
     def resources = microOps.flatMap(_.resources).distinctLinked
 
 
@@ -86,7 +87,7 @@ case class Decoder(decodeNode : Node, lane : Int) extends Area {
     addMicroOpDecodingDefault(NEED_FPU, False)
     addMicroOpDecodingDefault(NEED_RM , False)
     addMicroOpDecodingDefault(NEED_VPU, False)
-    addMicroOpDecodingDefault(IMM_SEL, IMM.NO_IMM)
+    // addMicroOpDecodingDefault(IMM_SEL, IMM.NO_IMM)   THIS IS BROKEN
     addMicroOpDecodingDefault(NEED_PC, False)
 
     val encodings = new Area {
@@ -109,7 +110,13 @@ case class Decoder(decodeNode : Node, lane : Int) extends Area {
           case r: RfResource => {
             val dec = rfAccessDec(r.access)
             dec.read.addNeeds(key, Masked.one)
+
+            // println(e)
+            // println(e.resources)
+            // println(dec.read.addNeeds(key, Masked.one))
+
             dec.rfid.addNeeds(key, Masked(dec.rfaKey.idOf(r.rf), 3))
+            // println(dec.rfid.addNeeds(key, Masked(dec.rfaKey.idOf(r.rf), 3)))
           }
           case PC_READ => addMicroOpDecoding(e, NEED_PC, True)
           case LQ => 
@@ -118,12 +125,13 @@ case class Decoder(decodeNode : Node, lane : Int) extends Area {
           case VPU => addMicroOpDecoding(e, NEED_VPU, True)
           case SQ =>
           case INT => addMicroOpDecoding(e, IS_INT, True)
+          case funct3 => 
         }
       } 
-      // what in the fuck are these numbers?
-      // if(Riscv.RVF || Riscv.RVD){
-      //   for (x <- 1 to 3; y <- 1 to 3) getDecodingSpec(NEED_FPU).addNeeds(Masked(0x73 + (x << 20) + (y << 12), 0xFFF0307Fl), Masked.one)
-      // }
+    //   // what in the fuck are these numbers?
+    //   // if(Riscv.RVF || Riscv.RVD){
+    //   //   for (x <- 1 to 3; y <- 1 to 3) getDecodingSpec(NEED_FPU).addNeeds(Masked(0x73 + (x << 20) + (y << 12), 0xFFF0307Fl), Masked.one)
+    //   // }
     }
     // val predictionSpec = new Area {
     //   val branchKeys = List(Rv32i.BEQ).map(e => Masked(e.key))
@@ -179,3 +187,4 @@ case class Decoder(decodeNode : Node, lane : Int) extends Area {
     }
   }
 }
+

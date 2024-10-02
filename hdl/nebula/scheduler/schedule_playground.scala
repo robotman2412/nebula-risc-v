@@ -16,12 +16,6 @@ class RAT(regfilesize : Int) extends Area {
 
 }
 
-
-
-
-
-
-
 class reserveLine() extends Bundle {
 
   val Op = ???

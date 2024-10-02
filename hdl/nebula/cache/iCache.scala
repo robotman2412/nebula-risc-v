@@ -35,7 +35,7 @@ case class ICache(node : Node) extends Area {
   class Tag() extends Bundle {
     val valid = Bool()
     val error = Bool()
-    val address = Bits(tagWidth bits)
+    // val address = Bits(tagWidth bits)
   }
 
   val banks = for (id <- 0 until bankCount) yield new Area {
