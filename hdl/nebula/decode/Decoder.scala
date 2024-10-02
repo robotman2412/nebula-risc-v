@@ -118,6 +118,7 @@ case class Decoder(decodeNode : Node, lane : Int) extends Area {
           case VPU => addMicroOpDecoding(e, NEED_VPU, True)
           case SQ =>
           case INT => addMicroOpDecoding(e, IS_INT, True)
+          case funct3 =>
         }
       } 
       // what in the fuck are these numbers?
