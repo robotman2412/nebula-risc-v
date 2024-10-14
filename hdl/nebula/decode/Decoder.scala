@@ -21,7 +21,7 @@ object Decoder extends AreaObject {
   }
   
 
-  val IS_INT   = Payload(Bool())
+  val IS_INT   = Payload(Bool()) 
   val NEED_PC  = Payload(Bool())
   val NEED_FPU = Payload(Bool())
   val NEED_RM  = Payload(Bool())
@@ -47,7 +47,7 @@ case class AccessKeys(rfa : RfAccess, physWidth : Int, rfMapping : Seq[RegFileAc
   val RFID = Payload(UInt(rfIdWidth bits)) // which RegFile
 }
 
-case class Decoder(decodeNode : Node, lane : Int) extends Area {
+case class Decoder(decodeNode : CtrlLink, lane : Int) extends Area {
   import Decoder._
   val decodingSpecs = mutable.LinkedHashMap[Payload[_ <: BaseType], DecodingSpec[_ <: BaseType]]()
   def getDecodingSpec(key: Payload[_ <:BaseType]) = decodingSpecs.getOrElseUpdate(key, new DecodingSpec(key))
@@ -145,18 +145,18 @@ case class Decoder(decodeNode : Node, lane : Int) extends Area {
       for (rfa <- rfaKeys) {
         val keys = rfa
         val dec = encodings.rfAccessDec(keys._1)
-        keys._2.ENABLE := dec.read.build(Decoder.INSTRUCTION, encodings.all)
-        keys._2.RFID   := dec.rfid.build(Decoder.INSTRUCTION, encodings.all)
-        keys._2.PHYS   := Decoder.INSTRUCTION(rfa._1 match {
+        keys._2.ENABLE := dec.read.build(up(INSTRUCTION), encodings.all)
+        keys._2.RFID   := dec.rfid.build(up(INSTRUCTION), encodings.all)
+        keys._2.PHYS   := up(INSTRUCTION)(rfa._1 match {
           case RS1 => 19 downto 15
           case RS2 => 24 downto 20
           case RS3 => 31 downto 27
           case RD  => 11 downto 7
         }).asUInt
       }
-      FUNCT3 := Decoder.INSTRUCTION(14 downto 12)
-      FUNCT7 := Decoder.INSTRUCTION(31 downto 25)
-      OPCODE := Decoder.INSTRUCTION(6  downto 0)
+      FUNCT3 := up(INSTRUCTION)(14 downto 12)
+      // FUNCT7 := INSTRUCTION(31 downto 25)
+      // OPCODE := INSTRUCTION(6  downto 0)
 
       // LEGAL := Symplify(Decode.INSTRUCTION, encodings.all) && !Decode.DECOMPRESSION_FAULT
       // Checks if FP instr is valid??
@@ -181,9 +181,14 @@ case class Decoder(decodeNode : Node, lane : Int) extends Area {
     // }
     
     val laneDecoding =  new decodeNode.Area(lane) {
-      for ((key, spec) <- decodingSpecs) {
-        key.assignFromBits(spec.build(Decoder.INSTRUCTION, encodings.all).asBits)
+      down(IS_INT) := False
+      when(isValid) {
+        down(IS_INT) := decodingSpecs.get(IS_INT).get.build(up(INSTRUCTION), encodings.all).asBits.asBool
+
       }
+      // for ((key, spec) <- decodingSpecs) {
+      //   key.assignFromBits(spec.build(Decoder.INSTRUCTION, encodings.all).asBits)
+      // }
     }
   }
 }

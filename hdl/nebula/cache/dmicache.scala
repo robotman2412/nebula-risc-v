@@ -44,14 +44,16 @@ case class DMICache(node : Node) extends Area {
   
   val wordSize : Int = 32
   val cacheSize : Int = 4096 // in words (32 or 64 bits)
-  assert(cacheSize == nSets * blockSize)
   val nSets : Int = 256 
   val blockSize : Int = 16 // words per block
 
-  val tagWidth = 32 - (indexWidth + blockWidth + byteWidth)
+  assert(cacheSize == nSets * blockSize)
+
   val indexWidth : Int = log2Up(nSets)
   val blockWidth : Int = log2Up(blockSize) // Block Index Width
   val byteWidth = 2 // byte index Width // in bits
+
+  val tagWidth = 32 - (indexWidth + blockWidth + byteWidth)
 
   val tagRange = 31 downto log2Up(nSets * blockSize * byteWidth)
   val indexRange = tagRange.low - 1 downto log2Up(blockSize * byteWidth)
