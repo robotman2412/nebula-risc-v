@@ -8,6 +8,7 @@ import nebula.decode._
 import spinal.core.sim._
 import nebula.decode.Decoder.INSTRUCTION
 import nebula.decode.Decoder.IS_INT
+import nebula.decode.Decoder.FUNCT3
 
 
 class decoderForTest() extends Component {
@@ -46,6 +47,7 @@ object decoder_test extends App {
   SimConfig.withWave.compile(new decoderForTest).doSim{ dut =>
     dut.clockDomain.forkStimulus(10)
     dut.io.instr #= BigInt("00000000000000000000000000110011", 2)
+    
    
     sleep(1)
     dut.clockDomain.waitSampling(20)
@@ -53,6 +55,7 @@ object decoder_test extends App {
     // val int = dut.test_signals_node(down(IS_INT))
     // print(int)
     println(dut.recieve.io.is_int.toBoolean)
+    
 
   }
 }

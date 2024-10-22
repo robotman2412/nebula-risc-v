@@ -82,13 +82,15 @@ case class Decoder(decodeNode : CtrlLink, lane : Int) extends Area {
       case sd: SingleDecoding => singleDecodings += sd
     }
 
-
+    val need_funct3 = Payload(Bool())
     addMicroOpDecodingDefault(IS_INT, False)
     addMicroOpDecodingDefault(NEED_FPU, False)
     addMicroOpDecodingDefault(NEED_RM , False)
     addMicroOpDecodingDefault(NEED_VPU, False)
     // addMicroOpDecodingDefault(IMM_SEL, IMM.NO_IMM)   THIS IS BROKEN
     addMicroOpDecodingDefault(NEED_PC, False)
+    addMicroOpDecodingDefault(need_funct3, False)
+
 
     val encodings = new Area {
       val all = mutable.LinkedHashSet[Masked]()
@@ -111,12 +113,7 @@ case class Decoder(decodeNode : CtrlLink, lane : Int) extends Area {
             val dec = rfAccessDec(r.access)
             dec.read.addNeeds(key, Masked.one)
 
-            // println(e)
-            // println(e.resources)
-            // println(dec.read.addNeeds(key, Masked.one))
-
             dec.rfid.addNeeds(key, Masked(dec.rfaKey.idOf(r.rf), 3))
-            // println(dec.rfid.addNeeds(key, Masked(dec.rfaKey.idOf(r.rf), 3)))
           }
           case PC_READ => addMicroOpDecoding(e, NEED_PC, True)
           case LQ => 
@@ -125,7 +122,7 @@ case class Decoder(decodeNode : CtrlLink, lane : Int) extends Area {
           case VPU => addMicroOpDecoding(e, NEED_VPU, True)
           case SQ =>
           case INT => addMicroOpDecoding(e, IS_INT, True)
-          case funct3 => 
+          case funct3 => addMicroOpDecoding(e, need_funct3, True)
         }
       } 
     //   // what in the fuck are these numbers?
@@ -155,8 +152,8 @@ case class Decoder(decodeNode : CtrlLink, lane : Int) extends Area {
         }).asUInt
       }
       FUNCT3 := up(INSTRUCTION)(14 downto 12)
-      // FUNCT7 := INSTRUCTION(31 downto 25)
-      // OPCODE := INSTRUCTION(6  downto 0)
+      FUNCT7 := up(INSTRUCTION)(31 downto 25)
+      OPCODE := up(INSTRUCTION)(6  downto 0)
 
       // LEGAL := Symplify(Decode.INSTRUCTION, encodings.all) && !Decode.DECOMPRESSION_FAULT
       // Checks if FP instr is valid??
@@ -181,14 +178,12 @@ case class Decoder(decodeNode : CtrlLink, lane : Int) extends Area {
     // }
     
     val laneDecoding =  new decodeNode.Area(lane) {
-      down(IS_INT) := False
-      when(isValid) {
-        down(IS_INT) := decodingSpecs.get(IS_INT).get.build(up(INSTRUCTION), encodings.all).asBits.asBool
-
+      for ((key, spec) <- decodingSpecs) {
+        down(key).assignDontCare()
+        when(isValid) {
+          down(key).assignFromBits(spec.build(up(INSTRUCTION), encodings.all).asBits)
+        }
       }
-      // for ((key, spec) <- decodingSpecs) {
-      //   key.assignFromBits(spec.build(Decoder.INSTRUCTION, encodings.all).asBits)
-      // }
     }
   }
 }
