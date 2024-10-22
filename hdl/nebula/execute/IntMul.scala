@@ -18,14 +18,14 @@ case class IntMul(mulNode : Node, SRC1 : Payload[Bits], SRC2 : Payload[Bits]) ex
   val MUL_RESULT = Payload(SInt(64 bits))
   val CTRL = Payload(IntMul.Ctrl())
 
-  val test = new this.mulNode.Area {
-    MUL_RESULT := CTRL.mux(
-      Ctrl.MUL     -> ((SRC1.asSInt * SRC2.asSInt)(31 downto 0)).resized,
-      Ctrl.MULH    -> ((SRC1.asSInt * SRC2.asSInt)(63 downto 32)).resized,
-      Ctrl.MULHSU  -> ???,
-      Ctrl.MULHU   -> (SRC1.asUInt * SRC2.asUInt).resized,
-      Ctrl.MULW    -> (SRC1.asSInt * SRC2.asSInt).resized
-    )
+  // val test = new this.mulNode.Area {
+  //   MUL_RESULT := CTRL.mux(
+  //     Ctrl.MUL     -> ((SRC1.asSInt * SRC2.asSInt)(31 downto 0)).resized,
+  //     Ctrl.MULH    -> ((SRC1.asSInt * SRC2.asSInt)(63 downto 32)).resized,
+  //     Ctrl.MULHSU  -> ???,
+  //     Ctrl.MULHU   -> (SRC1.asUInt * SRC2.asUInt).resized,
+  //     Ctrl.MULW    -> (SRC1.asSInt * SRC2.asSInt).resized
+  //   )
 
-  }
+  // }
 }

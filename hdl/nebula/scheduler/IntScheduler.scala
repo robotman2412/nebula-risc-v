@@ -79,8 +79,8 @@ class HazardChecker(hazardsRange: Seq[CtrlLink]) extends Area {
   //RAW hazards
   // isRAW = is RD(stage+n) === RS(operand read stage)
   //
-  val rfaReads = Decoder.rfaKeys.filter(_._1.isInstanceOf[RfRead])
-  val rfaWrites = Decoder.rfaKeys.filter(_._1.isInstanceOf[RfWrite])
+  // val rfaReads = Decoder.rfaKeys.filter(_._1.isInstanceOf[RfRead])
+  // val rfaWrites = Decoder.rfaKeys.filter(_._1.isInstanceOf[RfWrite])
 
   case class rfDependecyLine() extends Bundle {
     val register = Bits(5 bits)
@@ -93,7 +93,7 @@ class HazardChecker(hazardsRange: Seq[CtrlLink]) extends Area {
   val RAWChecker = new opReadStage.Area {
     val currentRS1 = mutable.LinkedHashMap[RegFileAccess, AccessKeys]()
     val isRAW = for (stage <- hazardsRange.tail) yield new Area {
-      val checkHazard = rfaReads(RS1).PHYS
+      // val checkHazard = rfaReads(RS1).PHYS
     }
   }
 
