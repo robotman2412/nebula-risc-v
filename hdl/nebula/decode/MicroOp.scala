@@ -30,6 +30,7 @@ object IMM extends Resource with AreaObject
 object funct3 extends Resource with AreaObject
 object funct7 extends Resource with AreaObject
 object INT extends Resource with AreaObject
+object ALU extends Resource with AreaObject
 
 
 // object LMUL extends Resource with AreaObject
@@ -66,8 +67,9 @@ object IntRegFileAccess extends RegFileAccess with AreaObject {
             RfResource(IntRegFileAccess, RS1),
             RfResource(IntRegFileAccess, RS2),
             RfResource(IntRegFileAccess, RD),
+            ALU,
+            INT,
             funct3,
-            INT
         )
     )
     // I-type

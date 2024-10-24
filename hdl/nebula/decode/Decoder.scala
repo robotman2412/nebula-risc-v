@@ -12,25 +12,27 @@ object Riscv extends AreaObject {
   val RVD, RVF = Boolean
 }
 
-object Decoder extends AreaObject {
+object UOP extends Bundle {
+  
+}
+
+object Decoder extends Bundle {
   type DecodeListType = Seq[(Payload[_ <: BaseType], Any)]
   val INSTRUCTION = Payload(Bits(32 bits))
 
-  val IMM = new SpinalEnum() {
-    val NO_IMM, IS_I, IS_B = newElement()
-  }
-  
-
   val IS_INT   = Payload(Bool()) 
   val NEED_PC  = Payload(Bool())
+  val FU_ALU  = Payload(Bool())
   val NEED_FPU = Payload(Bool())
   val NEED_RM  = Payload(Bool())
   val NEED_VPU = Payload(Bool())
-  val IMM_SEL = Payload(IMM())
+  // val IMM_SEL = Payload(IMM())
   val FUNCT3 = Payload(Bits(3 bits))
   val FUNCT7 = Payload(Bits(7 bits))
   val OPCODE = Payload(Bits(7 bits))
+  val need_funct3 = Payload(Bool())
 
+  val rfaKeys = mutable.LinkedHashMap[RfAccess, AccessKeys]()
 
 }
 
@@ -47,7 +49,7 @@ case class AccessKeys(rfa : RfAccess, physWidth : Int, rfMapping : Seq[RegFileAc
   val RFID = Payload(UInt(rfIdWidth bits)) // which RegFile
 }
 
-case class Decoder(decodeNode : CtrlLink, lane : Int) extends Area {
+case class Decoder(decodeNode : CtrlLink, lane: Option[Int] = None) extends Area {
   import Decoder._
   val decodingSpecs = mutable.LinkedHashMap[Payload[_ <: BaseType], DecodingSpec[_ <: BaseType]]()
   def getDecodingSpec(key: Payload[_ <:BaseType]) = decodingSpecs.getOrElseUpdate(key, new DecodingSpec(key))
@@ -65,10 +67,10 @@ case class Decoder(decodeNode : CtrlLink, lane : Int) extends Area {
   }
 
 
-  val rfaKeys = mutable.LinkedHashMap[RfAccess, AccessKeys]()
   val logic = new Area {
     def getMicroOps = ???
-    def microOps : Seq[MicroOp] = Seq(Rv32i.ADD, Rv32i.SUB, Rv32i.BEQ ,Rv32i.JAL ,Rv32i.ADDI ,Rv32i.SB ,Rv32i.LB ,Rv32i.AUIPC)
+    // def microOps : Seq[MicroOp] = Seq(Rv32i.ADD, Rv32i.SUB, Rv32i.BEQ ,Rv32i.JAL ,Rv32i.ADDI ,Rv32i.SB ,Rv32i.LB ,Rv32i.AUIPC)
+    def microOps : Seq[MicroOp] = Rv32i.UOPs
     def resources = microOps.flatMap(_.resources).distinctLinked
 
 
@@ -82,14 +84,13 @@ case class Decoder(decodeNode : CtrlLink, lane : Int) extends Area {
       case sd: SingleDecoding => singleDecodings += sd
     }
 
-    val need_funct3 = Payload(Bool())
     addMicroOpDecodingDefault(IS_INT, False)
     addMicroOpDecodingDefault(NEED_FPU, False)
     addMicroOpDecodingDefault(NEED_RM , False)
     addMicroOpDecodingDefault(NEED_VPU, False)
-    // addMicroOpDecodingDefault(IMM_SEL, IMM.NO_IMM)   THIS IS BROKEN
     addMicroOpDecodingDefault(NEED_PC, False)
     addMicroOpDecodingDefault(need_funct3, False)
+    addMicroOpDecodingDefault(FU_ALU, False)
 
 
     val encodings = new Area {
@@ -122,6 +123,7 @@ case class Decoder(decodeNode : CtrlLink, lane : Int) extends Area {
           case VPU => addMicroOpDecoding(e, NEED_VPU, True)
           case SQ =>
           case INT => addMicroOpDecoding(e, IS_INT, True)
+          case ALU => addMicroOpDecoding(e, FU_ALU, True)
           case funct3 => addMicroOpDecoding(e, need_funct3, True)
         }
       } 
@@ -138,22 +140,22 @@ case class Decoder(decodeNode : CtrlLink, lane : Int) extends Area {
     //   any.addNeeds(branchKeys ++ jalKeys, Masked.one)
     // }
     
-    val someLaneLogic = new decodeNode.Area(lane) {
+    val someLaneLogic = new decodeNode.Area {
       for (rfa <- rfaKeys) {
         val keys = rfa
         val dec = encodings.rfAccessDec(keys._1)
-        keys._2.ENABLE := dec.read.build(up(INSTRUCTION), encodings.all)
-        keys._2.RFID   := dec.rfid.build(up(INSTRUCTION), encodings.all)
-        keys._2.PHYS   := up(INSTRUCTION)(rfa._1 match {
+        down(keys._2.ENABLE) := dec.read.build(up(INSTRUCTION), encodings.all)
+        down(keys._2.RFID)   := dec.rfid.build(up(INSTRUCTION), encodings.all)
+        down(keys._2.PHYS)   := up(INSTRUCTION)(rfa._1 match {
           case RS1 => 19 downto 15
           case RS2 => 24 downto 20
           case RS3 => 31 downto 27
           case RD  => 11 downto 7
         }).asUInt
       }
-      FUNCT3 := up(INSTRUCTION)(14 downto 12)
-      FUNCT7 := up(INSTRUCTION)(31 downto 25)
-      OPCODE := up(INSTRUCTION)(6  downto 0)
+      down(FUNCT3) := up(INSTRUCTION)(14 downto 12)
+      down(FUNCT7) := up(INSTRUCTION)(31 downto 25)
+      down(OPCODE) := up(INSTRUCTION)(6  downto 0)
 
       // LEGAL := Symplify(Decode.INSTRUCTION, encodings.all) && !Decode.DECOMPRESSION_FAULT
       // Checks if FP instr is valid??
@@ -177,7 +179,7 @@ case class Decoder(decodeNode : CtrlLink, lane : Int) extends Area {
 
     // }
     
-    val laneDecoding =  new decodeNode.Area(lane) {
+    val laneDecoding =  new decodeNode.Area {
       for ((key, spec) <- decodingSpecs) {
         down(key).assignDontCare()
         when(isValid) {

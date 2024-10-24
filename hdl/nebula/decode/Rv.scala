@@ -65,12 +65,10 @@ object Rv32i extends AreaObject {
 
   val FLUSH_DATA         = TypeNone(M"-------00000-----101-----0001111")
 
-  // val UOPs = List(ADD, SUB, SLL, SLT, SLTU, XOR, SRL, SRA, OR, AND, ADDI, SLLI, SLTI, SLTIU, XORI, SRLI, SRAI, ORI, ANDI, LUI, AUIPC, BEQ, BNE, BLT, BGE, BLTU, BGEU, JALR, JAL, LB, LH, LW, LBU, LHU, SB, SH, SW, EBREAK, ECALL, MRET, SRET, URET, FENCEI, WFI, FENCE, SFENCE_VMA, FLUSH_DATA)
+  val UOPs = List(ADD, SUB, SLL, SLT, SLTU, XOR, SRL, SRA, OR, AND, ADDI, SLLI, SLTI, SLTIU, XORI, SRLI, SRAI, ORI, ANDI, LUI, AUIPC, BEQ, BNE, BLT, BGE, BLTU, BGEU, JALR, JAL, LB, LH, LW, LBU, LHU, SB, SH, SW, EBREAK, ECALL, MRET, SRET, URET, FENCEI, WFI, FENCE, SFENCE_VMA, FLUSH_DATA)
   // val uopZipped = UOPs.zipWithIndex
   // val uopsMasked = uopZipped.map{case (microOp, key) => (Masked(microOp), Masked(key))}
   
-  val TypeRuops = Seq(ADD, SUB, SLL, SLT, SLTU, XOR, SRL, SRA, OR, AND).map(e => Masked(e.key))
-  val TypeIuops = Seq(ADDI, SLLI, SLTI, SLTIU, XORI, SRLI, SRAI, ORI, ANDI).map(e => Masked(e.key))
 }
 
 object Rv64i extends AreaObject {
