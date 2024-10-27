@@ -20,6 +20,16 @@ object Decoder extends Bundle {
   type DecodeListType = Seq[(Payload[_ <: BaseType], Any)]
   val INSTRUCTION = Payload(Bits(32 bits))
 
+
+  val RS_Sources = new SpinalEnum() {
+    val RF, U, I, S, PC, NA = newElement()
+
+  }
+
+  val RS1_SRC = Payload(RS_Sources())
+  val RS2_SRC = Payload(RS_Sources())
+
+
   val IS_INT   = Payload(Bool()) 
   val NEED_PC  = Payload(Bool())
   val FU_ALU  = Payload(Bool())
@@ -32,9 +42,33 @@ object Decoder extends Bundle {
   val OPCODE = Payload(Bits(7 bits))
   val need_funct3 = Payload(Bool())
 
+  val UOP = Payload(Bits(32 bits))
+
+
   val rfaKeys = mutable.LinkedHashMap[RfAccess, AccessKeys]()
 
 }
+
+
+case class IMM(instruction  : Bits) extends Area{
+  // immediates
+  def i = instruction(31 downto 20)
+  def h = instruction(31 downto 24)
+  def s = instruction(31 downto 25) ## instruction(11 downto 7)
+  def b = instruction(31) ## instruction(7) ## instruction(30 downto 25) ## instruction(11 downto 8)
+  def u = instruction(31 downto 12) ## U"x000"
+  def j = instruction(31) ## instruction(19 downto 12) ## instruction(20) ## instruction(30 downto 21)
+  def z = instruction(19 downto 15)
+
+  // sign-extend immediates
+  def i_sext = S(i).resize(Riscv.XLEN)
+  def h_sext = S(h).resize(Riscv.XLEN)
+  def s_sext = S(s).resize(Riscv.XLEN)
+  def b_sext = S(b ## False).resize(Riscv.XLEN)
+  def j_sext = S(j ## False).resize(Riscv.XLEN)
+}
+
+
 
 case class AccessKeys(rfa : RfAccess, physWidth : Int, rfMapping : Seq[RegFileAccess]) extends Area {
   // how many bits to access RFAccess def
@@ -51,6 +85,7 @@ case class AccessKeys(rfa : RfAccess, physWidth : Int, rfMapping : Seq[RegFileAc
 
 case class Decoder(decodeNode : CtrlLink, lane: Option[Int] = None) extends Area {
   import Decoder._
+  import SrcKeys._
   val decodingSpecs = mutable.LinkedHashMap[Payload[_ <: BaseType], DecodingSpec[_ <: BaseType]]()
   def getDecodingSpec(key: Payload[_ <:BaseType]) = decodingSpecs.getOrElseUpdate(key, new DecodingSpec(key))
   def setDecodingDefault(key: Payload[_ <: BaseType], value: BaseType): Unit = {
@@ -91,6 +126,8 @@ case class Decoder(decodeNode : CtrlLink, lane: Option[Int] = None) extends Area
     addMicroOpDecodingDefault(NEED_PC, False)
     addMicroOpDecodingDefault(need_funct3, False)
     addMicroOpDecodingDefault(FU_ALU, False)
+    addMicroOpDecodingDefault(RS1_SRC, NA)
+    addMicroOpDecodingDefault(RS2_SRC, NA)
 
 
     val encodings = new Area {
@@ -126,6 +163,19 @@ case class Decoder(decodeNode : CtrlLink, lane: Option[Int] = None) extends Area
           case ALU => addMicroOpDecoding(e, FU_ALU, True)
           case funct3 => addMicroOpDecoding(e, need_funct3, True)
         }
+        e.srckeys.foreach {
+          case src1 : SrcKeys.SRC1 => {
+            case  SRC1.RF => addMicroOpDecoding(e, RS1_SRC, RF)
+            case  SRC1.U => addMicroOpDecoding(e, RS1_SRC, U)
+
+          }
+          case src2 : SrcKeys.SRC2 => {
+            case  SRC2.RF => addMicroOpDecoding(e, RS1_SRC, RF)
+            case  SRC2.I => addMicroOpDecoding(e, RS1_SRC, I)
+            case  SRC2.S => addMicroOpDecoding(e, RS1_SRC, S)
+            case  SRC2.PC => addMicroOpDecoding(e, RS1_SRC, PC)
+          }
+        }
       } 
     //   // what in the fuck are these numbers?
     //   // if(Riscv.RVF || Riscv.RVD){
@@ -156,6 +206,8 @@ case class Decoder(decodeNode : CtrlLink, lane: Option[Int] = None) extends Area
       down(FUNCT3) := up(INSTRUCTION)(14 downto 12)
       down(FUNCT7) := up(INSTRUCTION)(31 downto 25)
       down(OPCODE) := up(INSTRUCTION)(6  downto 0)
+      down(UOP)    :- up(INSTRUCTION)
+
 
       // LEGAL := Symplify(Decode.INSTRUCTION, encodings.all) && !Decode.DECOMPRESSION_FAULT
       // Checks if FP instr is valid??

@@ -32,6 +32,34 @@ object funct7 extends Resource with AreaObject
 object INT extends Resource with AreaObject
 object ALU extends Resource with AreaObject
 
+class SrcKeys
+class Src1Keys extends SrcKeys
+class Src2Keys extends SrcKeys
+class OpKeys   extends SrcKeys
+object SrcKeys extends AreaObject {
+  val Op = new Area{
+    val ADD = new OpKeys
+    val SUB = new OpKeys
+    val SRC1 = new OpKeys
+    val LESS = new OpKeys
+    val LESS_U = new OpKeys
+  }
+  val SRC1 = new Area{
+    val RF = new Src1Keys
+    val U  = new Src1Keys
+  }
+  val SRC2 = new Area{
+    val RF = new Src2Keys
+    val I  = new Src2Keys
+    val S  = new Src2Keys
+    val PC = new Src2Keys
+  }
+  val SRC3 = new Area {
+
+
+  }
+}
+
 
 // object LMUL extends Resource with AreaObject
 
@@ -43,7 +71,8 @@ abstract class MicroOp(val resources: Seq[Resource]) {
 
 case class SingleDecoding(
         key: MaskedLiteral,
-        override val resources: Seq[Resource]
+        override val resources: Seq[Resource],
+        srckeys : Seq[SrcKeys]
 ) extends MicroOp(resources)
 // case class MultiDecoding(key: MaskedLiteral, uop: Seq[MicroOp])
 
@@ -70,6 +99,10 @@ object IntRegFileAccess extends RegFileAccess with AreaObject {
             ALU,
             INT,
             funct3,
+        ),
+      srckeys = List(
+        SrcKeys.SRC1.RF,
+        SrcKeys.SRC2.RF
         )
     )
     // I-type
@@ -80,15 +113,25 @@ object IntRegFileAccess extends RegFileAccess with AreaObject {
             RfResource(IntRegFileAccess, RS1),
             RfResource(IntRegFileAccess, RD),
             funct3
+        ),
+      srckeys = List(
+        SrcKeys.SRC1.RF,
+        SrcKeys.SRC2.RF
         )
-    )
+
+    vim.cmd(")")
     // J-type
     def TypeJ(key: MaskedLiteral) = SingleDecoding(
         key = key,
         // resources = List(RD).map(this -> _)
         resources = List(
             RfResource(IntRegFileAccess, RD)
+        ),
+      srckeys = List(
+        SrcKeys.SRC1.RF,
+        SrcKeys.SRC2.RF
         )
+
     )
     // B-type
     def TypeB(key: MaskedLiteral) = SingleDecoding(
@@ -99,7 +142,12 @@ object IntRegFileAccess extends RegFileAccess with AreaObject {
             RfResource(IntRegFileAccess, RS2),
             PC_READ,
             funct3
+        ),
+      srckeys = List(
+        SrcKeys.SRC1.RF,
+        SrcKeys.SRC2.RF
         )
+
     )
     def TypeU(key: MaskedLiteral) = SingleDecoding(
         key = key,
@@ -107,7 +155,12 @@ object IntRegFileAccess extends RegFileAccess with AreaObject {
         // resources = List(RfResource(RD))
         resources = List(
             RfResource(IntRegFileAccess, RD)
+        ),
+      srckeys = List(
+        SrcKeys.SRC1.RF,
+        SrcKeys.SRC2.RF
         )
+
     )
     def TypeUPC(key: MaskedLiteral) = SingleDecoding(
         key = key,
@@ -115,7 +168,12 @@ object IntRegFileAccess extends RegFileAccess with AreaObject {
         resources = List(
             RfResource(IntRegFileAccess, RD),
             PC_READ
+        ),
+      srckeys = List(
+        SrcKeys.SRC1.RF,
+        SrcKeys.SRC2.RF
         )
+
     )
     //Integer Load Queue?
     def TypeILQ(key : MaskedLiteral) = SingleDecoding(
@@ -127,7 +185,12 @@ object IntRegFileAccess extends RegFileAccess with AreaObject {
             LQ,
             PC_READ,
             funct3
+        ),
+      srckeys = List(
+        SrcKeys.SRC1.RF,
+        SrcKeys.SRC2.RF
         )
+
     )
     // Int store Queue
     def TypeSSQ(key : MaskedLiteral) = SingleDecoding(
@@ -138,7 +201,12 @@ object IntRegFileAccess extends RegFileAccess with AreaObject {
             RfResource(IntRegFileAccess, RS2),
             SQ,
             funct3
+        ),
+      srckeys = List(
+        SrcKeys.SRC1.RF,
+        SrcKeys.SRC2.RF
         )
+
     )
     // Atomic store queue
     def TypeASQ(key : MaskedLiteral) = SingleDecoding(
@@ -149,7 +217,12 @@ object IntRegFileAccess extends RegFileAccess with AreaObject {
             RfResource(IntRegFileAccess, RS2),
             RfResource(IntRegFileAccess, RD),
             SQ,
+        ),
+      srckeys = List(
+        SrcKeys.SRC1.RF,
+        SrcKeys.SRC2.RF
         )
+
     )
     // Status registers
     def TypeIC(key : MaskedLiteral) = SingleDecoding(
@@ -157,7 +230,12 @@ object IntRegFileAccess extends RegFileAccess with AreaObject {
         // resources = List(RD).map(this -> _)
         resources = List(
             RfResource(IntRegFileAccess, RD),
+        ),
+      srckeys = List(
+        SrcKeys.SRC1.RF,
+        SrcKeys.SRC2.RF
         )
+
     )
     def TypeNone(key : MaskedLiteral) = SingleDecoding(
         key = key,
@@ -177,7 +255,12 @@ object FloatRegFileAccess extends RegFileAccess with AreaObject {
             RfResource(FloatRegFileAccess, RS2),
             RfResource(FloatRegFileAccess, RD),
             FPU
+        ),
+      srckeys = List(
+        SrcKeys.SRC1.RF,
+        SrcKeys.SRC2.RF
         )
+
     )
     def TypeR_RM(key : MaskedLiteral) = SingleDecoding(
         key = key,
@@ -207,7 +290,12 @@ object FloatRegFileAccess extends RegFileAccess with AreaObject {
             RfResource(FloatRegFileAccess, RD),
             FPU,
             RM
+        ),
+      srckeys = List(
+        SrcKeys.SRC1.RF,
+        SrcKeys.SRC2.RF
         )
+
     )
     def TypeR1(key : MaskedLiteral) = SingleDecoding(
         key = key,
@@ -215,7 +303,12 @@ object FloatRegFileAccess extends RegFileAccess with AreaObject {
             RfResource(FloatRegFileAccess, RS1),
             RfResource(FloatRegFileAccess, RD),
             FPU,
+        ),
+      srckeys = List(
+        SrcKeys.SRC1.RF,
+        SrcKeys.SRC2.RF
         )
+
     )
 
     def TypeILQ(key : MaskedLiteral) = SingleDecoding(
@@ -225,7 +318,12 @@ object FloatRegFileAccess extends RegFileAccess with AreaObject {
             RfResource(FloatRegFileAccess, RD),
             LQ,
             PC_READ
+        ),
+      srckeys = List(
+        SrcKeys.SRC1.RF,
+        SrcKeys.SRC2.RF
         )
+
     )
     def TypeSSQ(key : MaskedLiteral) = SingleDecoding(
         key = key,
@@ -234,7 +332,12 @@ object FloatRegFileAccess extends RegFileAccess with AreaObject {
             RfResource(FloatRegFileAccess, RS2),
             SQ,
             FPU
+        ),
+      srckeys = List(
+        SrcKeys.SRC1.RF,
+        SrcKeys.SRC2.RF
         )
+
     )
 
     def TypeF2I(key : MaskedLiteral) = SingleDecoding(
@@ -260,7 +363,12 @@ object FloatRegFileAccess extends RegFileAccess with AreaObject {
             RfResource(IntRegFileAccess, RS1),
             RfResource(FloatRegFileAccess, RD),
             FPU
+        ),
+      srckeys = List(
+        SrcKeys.SRC1.RF,
+        SrcKeys.SRC2.RF
         )
+
     )
     def TypeI2F_RM(key : MaskedLiteral) = SingleDecoding(
         key = key,
@@ -269,7 +377,12 @@ object FloatRegFileAccess extends RegFileAccess with AreaObject {
             RfResource(FloatRegFileAccess, RD),
             FPU,
             RM
+        ),
+      srckeys = List(
+        SrcKeys.SRC1.RF,
+        SrcKeys.SRC2.RF
         )
+
     )
     def TypeFCI(key : MaskedLiteral) = SingleDecoding(
         key = key,
@@ -278,7 +391,12 @@ object FloatRegFileAccess extends RegFileAccess with AreaObject {
             RfResource(FloatRegFileAccess, RS2),
             RfResource(IntRegFileAccess, RD),
             FPU
+        ),
+      srckeys = List(
+        SrcKeys.SRC1.RF,
+        SrcKeys.SRC2.RF
         )
+
     )
  }
 
@@ -292,7 +410,12 @@ object VectorRegFileAccess extends RegFileAccess with AreaObject {
         resources = List(
             RfResource(VectorRegFileAccess, RD),
             RfResource(FloatRegFileAccess, RS1)
+        ),
+      srckeys = List(
+        SrcKeys.SRC1.RF,
+        SrcKeys.SRC2.RF
         )
+
     )
     def TypeVLS(key: MaskedLiteral) = SingleDecoding(
         key = key,
@@ -300,7 +423,17 @@ object VectorRegFileAccess extends RegFileAccess with AreaObject {
             RfResource(VectorRegFileAccess, RD),
             RfResource(FloatRegFileAccess, RS1),
             RfResource (FloatRegFileAccess, RS2)
+        ),
+      srckeys = List(
+        SrcKeys.SRC1.RF,
+        SrcKeys.SRC2.RF
+        ),
+      srckeys = List(
+        SrcKeys.SRC1.RF,
+        SrcKeys.SRC2.RF
         )
+
+
     )
     def TypeVLX(key: MaskedLiteral) = SingleDecoding(
         key = key,
@@ -308,14 +441,24 @@ object VectorRegFileAccess extends RegFileAccess with AreaObject {
             RfResource(VectorRegFileAccess, RD),
             RfResource(FloatRegFileAccess, RS1),
             RfResource (FloatRegFileAccess, RS2)
+        ),
+      srckeys = List(
+        SrcKeys.SRC1.RF,
+        SrcKeys.SRC2.RF
         )
+
     )
     def TypeVS(key: MaskedLiteral) = SingleDecoding(
         key = key,
         resources = List(
             RfResource(VectorRegFileAccess, RS3),
             RfResource(FloatRegFileAccess, RS1)
+        ),
+      srckeys = List(
+        SrcKeys.SRC1.RF,
+        SrcKeys.SRC2.RF
         )
+
     )
     def TypeVSS(key: MaskedLiteral) = SingleDecoding(
         key = key,
@@ -323,7 +466,12 @@ object VectorRegFileAccess extends RegFileAccess with AreaObject {
             RfResource(VectorRegFileAccess, RS3),
             RfResource(FloatRegFileAccess, RS1),
             RfResource (FloatRegFileAccess, RS2)
+        ),
+      srckeys = List(
+        SrcKeys.SRC1.RF,
+        SrcKeys.SRC2.RF
         )
+
     )
     def TypeVSX(key: MaskedLiteral) = SingleDecoding(
         key = key,
@@ -340,7 +488,12 @@ object VectorRegFileAccess extends RegFileAccess with AreaObject {
             RfResource(VectorRegFileAccess, RD),
             RfResource(VectorRegFileAccess, RS1),
             RfResource (VectorRegFileAccess, RS2)
+        ),
+      srckeys = List(
+        SrcKeys.SRC1.RF,
+        SrcKeys.SRC2.RF
         )
+
     )
     def TypeOPFVV(key: MaskedLiteral) = SingleDecoding(
         key = key,
@@ -349,7 +502,12 @@ object VectorRegFileAccess extends RegFileAccess with AreaObject {
             RfResource(FloatRegFileAccess, RD),
             RfResource(VectorRegFileAccess, RS1),
             RfResource (VectorRegFileAccess, RS2)
+        ),
+      srckeys = List(
+        SrcKeys.SRC1.RF,
+        SrcKeys.SRC2.RF
         )
+
     )
     def TypeOPMVV(key: MaskedLiteral) = SingleDecoding(
         key = key,
@@ -358,14 +516,24 @@ object VectorRegFileAccess extends RegFileAccess with AreaObject {
             RfResource(FloatRegFileAccess, RD),
             RfResource(VectorRegFileAccess, RS1),
             RfResource (VectorRegFileAccess, RS2)
+        ),
+      srckeys = List(
+        SrcKeys.SRC1.RF,
+        SrcKeys.SRC2.RF
         )
+
     )
     def TypeOPIVI(key: MaskedLiteral) = SingleDecoding(
         key = key,
         resources = List(
             RfResource(VectorRegFileAccess, RD),
             RfResource(VectorRegFileAccess, RS2)
+        ),
+      srckeys = List(
+        SrcKeys.SRC1.RF,
+        SrcKeys.SRC2.RF
         )
+
     )
     def TypeOPIVX(key: MaskedLiteral) = SingleDecoding(
         key = key,
