@@ -8,6 +8,28 @@ import spinal.lib.misc.pipeline._
 import nebula.decode.Decoder._
 import nebula.decode.RS1
 
+case class RegFileWriteCmd() extends Bundle with IMasterSlave {
+  
+  val valid = Bool()
+  val address = UInt(32 bits)
+  val data = Bits(32 bits)
+
+  override def asMaster() = {
+    out(valid, address, data)
+  }
+}
+
+case class RegFileReadCmd() extends Bundle with IMasterSlave {
+
+  val valid = Bool()
+  val address = UInt(32 bits)
+  val data = Bits(32 bits)
+
+  override def asMaster() = {
+    out(address, valid)
+    in(data)
+  }
+}
 
 
 case class IntRegFile(stage: CtrlLink, readSync: Boolean, dataWidth : Int) extends Area {
@@ -25,6 +47,9 @@ case class IntRegFile(stage: CtrlLink, readSync: Boolean, dataWidth : Int) exten
     val RS2_data = out port Bits(dataWidth bits)
 
   }
+
+  val readIO = slave(RegFileReadCmd())
+  val writeIO = slave(RegFileWriteCmd())
 
   val reggy = new stage.Area {
     val mem = Mem.fill(32)(Bits(32 bits)) init(Seq.fill(32)(B"0".resize(32)))
