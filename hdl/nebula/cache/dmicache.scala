@@ -90,6 +90,12 @@ case class DMICache(node : Node) extends Area {
 
   
   val read = new Area {
+    when(l1bus.cmd.valid) {
+      //read address
+      // if hit, rsp
+      // if miss, send refill cmd
+
+    }
 
 
 

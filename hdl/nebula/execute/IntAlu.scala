@@ -11,7 +11,7 @@ object IntAluCtrl extends AreaObject {
   }
 }
 
-case class IntAlu(aluNode : CtrlLink) extends Area {
+case class IntAlu(aluNode : CtrlLink) extends ExecutionUnit with Area {
   import IntAluCtrl._
 
   val SRC1 = Payload(SInt(32 bits))
@@ -19,12 +19,13 @@ case class IntAlu(aluNode : CtrlLink) extends Area {
   val CTRL = Payload(AluCtrl())
   val RESULT = Payload(Bits(32 bits))
   
+  add(Rvi32.ADD).decode(CTRL -> AluCtrl.ADD_SUB)
   
   val aluNodeStage = new aluNode.Area {
     val logic = new aluNode.Area {
       import nebula.dispatch.Dispatch._
 
-      when(alu_valid === True) {
+      when(up(SEL) === True) {
       val result = up(CTRL).mux(
         AluCtrl.XOR  -> (up(SRC1) ^ up(SRC2)),
         AluCtrl.OR   -> (SRC1 | SRC2),
