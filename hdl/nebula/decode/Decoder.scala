@@ -12,7 +12,18 @@ object Riscv extends AreaObject {
   val RVD, RVF = Boolean
 }
 
-object UOP extends Bundle {
+object EU_OP extends AreaObject{
+  val ADD  = B"000"
+  val SUB  = B"000"
+  val SLL  = B"000"
+  val SLT  = B"000"
+  val SLTU = B"000"
+  val XOR  = B"000"
+  val SRL  = B"000"
+  val SRA  = B"000"
+  val OR   = B"000"
+  val AND  = B"000"
+
   
 }
 
@@ -21,21 +32,16 @@ object Decoder extends Bundle {
   val INSTRUCTION = Payload(Bits(32 bits))
 
 
-  val RS_Sources = new SpinalEnum() {
+  val RS_Sources = new SpinalEnum(binarySequential) {
     val RF, U, I, S, PC, NA = newElement()
 
   }
 
   val RS1_SRC = Payload(RS_Sources())
+  val RS3_SRC = Payload(RS_Sources())
   val RS2_SRC = Payload(RS_Sources())
 
 
-  val IS_INT   = Payload(Bool()) 
-  val NEED_PC  = Payload(Bool())
-  val FU_ALU  = Payload(Bool())
-  val NEED_FPU = Payload(Bool())
-  val NEED_RM  = Payload(Bool())
-  val NEED_VPU = Payload(Bool())
   // val IMM_SEL = Payload(IMM())
   val FUNCT3 = Payload(Bits(3 bits))
   val FUNCT7 = Payload(Bits(7 bits))
@@ -47,6 +53,22 @@ object Decoder extends Bundle {
 
   val rfaKeys = mutable.LinkedHashMap[RfAccess, AccessKeys]()
 
+  val euList = List(INTALU, FPU, SQ, LQ)
+  val EU = Payload(Bits(log2Up(euList.size) bits))
+  val euList2Enum = euList.zipWithIndex.map{case (e,i) => e -> B(i, widthOf(EU) bits)}.toMap
+
+  
+  val src1Keys = List(SRC1.U, SRC1.RF)
+  val src2Keys = List(SRC2.RF, SRC2.I, SRC2.S, SRC2.PC)
+
+  val SRC1_CTRL = Payload(Bits(log2Up(src1Keys.size) bits))
+  val SRC2_CTRL = Payload(Bits(log2Up(src2Keys.size) bits))
+  
+  val src1Enum = src1Keys.zipWithIndex.map{case(k,i) => k -> B(i, widthOf(SRC1_CTRL) bits)}.toMap
+  val src2Enum = src2Keys.zipWithIndex.map{case(k,i) => k -> B(i, widthOf(SRC2_CTRL) bits)}.toMap
+  
+  val aluCtrl = List()
+  
 }
 
 
@@ -61,11 +83,11 @@ case class IMM(instruction  : Bits) extends Area{
   def z = instruction(19 downto 15)
 
   // sign-extend immediates
-  def i_sext = S(i).resize(Riscv.XLEN)
-  def h_sext = S(h).resize(Riscv.XLEN)
-  def s_sext = S(s).resize(Riscv.XLEN)
-  def b_sext = S(b ## False).resize(Riscv.XLEN)
-  def j_sext = S(j ## False).resize(Riscv.XLEN)
+  def i_sext = S(i).resize(64)
+  def h_sext = S(h).resize(64)
+  def s_sext = S(s).resize(64)
+  def b_sext = S(b ## False).resize(64)
+  def j_sext = S(j ## False).resize(64)
 }
 
 
@@ -85,7 +107,6 @@ case class AccessKeys(rfa : RfAccess, physWidth : Int, rfMapping : Seq[RegFileAc
 
 case class Decoder(decodeNode : CtrlLink, lane: Option[Int] = None) extends Area {
   import Decoder._
-  import SrcKeys._
   val decodingSpecs = mutable.LinkedHashMap[Payload[_ <: BaseType], DecodingSpec[_ <: BaseType]]()
   def getDecodingSpec(key: Payload[_ <:BaseType]) = decodingSpecs.getOrElseUpdate(key, new DecodingSpec(key))
   def setDecodingDefault(key: Payload[_ <: BaseType], value: BaseType): Unit = {
@@ -119,17 +140,6 @@ case class Decoder(decodeNode : CtrlLink, lane: Option[Int] = None) extends Area
       case sd: SingleDecoding => singleDecodings += sd
     }
 
-    addMicroOpDecodingDefault(IS_INT, False)
-    addMicroOpDecodingDefault(NEED_FPU, False)
-    addMicroOpDecodingDefault(NEED_RM , False)
-    addMicroOpDecodingDefault(NEED_VPU, False)
-    addMicroOpDecodingDefault(NEED_PC, False)
-    addMicroOpDecodingDefault(need_funct3, False)
-    addMicroOpDecodingDefault(FU_ALU, False)
-    addMicroOpDecodingDefault(RS1_SRC, NA)
-    addMicroOpDecodingDefault(RS2_SRC, NA)
-
-
     val encodings = new Area {
       val all = mutable.LinkedHashSet[Masked]()
       // Creates a decoding spec that specifies access to which regfile
@@ -153,29 +163,15 @@ case class Decoder(decodeNode : CtrlLink, lane: Option[Int] = None) extends Area
 
             dec.rfid.addNeeds(key, Masked(dec.rfaKey.idOf(r.rf), 3))
           }
-          case PC_READ => addMicroOpDecoding(e, NEED_PC, True)
-          case LQ => 
-          case FPU => addMicroOpDecoding(e, NEED_FPU, True)
-          case RM => addMicroOpDecoding(e, NEED_RM, True)
-          case VPU => addMicroOpDecoding(e, NEED_VPU, True)
-          case SQ =>
-          case INT => addMicroOpDecoding(e, IS_INT, True)
-          case ALU => addMicroOpDecoding(e, FU_ALU, True)
-          case funct3 => addMicroOpDecoding(e, need_funct3, True)
         }
         e.srckeys.foreach {
-          case src1 : SrcKeys.SRC1 => {
-            case  SRC1.RF => addMicroOpDecoding(e, RS1_SRC, RF)
-            case  SRC1.U => addMicroOpDecoding(e, RS1_SRC, U)
-
-          }
-          case src2 : SrcKeys.SRC2 => {
-            case  SRC2.RF => addMicroOpDecoding(e, RS1_SRC, RF)
-            case  SRC2.I => addMicroOpDecoding(e, RS1_SRC, I)
-            case  SRC2.S => addMicroOpDecoding(e, RS1_SRC, S)
-            case  SRC2.PC => addMicroOpDecoding(e, RS1_SRC, PC)
-          }
+          case src1 : Src1Values => addMicroOpDecoding(e, SRC1_CTRL, (src1Enum(src1))) 
+          case src2 : Src2Values => addMicroOpDecoding(e, SRC1_CTRL, (src2Enum(src2))) 
         }
+        // e.eu : INTALU
+        // which EU
+        addMicroOpDecoding(e, EU, euList2Enum(e.eu))
+
       } 
     //   // what in the fuck are these numbers?
     //   // if(Riscv.RVF || Riscv.RVD){
@@ -206,7 +202,7 @@ case class Decoder(decodeNode : CtrlLink, lane: Option[Int] = None) extends Area
       down(FUNCT3) := up(INSTRUCTION)(14 downto 12)
       down(FUNCT7) := up(INSTRUCTION)(31 downto 25)
       down(OPCODE) := up(INSTRUCTION)(6  downto 0)
-      down(UOP)    :- up(INSTRUCTION)
+      down(UOP)    := up(INSTRUCTION)
 
 
       // LEGAL := Symplify(Decode.INSTRUCTION, encodings.all) && !Decode.DECOMPRESSION_FAULT

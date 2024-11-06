@@ -8,6 +8,7 @@ import spinal.lib.misc.pipeline._
 
 import nebula.decode._
 import nebula.dispatch._
+import nebula.execute._
 
 
 //  rough core pipelein
@@ -38,15 +39,20 @@ class nebulaRVIO() extends Component  {
   val E3 = CtrlLink()
   val wbStage = CtrlLink()
   
-  val hazards = Seq(rfread0, E1, E2 ,E3)
-  val decoder = Decoder(d0)
-  val dispatch = Dispatch(dis0, hazards)
-  val intregFile = IntRegFile(rfread0)
+  val stages = Array.fill(8){CtrlLink()}
+  
+  val hazards = Seq(stages(3), stages(4),stages(5),stages(6),stages(7))
+  // val hazards = stages.
+
+  // val decoder = Decoder(d0)
+  val decoder = Decoder(stages(0))
+  val dispatch = Dispatch(dispatchNode = stages(1), rfReadNode = stages(2),hazardRange = hazards)
+  val intregFile = IntRegFile(stages(2), readSync = true, dataWidth = 64)
   val intalu = IntAlu(E1)
 
 
 
-  val wb = WritebackPlugin(wbStage)
+  val wb = Writeback(wbStage)
 
 
 

@@ -11,9 +11,9 @@ object Dispatch extends AreaObject {
   val alu_valid = Payload(Bool())
 }
 
-class UopLayerSpec(val uop: MicroOp, val elImpl : LaneLayer) {
+// class UopLayerSpec(val uop: MicroOp, val elImpl : LaneLayer) {
 
-}
+// }
 
 class LaneLayer(val name : String, var priority : Int) {
 
@@ -55,35 +55,6 @@ case class HazardChecker(hzRange : Seq[CtrlLink]) extends Area {
 
 }
 
-case class SrcPlugin() extends Area {
-  // if RF then RF should read
-  // also maybe choose forwarded value
-
-
-  // Maybe with EXU, tell SRC which OPS want which IMM. also acts as SEXT plugin
-
-
-  val RS1 = Payload(Bits (32 bits))
-  val RS2 = Payload(Bits (32 bits))
-
-  match(RS1_SRC) {
-    case(RF) {
-      RS1 := RegFile_RS1
-    }
-    case (U) {
-      ???
-    }
-  }
-  match(RS2_SRC) {
-    case(RF) {RS1 := RegFile_RS1}
-    case(I) {}
-    case(S) {}
-    case(PC) {}
-  }
-
-
-
-}
 
 /*
 How to check if a instruction can schedule :
@@ -105,53 +76,45 @@ case class Dispatch(dispatchNode: CtrlLink, rfReadNode: CtrlLink, hazardRange: S
 
   //import nebula.decode.Decoder._
   import Dispatch._
-  val uop = List(IS_INT, NEED_PC, FU_ALU)
-  val op = uop.toStream
+  // val op = uop.toStream
 
 
   // if uop match EU uop
   // check hazards
   // set EU to fire
 
-  val eus = List[ExecutionUnit]()
-
-  down(RS1) := RS1_Source.mux(
-    SrcKeys.SRC1.RF ->
-    
-
-
-    )
-
+  // val eus = List[ExecutionUnit]()
+  val eus = nebula.decode.Decoder.euList
 
   // logic?
   // for each EU check if UOP maps.
   // if maps send to, and execute, as long as no hazard
   // if uop match EU, SEL := TRUE
-  eus.foreach {
-    if (uopList(op)) {
-      eus.SEL := True
-    }
-    // check if transaction is moving, indicates EU is free/stage is free
-    eus.node.isMoving()
-  }
+  // eus.foreach {
+  //   if (uopList(op)) {
+  //     eus.SEL := True
+  //   }
+  //   // check if transaction is moving, indicates EU is free/stage is free
+  //   eus.node.isMoving()
+  // }
 
 
   
   val hazard = Bool()
   hazard := False
   
-  val nodeArea = new dispatchNode.Area {
-    down(alu_valid) := False
+  // val nodeArea = new dispatchNode.Area {
+  //   down(alu_valid) := False
 
-    when(hazard) {
-      haltIt()
-    }
-    when(up(FU_ALU) && !hazard) {
-      down(alu_valid) := True
+  //   when(hazard) {
+  //     haltIt()
+  //   }
+  //   when(up(FU_ALU) && !hazard) {
+  //     down(alu_valid) := True
 
-    }
+  //   }
     
-  }
+  // }
 
   // what EU does it want
 
