@@ -6,15 +6,13 @@ import spinal.lib.misc.pipeline._
 import spinal.lib.logic.Masked._
 import spinal.lib.logic._
 import scala.collection.mutable
-import java.util.LinkedHashSet
-import java.util.LinkedHashMap
 
 
 object Riscv extends AreaObject {
   val RVD, RVF = Boolean
 }
 
-package object Decode extends AreaObject {
+object Decoder extends AreaObject {
   type DecodeListType = Seq[(Payload[_ <: BaseType], Any)]
   val INSTRUCTION = Payload(Bits(32 bits))
 
@@ -23,6 +21,7 @@ package object Decode extends AreaObject {
   }
   
 
+  val IS_INT   = Payload(Bool()) 
   val NEED_PC  = Payload(Bool())
   val NEED_FPU = Payload(Bool())
   val NEED_RM  = Payload(Bool())
@@ -31,6 +30,8 @@ package object Decode extends AreaObject {
   val FUNCT3 = Payload(Bits(3 bits))
   val FUNCT7 = Payload(Bits(7 bits))
   val OPCODE = Payload(Bits(7 bits))
+
+
 }
 
 case class AccessKeys(rfa : RfAccess, physWidth : Int, rfMapping : Seq[RegFileAccess]) extends Area {
@@ -46,37 +47,31 @@ case class AccessKeys(rfa : RfAccess, physWidth : Int, rfMapping : Seq[RegFileAc
   val RFID = Payload(UInt(rfIdWidth bits)) // which RegFile
 }
 
-class Decoder(thisNode: Node, lane: Int) extends Area {
-  val node = thisNode
-  import Decode._
+case class Decoder(decodeNode : CtrlLink, lane : Int) extends Area {
+  import Decoder._
   val decodingSpecs = mutable.LinkedHashMap[Payload[_ <: BaseType], DecodingSpec[_ <: BaseType]]()
   def getDecodingSpec(key: Payload[_ <:BaseType]) = decodingSpecs.getOrElseUpdate(key, new DecodingSpec(key))
   def setDecodingDefault(key: Payload[_ <: BaseType], value: BaseType): Unit = {
     decodingSpecs.getOrElseUpdate(key, new DecodingSpec(key)).setDefault(Masked(value))
   }
-  //What is this doint
   def DecodeList(e: (Payload[_ <: BaseType], Any)*) = List(e: _*)
-  def addMicroOpDecoding(microOp: MicroOp, decoding: DecodeListType) = {
+  def addMicroOpDecoding[T <: BaseType](microOp: MicroOp, key : Payload[T], value : T) = {
     val op = Masked(microOp.key)
-    for ((key, value) <- decoding) {
-      decodingSpecs.getOrElseUpdate(key, new DecodingSpec(key)).addNeeds(op, Masked(value))
-    }
+    decodingSpecs.getOrElseUpdate(key, new DecodingSpec(key)).addNeeds(op, Masked(value))
   }
   
   def addMicroOpDecodingDefault(key: Payload[_ <: BaseType], value: BaseType) = {
     getDecodingSpec(key).setDefault(Masked(value))
   }
 
-  def addMicroOpDecoding[T <: BaseType](microOp: MicroOp, key : Payload[T], value: T) : Unit = addMicroOpDecoding(microOp, DecodeList(key -> value))
-  
 
-
+  val rfaKeys = mutable.LinkedHashMap[RfAccess, AccessKeys]()
   val logic = new Area {
-    def microOps : Seq[MicroOp] = Seq(Rv32i.ADD, Rv32i.ADDI, Rv32i.SUB, Rv32i.AUIPC, Rv32i.BEQ)
+    def getMicroOps = ???
+    def microOps : Seq[MicroOp] = Seq(Rv32i.ADD, Rv32i.SUB, Rv32i.BEQ ,Rv32i.JAL ,Rv32i.ADDI ,Rv32i.SB ,Rv32i.LB ,Rv32i.AUIPC)
     def resources = microOps.flatMap(_.resources).distinctLinked
 
 
-    val rfaKeys = mutable.LinkedHashMap[RfAccess, AccessKeys]()
     rfaKeys(RS1) = AccessKeys(RS1, 5, List(IntRegFileAccess, FloatRegFileAccess, VectorRegFileAccess))
     rfaKeys(RS2) = AccessKeys(RS2, 5, List(IntRegFileAccess, FloatRegFileAccess, VectorRegFileAccess))
     rfaKeys(RS3) = AccessKeys(RS3, 5, List(IntRegFileAccess, FloatRegFileAccess, VectorRegFileAccess))
@@ -87,12 +82,15 @@ class Decoder(thisNode: Node, lane: Int) extends Area {
       case sd: SingleDecoding => singleDecodings += sd
     }
 
-
+    val need_funct3 = Payload(Bool())
+    addMicroOpDecodingDefault(IS_INT, False)
     addMicroOpDecodingDefault(NEED_FPU, False)
     addMicroOpDecodingDefault(NEED_RM , False)
     addMicroOpDecodingDefault(NEED_VPU, False)
-    addMicroOpDecodingDefault(IMM_SEL, IMM.NO_IMM)
+    // addMicroOpDecodingDefault(IMM_SEL, IMM.NO_IMM)   THIS IS BROKEN
     addMicroOpDecodingDefault(NEED_PC, False)
+    addMicroOpDecodingDefault(need_funct3, False)
+
 
     val encodings = new Area {
       val all = mutable.LinkedHashSet[Masked]()
@@ -114,6 +112,7 @@ class Decoder(thisNode: Node, lane: Int) extends Area {
           case r: RfResource => {
             val dec = rfAccessDec(r.access)
             dec.read.addNeeds(key, Masked.one)
+
             dec.rfid.addNeeds(key, Masked(dec.rfaKey.idOf(r.rf), 3))
           }
           case PC_READ => addMicroOpDecoding(e, NEED_PC, True)
@@ -122,12 +121,14 @@ class Decoder(thisNode: Node, lane: Int) extends Area {
           case RM => addMicroOpDecoding(e, NEED_RM, True)
           case VPU => addMicroOpDecoding(e, NEED_VPU, True)
           case SQ =>
+          case INT => addMicroOpDecoding(e, IS_INT, True)
+          case funct3 => addMicroOpDecoding(e, need_funct3, True)
         }
       } 
-      // what in the fuck are these numbers?
-      // if(Riscv.RVF || Riscv.RVD){
-      //   for (x <- 1 to 3; y <- 1 to 3) getDecodingSpec(NEED_FPU).addNeeds(Masked(0x73 + (x << 20) + (y << 12), 0xFFF0307Fl), Masked.one)
-      // }
+    //   // what in the fuck are these numbers?
+    //   // if(Riscv.RVF || Riscv.RVD){
+    //   //   for (x <- 1 to 3; y <- 1 to 3) getDecodingSpec(NEED_FPU).addNeeds(Masked(0x73 + (x << 20) + (y << 12), 0xFFF0307Fl), Masked.one)
+    //   // }
     }
     // val predictionSpec = new Area {
     //   val branchKeys = List(Rv32i.BEQ).map(e => Masked(e.key))
@@ -137,22 +138,22 @@ class Decoder(thisNode: Node, lane: Int) extends Area {
     //   any.addNeeds(branchKeys ++ jalKeys, Masked.one)
     // }
     
-    val someLaneLogic = new node.Area(lane) {
+    val someLaneLogic = new decodeNode.Area(lane) {
       for (rfa <- rfaKeys) {
         val keys = rfa
         val dec = encodings.rfAccessDec(keys._1)
-        keys._2.ENABLE := dec.read.build(Decode.INSTRUCTION, encodings.all)
-        keys._2.RFID   := dec.rfid.build(Decode.INSTRUCTION, encodings.all)
-        keys._2.PHYS   := Decode.INSTRUCTION(rfa._1 match {
+        keys._2.ENABLE := dec.read.build(up(INSTRUCTION), encodings.all)
+        keys._2.RFID   := dec.rfid.build(up(INSTRUCTION), encodings.all)
+        keys._2.PHYS   := up(INSTRUCTION)(rfa._1 match {
           case RS1 => 19 downto 15
           case RS2 => 24 downto 20
           case RS3 => 31 downto 27
           case RD  => 11 downto 7
         }).asUInt
       }
-      FUNCT3 := Decode.INSTRUCTION(14 downto 12)
-      FUNCT7 := Decode.INSTRUCTION(31 downto 25)
-      OPCODE := Decode.INSTRUCTION(6  downto 0)
+      FUNCT3 := up(INSTRUCTION)(14 downto 12)
+      FUNCT7 := up(INSTRUCTION)(31 downto 25)
+      OPCODE := up(INSTRUCTION)(6  downto 0)
 
       // LEGAL := Symplify(Decode.INSTRUCTION, encodings.all) && !Decode.DECOMPRESSION_FAULT
       // Checks if FP instr is valid??
@@ -176,10 +177,14 @@ class Decoder(thisNode: Node, lane: Int) extends Area {
 
     // }
     
-    val laneDecoding =  new node.Area(lane) {
+    val laneDecoding =  new decodeNode.Area(lane) {
       for ((key, spec) <- decodingSpecs) {
-        key.assignFromBits(spec.build(Decode.INSTRUCTION, encodings.all).asBits)
+        down(key).assignDontCare()
+        when(isValid) {
+          down(key).assignFromBits(spec.build(up(INSTRUCTION), encodings.all).asBits)
+        }
       }
     }
   }
 }
+
