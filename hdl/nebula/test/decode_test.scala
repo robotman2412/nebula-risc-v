@@ -7,8 +7,7 @@ import nebula.decode._
 
 import spinal.core.sim._
 import nebula.decode.Decoder.INSTRUCTION
-import nebula.decode.Decoder.IS_INT
-import nebula.decode.Decoder.FUNCT3
+import nebula.decode.Decoder.EXECUTION_UNIT
 
 
 class decoderForTest() extends Component {
@@ -17,7 +16,7 @@ class decoderForTest() extends Component {
   }
   val test_signals_node, decode_node, recieve_signals  = CtrlLink()
 
-  val decoder = Decoder(decode_node, 0)
+  val decoder = Decoder(decode_node)
   
   val testNode = new test_signals_node.Area {
     down(INSTRUCTION) := io.instr
@@ -30,7 +29,7 @@ class decoderForTest() extends Component {
     io.is_int:= False
 
     when(up.isFiring){
-      io.is_int := IS_INT
+      io.is_int := (EXECUTION_UNIT === ExecutionUnit.ALU)
     }
     // up(IS_INT) := False
     // println(IS_INT)
