@@ -1,23 +1,27 @@
 package nebula.dispatch
 
 import spinal.core._
+import spinal.core.sim._
 import spinal.lib._
+import spinal.lib.sim._
 import spinal.lib.misc.pipeline._
 
 import nebula.decode.Decoder._
+import nebula.decode.Decoder
+import nebula.decode.ExecutionUnit
 
 
-object Dispatch extends AreaObject {
-  val alu_valid = Payload(Bool())
-}
+// object Dispatch extends AreaObject {
+//   val alu_valid = Payload(Bool())
+// }
 
 // class UopLayerSpec(val uop: MicroOp, val elImpl : LaneLayer) {
 
 // }
 
-class LaneLayer(val name : String, var priority : Int) {
+// class LaneLayer(val name : String, var priority : Int) {
 
-}
+// }
 
 /*
 How to detect RD->RSx hazards for a given candidate:
@@ -35,22 +39,52 @@ How to detect RD->RSx hazards for a given candidate:
  */
 
 case class HazardChecker(hzRange : Seq[CtrlLink]) extends Area {
+  // RAW Hazards
+  // WAW hazard
+  // Control hazards (branch not yet resolved)
+  // Structural hazard
   
   // hzRange = rfRead -> rfWriteback
 
   // WAR hazard
   // intended : write RD after reading RS
 
-
-
-
+  // something like
+  // takes in range
+  // gets Stage(1), Stage(2)
+  // checks if RD /RS is same
+  // then call functionally on whole range
+  // if match, stallIt/Upper until hazard fixed
 
   // RAW hazard
-  // intended : read RS before Write
-  // if instr 1 rd === inst 2 rs
-  val RAW = for ((stages,id) <- hzRange.zipWithIndex) {
-    // if hzRange[i].rd === [hzRange[i-1].rs
+  // if RD is hzRange(0) === RSx in hzRange(1 .. n-1) 
 
+  // hzRange.head(RD)
+  // val rs1Hazard = for (stage <- hzRange.tail) {
+    
+  // }
+
+  val isRs1Haz = hzRange.tail.map(e => 
+    (hzRange.head(RS1) =/= 0) &&
+    (hzRange.head(RS1) === e(RD)) &&
+    e.up(nebula.decode.Decoder.RDTYPE) === (nebula.decode.REGFILE.RDTYPE.RD_INT))
+
+    // isRs1Haz.zipWithIndex.foreach(e => hzRange(e._2).haltWhen(e._1))
+  hzRange.head.haltWhen(isRs1Haz.reduce(_ || _) simPublic())
+  // when (isRs1Haz.reduce(_ || _) simPublic()) {
+    // hzRange.head.haltIt() 
+    // hzRange.head.isReady := False
+  // }
+
+  val isRs2Haz = hzRange.tail.map(e => 
+    (hzRange.head(RS2) =/= 0) &&
+    (hzRange.head(RS2) === e(RD)) &&
+    e.up(nebula.decode.Decoder.RDTYPE) === (nebula.decode.REGFILE.RDTYPE.RD_INT))
+    
+  // isRs2Haz.zipWithIndex.foreach(e => hzRange(e._2).haltWhen(e._1))
+
+  when (isRs2Haz.reduce(_ || _) simPublic()) {
+    hzRange.head.haltIt()
   }
 
 }
@@ -63,7 +97,7 @@ How to check if a instruction can schedule :
 - There is no scheduling fence
 - For credit based execution, check there is enough credit
 
-Schedule euristic :
+Schedule heuristic :
 - In priority order, go through the slots
 - Check which pipeline could schedule it (free && compatible)
 - Select the pipeline which the highest priority (to avoid using the one which can do load and store, for instance)
@@ -71,8 +105,11 @@ Schedule euristic :
 */
 
 
+object Dispatch extends AreaObject {
+  val SENDTOALU = Payload(Bool())
+}
 
-case class Dispatch(dispatchNode: CtrlLink, rfReadNode: CtrlLink, hazardRange: Seq[CtrlLink]) extends Area {
+case class Dispatch(dispatchNode: CtrlLink) extends Area {
 
   //import nebula.decode.Decoder._
   import Dispatch._
@@ -83,8 +120,16 @@ case class Dispatch(dispatchNode: CtrlLink, rfReadNode: CtrlLink, hazardRange: S
   // check hazards
   // set EU to fire
 
-  // val eus = List[ExecutionUnit]()
-  val eus = nebula.decode.Decoder.euList
+  val logic = new dispatchNode.Area {
+    // when(up.isValid) {
+    //   eus.foreach(f => f.SEL := False) 
+    // }
+    down(SENDTOALU) := False
+    when(up(Decoder.EXECUTION_UNIT) === ExecutionUnit.ALU && up.isValid) {
+      down(SENDTOALU) := True
+    }
+
+  }
 
   // logic?
   // for each EU check if UOP maps.
@@ -99,9 +144,6 @@ case class Dispatch(dispatchNode: CtrlLink, rfReadNode: CtrlLink, hazardRange: S
   // }
 
 
-  
-  val hazard = Bool()
-  hazard := False
   
   // val nodeArea = new dispatchNode.Area {
   //   down(alu_valid) := False

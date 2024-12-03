@@ -59,7 +59,10 @@ object ExecutionUnit{
 }
 
 abstract class ExecutionUnit() {
-  val SEL = Payload(Bool())
+  // val SEL = Payload(Bool())
+  
+  // def supportedUOPS = rv32i.add
+  
   // withPrefix(layer.name)
 
   // val SEL = Payload(Bool())

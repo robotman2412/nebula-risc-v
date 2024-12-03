@@ -12,3 +12,5 @@ project
 tmp
 simWorkspace
 gen
+
+*.dump

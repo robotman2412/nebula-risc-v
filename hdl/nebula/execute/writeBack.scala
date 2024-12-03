@@ -9,26 +9,31 @@ import nebula.dispatch._
 
 
 
-case class IntWriteBackPlugin(stage : CtrlLink, rfaAddress : UInt, rfaEnable : Bool, rfaData : Bits, regfile : RegFile) extends Area {
+case class IntWriteBackPlugin(stage : CtrlLink, regfile : IntRegFile) extends Area {
 
-  val rfaRD = nebula.decode.Decoder.rfaKeys(nebula.decode.RD)
   // val rdaRD = 
   
   val io = new Bundle {
-    val RD_address = out port UInt(5 bits)
-    val RD_Enable = out port Bool()
-    val RD_data = out port Bits(64 bits)
+    val RD_address = UInt(5 bits)
+    val RD_Enable = Bool()
+    val RD_data = Bits(64 bits)
   }
   
-  regfile.returnIO <> io
+  // io <> regfile.returnIO
+  
+  regfile.io.RD_Enable := io.RD_Enable
+  regfile.io.RD_address := io.RD_address
+  regfile.io.RD_data := io.RD_data
 
   val logic = new stage.Area {
-    io.RD_address := rfaRD.PHYS
-    io.RD_Enable  := (rfaRD.ENABLE) && (rfaRD.RFID === U"0")
-    io.RD_data    := up(nebula.execute.Execute.RESULT).asBits
-
+    import nebula.decode.REGFILE._
+    io.RD_Enable := False
+    io.RD_address.assignDontCare()
+    io.RD_data.assignDontCare()
+    when(up.isValid) {
+      io.RD_address := up(RD).asUInt
+      io.RD_Enable  := (up(nebula.decode.Decoder.RDTYPE) === (RDTYPE.RD_INT))
+      io.RD_data    := up(nebula.execute.Execute.RESULT).asBits
+    }
   }
-
-
-
 }

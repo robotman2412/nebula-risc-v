@@ -7,7 +7,7 @@ import nebula.decode._
 
 import spinal.core.sim._
 import nebula.decode.Decoder.INSTRUCTION
-import nebula.decode.Decoder.FUNCT3
+import nebula.decode.Decoder.EXECUTION_UNIT
 
 
 class decoderForTest() extends Component {
@@ -29,7 +29,7 @@ class decoderForTest() extends Component {
     io.is_int:= False
 
     when(up.isFiring){
-      // io.is_int := IS_INT
+      io.is_int := (EXECUTION_UNIT === ExecutionUnit.ALU)
     }
     // up(IS_INT) := False
     // println(IS_INT)

@@ -4,70 +4,68 @@ package nebula.dispatch
 import spinal.core._
 import spinal.lib._
 import spinal.lib.misc.pipeline._
-import nebula.decode.{IMM, SRC1, SRC2}
 import nebula.decode.Decoder._
+import spinal.lib.logic.DecodingSpec
+import spinal.lib.logic.Masked
+
+import scala.collection.mutable
+import nebula.decode.Imm_Select
 
 
 object SrcPlugin extends AreaObject { 
 
-  val RS1 = Payload(Bits (32 bits))
-  val RS2 = Payload(Bits (32 bits))
+  val RS1 = Payload(Bits (64 bits))
+  val RS2 = Payload(Bits (64 bits))
 
 }
 
+case class IMM(instruction  : Bits) extends Area{
+  // immediates
+  def i = instruction(31 downto 20)
+  def h = instruction(31 downto 24)
+  def s = instruction(31 downto 25) ## instruction(11 downto 7)
+  def b = instruction(31) ## instruction(7) ## instruction(30 downto 25) ## instruction(11 downto 8)
+  def u = instruction(31 downto 12) ## U"x000"
+  def j = instruction(31) ## instruction(19 downto 12) ## instruction(20) ## instruction(30 downto 21)
+  def z = instruction(19 downto 15)
+
+  // sign-extend immediates
+  def i_sext = S(i).resize(64)
+  def h_sext = S(h).resize(64)
+  def s_sext = S(s).resize(64)
+  def b_sext = S(b ## False).resize(64)
+  def j_sext = S(j ## False).resize(64)
+}
 
 
 
 case class SrcPlugin(stage : CtrlLink) extends Area {
   import SrcPlugin._
-  // if RF then RF should read
-  // also maybe choose forwarded value
-
-
-  // Maybe with EXU, tell SRC which OPS want which IMM. also acts as SEXT plugin
-  // JUST TELL EXU UNIT WHETHER TO USEj
-
-
 
   val immsel = new stage.Area {
-    val imm = new IMM(nebula.decode.Decoder.UOP)
-    val i_sext = imm.i_sext
+    val sext = Bits(64 bits)
+    sext.assignDontCare()
+    val imm = new IMM(nebula.decode.Decoder.INSTRUCTION)
+    when(up.isValid) {
+      sext := up(IMMSEL).muxDc(
+        Imm_Select.I_IMM -> imm.i_sext,
+        Imm_Select.S_IMM -> imm.s_sext,
+        Imm_Select.B_IMM -> imm.b_sext,
+      ).asBits
+    }
   }
 
   val selectRS = new stage.Area {
-    switch(up(SRC1_CTRL)) {
-      is(src1Enum(SRC1.RF)) {
-        RS1 := IntRegFile.RegFile_RS1
-      }
-    }
-    switch(up(SRC2_CTRL)) {
-     is(src2Enum(SRC2.RF)) {RS1 := IntRegFile.RegFile_RS1}
-     is(src2Enum(SRC2.I))  {RS1 := immsel.imm.i_sext.asBits}
-     is(src2Enum(SRC2.RF)) {}
-     is(src2Enum(SRC2.RF)) {}
+    RS1.assignDontCare()
+    RS2.assignDontCare()
+    when(up.isValid) {
+      down(RS1) := up(nebula.decode.Decoder.RS1TYPE).muxDc(
+        nebula.decode.REGFILE.RSTYPE.RS_INT -> IntRegFile.RegFile_RS1.asBits,
+      )
+      down(RS2) := up(nebula.decode.Decoder.RS2TYPE).muxDc(
+        nebula.decode.REGFILE.RSTYPE.RS_INT -> IntRegFile.RegFile_RS2.asBits,
+        nebula.decode.REGFILE.RSTYPE.IMMED  -> immsel.sext,
+      )
     }
   }
-
-    // val src = new eu.Execute(executeAt-relaxedRs.toInt){
-    //   def get(rs : RfRead) = relaxedRs match {
-    //     case false => up(eu(IntRegFile, rs))
-    //     case true  => down(eu(IntRegFile, rs))
-    //   }
-    //   val imm = new IMM(Decode.UOP)
-    //   if(src1Keys.nonEmpty) SRC1 := SRC1_CTRL.muxListDc[SInt](src1Keys.map {
-    //     case sk.SRC1.RF => src1ToEnum(sk.SRC1.RF) -> S(get(RS1))
-    //     case sk.SRC1.U  => src1ToEnum(sk.SRC1.U ) -> S(imm.u).resize(Riscv.XLEN)
-    //   })
-
-    //   val pcExtended = PHYSICAL_WIDTH.get < VIRTUAL_WIDTH.get
-    //   if(src2Keys.nonEmpty) SRC2 := SRC2_CTRL.muxListDc[SInt](src2Keys.map {
-    //     case sk.SRC2.RF => src2ToEnum(sk.SRC2.RF) -> S(get(RS2))
-    //     case sk.SRC2.I  => src2ToEnum(sk.SRC2.I ) -> imm.i_sext
-    //     case sk.SRC2.S  => src2ToEnum(sk.SRC2.S ) -> imm.s_sext
-    //     case sk.SRC2.PC => src2ToEnum(sk.SRC2.PC) -> pcExtended.mux(S(this(Global.PC)).resize(Riscv.XLEN), S(this(Global.PC).resize(Riscv.XLEN)))
-    //   })
-
-
-
-  // }
 }

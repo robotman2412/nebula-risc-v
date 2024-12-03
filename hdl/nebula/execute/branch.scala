@@ -13,7 +13,7 @@ case class AGU() extends ExecutionUnit with Area {
 
 case class branchPlugin(stage : CtrlLink) extends ExecutionUnit with Area {
 
-
+  
 
 
   val shouldBranch = Bool()
