@@ -1,8 +1,53 @@
 package test.unit_tests
 
-import scala.collection.mutable._
+
+object compile_rv {
+import scala.collection.mutable.ArrayBuffer
+  def compileProgram(test: ArrayBuffer[String]): Array[String] = {
+    import scala.sys.process._
+    import java.io.{PrintWriter, File}
+    import java.nio.file.{Files, Paths}
+    
+    
+    val tempFile = "program.s"
+    val objFile = "program.o"
+    val binFile = "program.bin"
+    
+    val instructions = test
+
+    try {
+      // Write all instructions to the temporary assembly file
+      val writer = new PrintWriter(tempFile)
+      writer.println(".text")
+      instructions.foreach(writer.println)
+      writer.close()
+
+      // Assemble the program
+      val assembleCommand = Seq("riscv64-unknown-elf-as", tempFile, "-o", objFile)
+      if (assembleCommand.! != 0) throw new RuntimeException("Assembly failed.")
+
+      // Extract raw binary using objcopy
+      val objCopyCommand = Seq("riscv64-unknown-elf-objcopy", "-O", "binary", objFile, binFile)
+      if (objCopyCommand.! != 0) throw new RuntimeException("Objcopy failed.")
+
+      // Convert binary to hex format using hexdump
+      val hexdumpCommand = Seq("hexdump", "-ve", "/4 \"%08x\\n\"", binFile)
+      val hexOutput = hexdumpCommand.!!.trim.split("\n")
+
+      hexOutput
+    } finally {
+      // Clean up temporary files
+      Files.deleteIfExists(Paths.get(tempFile))
+      Files.deleteIfExists(Paths.get(objFile))
+      Files.deleteIfExists(Paths.get(binFile))
+    }
+  }
+
+}
 
 object test_addi {
+    import compile_rv.compileProgram
+    import scala.collection.mutable.ArrayBuffer
   var test1 : ArrayBuffer[String] = ArrayBuffer[String]()
       test1 += "li	gp,2"
       test1 += "li	a3,0"
@@ -55,9 +100,6 @@ object test_addi {
       test7 += "lui	t2,0x80000"
       test7 += "addi	t2,t2,-2048"
       test7 += "slt t0,	a4,t2"
-                                     
-                                     
-                                     
                                      
   var test8  : ArrayBuffer[String] = ArrayBuffer[String]()
       test8 += "li	gp,9"
@@ -243,49 +285,7 @@ object test_addi {
 
   val tests = ArrayBuffer(test1, test2, test3, test4, test5, test6, test7, test8, test9, test10, test11, test12, test13, test14, test15, test16)
 
-
-
-  def compileProgram(test: ArrayBuffer[String]): Array[String] = {
-    import scala.sys.process._
-    import java.io.{PrintWriter, File}
-    import java.nio.file.{Files, Paths}
-    
-    
-    val tempFile = "program.s"
-    val objFile = "program.o"
-    val binFile = "program.bin"
-    
-    val instructions = test
-
-    try {
-      // Write all instructions to the temporary assembly file
-      val writer = new PrintWriter(tempFile)
-      writer.println(".text")
-      instructions.foreach(writer.println)
-      writer.close()
-
-      // Assemble the program
-      val assembleCommand = Seq("riscv64-unknown-elf-as", tempFile, "-o", objFile)
-      if (assembleCommand.! != 0) throw new RuntimeException("Assembly failed.")
-
-      // Extract raw binary using objcopy
-      val objCopyCommand = Seq("riscv64-unknown-elf-objcopy", "-O", "binary", objFile, binFile)
-      if (objCopyCommand.! != 0) throw new RuntimeException("Objcopy failed.")
-
-      // Convert binary to hex format using hexdump
-      val hexdumpCommand = Seq("hexdump", "-ve", "/4 \"%08x\\n\"", binFile)
-      val hexOutput = hexdumpCommand.!!.trim.split("\n")
-
-      hexOutput
-    } finally {
-      // Clean up temporary files
-      Files.deleteIfExists(Paths.get(tempFile))
-      Files.deleteIfExists(Paths.get(objFile))
-      Files.deleteIfExists(Paths.get(binFile))
-    }
-  }
-  
   val sequences = tests.map(e => compileProgram(e))
-  // sequences(0).foreach(e => println(e))
   
+//   sequences.foreach(e => e.foreach(h => println(h)) )
 }

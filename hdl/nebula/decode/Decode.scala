@@ -60,27 +60,11 @@ object AluOp extends SpinalEnum(binarySequential) {
 
 }
 
-class CtrlSigs() extends Bundle {
-  val is_fp          = YESNO()
-  val execution_unit = ExecutionUnit()
-  val rdtype         = REGFILE.RDTYPE()
-  val rs1type        = REGFILE.RSTYPE()
-  val rs2type        = REGFILE.RSTYPE()
-  val fsr3en         = YESNO()
-  val immSel         = Imm_Select()
-  val aluop          = AluOp()
-  val is_br          = YESNO()
-  val is_w           = YESNO()
-  
-  val sigs = Seq(is_fp, execution_unit, rdtype, rs1type, rs2type, fsr3en, immSel, aluop, is_br, is_w)
-  // val sigs = Seq()
-}
 case class Decoder(stage : CtrlLink) extends Area {
   import DecodeTable._
   // import CtrlSigs._
   import ExecutionUnit._
 
-  val ctrlSigs = new CtrlSigs()
 
   
   // every instr to be mapped to ctrlSigs, through decoder
@@ -92,22 +76,23 @@ case class Decoder(stage : CtrlLink) extends Area {
 
   
   val all = mutable.LinkedHashSet[Masked]()
+  import Decoder._
+  val payloads = Seq(IS_FP, EXECUTION_UNIT , RDTYPE, RS1TYPE, RS2TYPE, FSR3EN, IMMSEL, ALUOP , IS_BR , IS_W )
 
-  val specs = ctrlSigs.sigs.map(k => new DecodingSpec(k)).zip(ctrlSigs.sigs)
+  val specs = payloads.map(k => new DecodingSpec(k)).zip(payloads)
 
-  // specs.foreach(e => e._1.setDefault())
-  assert(ctrlSigs.sigs.length == specs.length)
+
+
+  
+  assert(payloads.length == specs.length)
   for((instr, vals) <- X_table) {
     all += Masked(instr)
     for (((spec,signal),i) <- specs.zipWithIndex) {
       // each spec is the DecodingSpec and its associated CtrlSig
       spec.addNeeds(Masked(instr),Masked(vals(i)))
-      // println(instr, (vals(i)))
-
-     // println(Masked(vals(i)).)
-      // gets decodingSpec from spec (spec : decodingSpec, CtrlSig) and adds thing
     }
   }
+
 
   val validDecode = new DecodingSpec(Bool())
   all.foreach(e => validDecode.addNeeds(e, Masked(True)))
@@ -117,32 +102,18 @@ case class Decoder(stage : CtrlLink) extends Area {
 
     shouldHalt := !validDecode.build(up(Decoder.INSTRUCTION), all)
     haltWhen(shouldHalt)
-}
-  // specs : ((decodingSpec, CtrlSig), Int)
-  val decodeLane = new stage.Area {
+  }
 
-    for((spec) <- specs) {
-      spec._2.assignDontCare()
+  val decodeLane = new stage.Area {
+    for (spec <- specs) {
+      down(spec._2).assignDontCare()
       when(up.isFiring) {
-        spec._2.assignFromBits(spec._1.build(up(Decoder.INSTRUCTION), all).asBits)
+        down(spec._2).assignFromBits(spec._1.build(up(INSTRUCTION),all).asBits)
       }
     }
   }
-  //  val payloads = Seq(Payload(execution_unit), Payload(rdtype), Payload(rs1type), Payload(rs2type)).zip(sigs)
    
   val logic = new stage.Area {
-    down(Decoder.IS_FP)          := ctrlSigs.is_fp          
-    down(Decoder.EXECUTION_UNIT) := ctrlSigs.execution_unit 
-    down(Decoder.RDTYPE)         := ctrlSigs.rdtype         
-    down(Decoder.RS1TYPE)        := ctrlSigs.rs1type        
-    down(Decoder.RS2TYPE)        := ctrlSigs.rs2type        
-    down(Decoder.FSR3EN)         := ctrlSigs.fsr3en         
-    down(Decoder.IMMSEL)         := ctrlSigs.immSel         
-    down(Decoder.ALUOP)          := ctrlSigs.aluop          
-    down(Decoder.IS_BR)          := ctrlSigs.is_br
-    down(Decoder.IS_W)           := ctrlSigs.is_w
-
-    
     down(Decoder.RD) :=  up(Decoder.INSTRUCTION)(11 downto 7)
     down(Decoder.RS1) := up(Decoder.INSTRUCTION)(19 downto 15)
     down(Decoder.RS2) := up(Decoder.INSTRUCTION)(24 downto 20)

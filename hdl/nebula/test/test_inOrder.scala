@@ -157,111 +157,55 @@ object test_in_order extends App {
   }
 }
 
-object test_ALU extends App {
-  SimConfig.withWave.compile(new nebulaRVIO).doSim{ dut =>
-    
-    dut.clockDomain.forkStimulus(10)
-
-    
-    dut.fetcher.mem.setBigInt(0, BigInt("01111101000000000000001010010011", 2))
-    dut.fetcher.mem.setBigInt(1, BigInt("00000000010100101000010000110011", 2))
-    
-    sleep(1)
-    dut.clockDomain.waitSampling(50)
-    
-    println(dut.intregFile.reggy.mem.getBigInt(8))
-
-  }
-}
 
 object test_addi_seq extends App {
   SimConfig.withWave.compile(new nebulaRVIO).doSim{ dut =>
     dut.clockDomain.forkStimulus(10)
 
     import test.unit_tests.test_addi._
-    sequences(0).zipWithIndex.foreach(e => dut.fetcher.mem.setBigInt(e._2,BigInt(e._1,16)))
-    sleep(1)
-    dut.clockDomain.waitSampling(50)
-    assert(dut.intregFile.reggy.mem.getBigInt(5) == 0)
     
-    
-    sequences(1).zipWithIndex.foreach(e => dut.fetcher.mem.setBigInt(e._2,BigInt(e._1,16)))
-    sleep(1)
-    dut.clockDomain.waitSampling(50)
-    (dut.intregFile.reggy.mem.getBigInt(5) == 0)
-    
-    sequences(2).zipWithIndex.foreach(e => dut.fetcher.mem.setBigInt(e._2,BigInt(e._1,16)))
-    sleep(1)
-    dut.clockDomain.waitSampling(50)
-    assert(dut.intregFile.reggy.mem.getBigInt(5) == 0)
-    
-    sequences(3).zipWithIndex.foreach(e => dut.fetcher.mem.setBigInt(e._2,BigInt(e._1,16)))
-    sleep(1)
-    dut.clockDomain.waitSampling(50)
-    assert(dut.intregFile.reggy.mem.getBigInt(5) == 0)
-    
-    sequences(4).zipWithIndex.foreach(e => dut.fetcher.mem.setBigInt(e._2,BigInt(e._1,16)))
-    sleep(1)
-    dut.clockDomain.waitSampling(50)
-    assert(dut.intregFile.reggy.mem.getBigInt(5) == 0)
-    
-    sequences(5).zipWithIndex.foreach(e => dut.fetcher.mem.setBigInt(e._2,BigInt(e._1,16)))
-    sleep(1)
-    dut.clockDomain.waitSampling(50)
-    assert(dut.intregFile.reggy.mem.getBigInt(5) == 0)
-    
-    sequences(7).zipWithIndex.foreach(e => dut.fetcher.mem.setBigInt(e._2,BigInt(e._1,16)))
-    sleep(1)
-    dut.clockDomain.waitSampling(50)
-    assert(dut.intregFile.reggy.mem.getBigInt(5) == 0)
-    
-    sequences(8).zipWithIndex.foreach(e => dut.fetcher.mem.setBigInt(e._2,BigInt(e._1,16)))
-    sleep(1)
-    dut.clockDomain.waitSampling(50)
-    assert(dut.intregFile.reggy.mem.getBigInt(5) == 0)
-    
-    sequences(8).zipWithIndex.foreach(e => dut.fetcher.mem.setBigInt(e._2,BigInt(e._1,16)))
-    sleep(1)
-    dut.clockDomain.waitSampling(50)
-    assert(dut.intregFile.reggy.mem.getBigInt(5) == 0)
-    
-    sequences(9).zipWithIndex.foreach(e => dut.fetcher.mem.setBigInt(e._2,BigInt(e._1,16)))
-    sleep(1)
-    dut.clockDomain.waitSampling(50)
-    assert(dut.intregFile.reggy.mem.getBigInt(5) == 0)
-    
-    sequences(10).zipWithIndex.foreach(e => dut.fetcher.mem.setBigInt(e._2,BigInt(e._1,16)))
-    sleep(1)
-    dut.clockDomain.waitSampling(50)
-    assert(dut.intregFile.reggy.mem.getBigInt(5) == 0)
-    
-    sequences(11).zipWithIndex.foreach(e => dut.fetcher.mem.setBigInt(e._2,BigInt(e._1,16)))
-    sleep(1)
-    dut.clockDomain.waitSampling(50)
-    assert(dut.intregFile.reggy.mem.getBigInt(5) == 0)
-    
-    sequences(12).zipWithIndex.foreach(e => dut.fetcher.mem.setBigInt(e._2,BigInt(e._1,16)))
-    sleep(1)
-    dut.clockDomain.waitSampling(50)
-    assert(dut.intregFile.reggy.mem.getBigInt(5) == 0)
-    
-    sequences(13).zipWithIndex.foreach(e => dut.fetcher.mem.setBigInt(e._2,BigInt(e._1,16)))
-    sleep(1)
-    dut.clockDomain.waitSampling(50)
-    assert(dut.intregFile.reggy.mem.getBigInt(5) == 0)
-    
-    sequences(14).zipWithIndex.foreach(e => dut.fetcher.mem.setBigInt(e._2,BigInt(e._1,16)))
-    sleep(1)
-    dut.clockDomain.waitSampling(50)
-    assert(dut.intregFile.reggy.mem.getBigInt(5) == 0)
-    
-    sequences(15).zipWithIndex.foreach(e => dut.fetcher.mem.setBigInt(e._2,BigInt(e._1,16)))
-    sleep(1)
-    dut.clockDomain.waitSampling(50)
-    assert(dut.intregFile.reggy.mem.getBigInt(5) == 0)
-    
+    sequences.foreach(e => e.zipWithIndex.foreach(e =>  {
+      dut.fetcher.mem.setBigInt(e._2, BigInt(e._1,16))
+      sleep(1)
+      dut.clockDomain.waitSampling(50)
+      assert(dut.intregFile.reggy.mem.getBigInt(5) == 0, s"failed at test ${e._2}")
+    }))
+
     /// DO TO TEST 25
-  
-  
+  }
+}
+
+
+object test_add_seq extends App {
+  SimConfig.withWave.compile(new nebulaRVIO).doSim{ dut =>
+    dut.clockDomain.forkStimulus(10)
+
+    import test.unit_tests.add_test._
+    
+    sequences.foreach(e => e.zipWithIndex.foreach(e =>  {
+      dut.fetcher.mem.setBigInt(e._2, BigInt(e._1,16))
+      sleep(1)
+      dut.clockDomain.waitSampling(50)
+      assert(dut.intregFile.reggy.mem.getBigInt(5) == 0, s"failed at test ${e._2}")
+    }))
+
+    /// DO TO TEST 25
+  }
+}
+
+object test_sub_seq extends App {
+  SimConfig.withWave.compile(new nebulaRVIO).doSim{ dut =>
+    dut.clockDomain.forkStimulus(10)
+
+    import test.unit_tests.sub_test._
+    
+    sequences.foreach(e => e.zipWithIndex.foreach(e =>  {
+      dut.fetcher.mem.setBigInt(e._2, BigInt(e._1,16))
+      sleep(1)
+      dut.clockDomain.waitSampling(50)
+      assert(dut.intregFile.reggy.mem.getBigInt(5) == 0, s"failed at test ${e._2}")
+    }))
+
+    /// DO TO TEST 25
   }
 }

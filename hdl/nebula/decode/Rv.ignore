@@ -6,7 +6,7 @@ import spinal.lib.logic._
 
 
 
-object Rv32i extends AreaObject {
+object RV32I extends AreaObject {
   
   val ADD                = M"0000000----------000-----0110011"
   val SUB                = M"0100000----------000-----0110011"
@@ -19,27 +19,27 @@ object Rv32i extends AreaObject {
   val OR                 = M"0000000----------110-----0110011"
   val AND                = M"0000000----------111-----0110011"
 
-  // val ADDI               = TypeI(M"-----------------000-----0010011")
-  // val SLLI               = TypeI(M"000000-----------001-----0010011")
-  // val SLTI               = TypeI(M"-----------------010-----0010011")
-  // val SLTIU              = TypeI(M"-----------------011-----0010011")
-  // val XORI               = TypeI(M"-----------------100-----0010011")
-  // val SRLI               = TypeI(M"000000-----------101-----0010011")
-  // val SRAI               = TypeI(M"010000-----------101-----0010011")
-  // val ORI                = TypeI(M"-----------------110-----0010011")
-  // val ANDI               = TypeI(M"-----------------111-----0010011")
+  val ADDI               = (M"-----------------000-----0010011")
+  val SLLI               = (M"000000-----------001-----0010011")
+  val SLTI               = (M"-----------------010-----0010011")
+  val SLTIU              = (M"-----------------011-----0010011")
+  val XORI               = (M"-----------------100-----0010011")
+  val SRLI               = (M"000000-----------101-----0010011")
+  val SRAI               = (M"010000-----------101-----0010011")
+  val ORI                = (M"-----------------110-----0010011")
+  val ANDI               = (M"-----------------111-----0010011")
 
   // val LUI                = TypeU(M"-------------------------0110111")
   // val AUIPC              = TypeUPC(M"-------------------------0010111")
 
-  // val BEQ                = TypeB(M"-----------------000-----1100011")
-  // val BNE                = TypeB(M"-----------------001-----1100011")
-  // val BLT                = TypeB(M"-----------------100-----1100011")
-  // val BGE                = TypeB(M"-----------------101-----1100011")
-  // val BLTU               = TypeB(M"-----------------110-----1100011")
-  // val BGEU               = TypeB(M"-----------------111-----1100011")
-  // val JALR               = TypeI(M"-----------------000-----1100111")
-  // val JAL                = TypeJ(M"-------------------------1101111")
+  // val BEQ                = (M"-----------------000-----1100011")
+  // val BNE                = (M"-----------------001-----1100011")
+  // val BLT                = (M"-----------------100-----1100011")
+  // val BGE                = (M"-----------------101-----1100011")
+  // val BLTU               = (M"-----------------110-----1100011")
+  // val BGEU               = (M"-----------------111-----1100011")
+  // val JALR               = (M"-----------------000-----1100111")
+  // val JAL                = (M"-------------------------1101111")
   
   // val LB                 = TypeILQ(M"-----------------000-----0000011")
   // val LH                 = TypeILQ(M"-----------------001-----0000011")
@@ -64,32 +64,27 @@ object Rv32i extends AreaObject {
 
   // val FLUSH_DATA         = TypeNone(M"-------00000-----101-----0001111")
 
-  // val UOPs = List(ADD, SUB, SLL, SLT, SLTU, XOR, SRL, SRA, OR, AND, ADDI, SLLI, SLTI, SLTIU, XORI, SRLI, SRAI, ORI, ANDI, LUI, AUIPC, BEQ, BNE, BLT, BGE, BLTU, BGEU, JALR, JAL, LB, LH, LW, LBU, LHU, SB, SH, SW, EBREAK, ECALL, MRET, SRET, URET, FENCEI, WFI, FENCE, SFENCE_VMA, FLUSH_DATA)
-  val UOPs = List(ADD, SUB, SLL, SLT, SLTU, XOR, SRL, SRA, OR, AND)
-  // val uopZipped = UOPs.zipWithIndex
-  // val uopsMasked = uopZipped.map{case (microOp, key) => (Masked(microOp), Masked(key))}
   
 }
 
-// object Rv64i extends AreaObject {
-//   import IntRegFileAccess._
+object RV64I extends AreaObject {
   
-//   val LWU                = TypeILQ(M"-----------------110-----0000011")
-//   val LD                 = TypeILQ(M"-----------------011-----0000011")
-//   val SD                 = TypeSSQ(M"-----------------011-----0100011")
+  val LWU                = (M"-----------------110-----0000011")
+  val LD                 = (M"-----------------011-----0000011")
+  val SD                 = (M"-----------------011-----0100011")
   
-//   val ADDW               = TypeR(M"0000000----------000-----0111011")
-//   val SUBW               = TypeR(M"0100000----------000-----0111011")
-//   val ADDIW              = TypeI(M"-----------------000-----0011011")
+  val ADDW               = (M"0000000----------000-----0111011")
+  val SUBW               = (M"0100000----------000-----0111011")
+  val ADDIW              = (M"-----------------000-----0011011")
 
-//   val SLLW               = TypeR(M"0000000----------001-----0111011")
-//   val SRLW               = TypeR(M"0000000----------101-----0111011")
-//   val SRAW               = TypeR(M"0100000----------101-----0111011")
+  val SLLW               = (M"0000000----------001-----0111011")
+  val SRLW               = (M"0000000----------101-----0111011")
+  val SRAW               = (M"0100000----------101-----0111011")
 
-//   val SLLIW              = TypeI(M"000000-----------001-----0011011")
-//   val SRLIW              = TypeI(M"000000-----------101-----0011011")
-//   val SRAIW              = TypeI(M"010000-----------101-----0011011")
-// }
+  val SLLIW              = (M"000000-----------001-----0011011")
+  val SRLIW              = (M"000000-----------101-----0011011")
+  val SRAIW              = (M"010000-----------101-----0011011")
+}
 
 // object Rv32M extends AreaObject {
 //   import IntRegFileAccess._

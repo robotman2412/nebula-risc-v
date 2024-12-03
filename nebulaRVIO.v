@@ -1,6 +1,6 @@
 // Generator : SpinalHDL v1.10.2    git head : 279867b771fb50fc0aec21d8a20d8fdad0f87e3f
 // Component : nebulaRVIO
-// Git hash  : f05e0f2741d36ea7da19ff48a864a2a841844368
+// Git hash  : df7480bd8c8160f0ee168511d30818b27521f7e7
 
 `timescale 1ns/1ps
 
@@ -47,32 +47,32 @@ module nebulaRVIO (
   wire       [63:0]   intregFile_reggy_mem_spinal_port0;
   wire       [63:0]   intregFile_reggy_mem_spinal_port1;
   wire       [0:0]    _zz_decoder_trap_shouldHalt_1;
-  wire       [31:0]   _zz__zz_decoder_ctrlSigs_aluop_2;
-  wire       [31:0]   _zz__zz_decoder_ctrlSigs_aluop_2_1;
-  wire       [31:0]   _zz__zz_decoder_ctrlSigs_aluop_2_2;
-  wire       [31:0]   _zz__zz_decoder_ctrlSigs_aluop_2_3;
-  wire                _zz__zz_decoder_ctrlSigs_aluop_2_4;
-  wire       [0:0]    _zz__zz_decoder_ctrlSigs_aluop_2_5;
-  wire       [31:0]   _zz__zz_decoder_ctrlSigs_aluop_2_6;
-  wire       [2:0]    _zz__zz_decoder_ctrlSigs_aluop_2_7;
-  wire                _zz__zz_decoder_ctrlSigs_aluop_2_8;
-  wire                _zz__zz_decoder_ctrlSigs_aluop_2_9;
-  wire       [0:0]    _zz__zz_decoder_ctrlSigs_aluop_2_10;
-  wire       [31:0]   _zz__zz_decoder_ctrlSigs_aluop_2_11;
-  wire       [3:0]    _zz__zz_decoder_ctrlSigs_aluop_2_12;
-  wire       [31:0]   _zz__zz_decoder_ctrlSigs_aluop_2_13;
-  wire       [31:0]   _zz__zz_decoder_ctrlSigs_aluop_2_14;
-  wire                _zz__zz_decoder_ctrlSigs_aluop_2_15;
-  wire       [0:0]    _zz__zz_decoder_ctrlSigs_aluop_2_16;
-  wire       [0:0]    _zz__zz_decoder_ctrlSigs_aluop_2_17;
-  wire       [0:0]    _zz__zz_decoder_ctrlSigs_aluop_2_18;
-  wire       [4:0]    _zz__zz_decoder_ctrlSigs_aluop_2_19;
-  wire       [31:0]   _zz__zz_decoder_ctrlSigs_aluop_2_20;
-  wire       [31:0]   _zz__zz_decoder_ctrlSigs_aluop_2_21;
-  wire       [0:0]    _zz__zz_decoder_ctrlSigs_aluop_2_22;
-  wire       [1:0]    _zz__zz_decoder_ctrlSigs_aluop_2_23;
-  wire       [31:0]   _zz__zz_decoder_ctrlSigs_aluop_2_24;
-  wire       [31:0]   _zz__zz_decoder_ctrlSigs_aluop_2_25;
+  wire       [31:0]   _zz__zz_d0_down_Decoder_ALUOP_3;
+  wire       [31:0]   _zz__zz_d0_down_Decoder_ALUOP_3_1;
+  wire       [31:0]   _zz__zz_d0_down_Decoder_ALUOP_3_2;
+  wire       [31:0]   _zz__zz_d0_down_Decoder_ALUOP_3_3;
+  wire                _zz__zz_d0_down_Decoder_ALUOP_3_4;
+  wire       [0:0]    _zz__zz_d0_down_Decoder_ALUOP_3_5;
+  wire       [31:0]   _zz__zz_d0_down_Decoder_ALUOP_3_6;
+  wire       [2:0]    _zz__zz_d0_down_Decoder_ALUOP_3_7;
+  wire                _zz__zz_d0_down_Decoder_ALUOP_3_8;
+  wire                _zz__zz_d0_down_Decoder_ALUOP_3_9;
+  wire       [0:0]    _zz__zz_d0_down_Decoder_ALUOP_3_10;
+  wire       [31:0]   _zz__zz_d0_down_Decoder_ALUOP_3_11;
+  wire       [3:0]    _zz__zz_d0_down_Decoder_ALUOP_3_12;
+  wire       [31:0]   _zz__zz_d0_down_Decoder_ALUOP_3_13;
+  wire       [31:0]   _zz__zz_d0_down_Decoder_ALUOP_3_14;
+  wire                _zz__zz_d0_down_Decoder_ALUOP_3_15;
+  wire       [0:0]    _zz__zz_d0_down_Decoder_ALUOP_3_16;
+  wire       [0:0]    _zz__zz_d0_down_Decoder_ALUOP_3_17;
+  wire       [0:0]    _zz__zz_d0_down_Decoder_ALUOP_3_18;
+  wire       [4:0]    _zz__zz_d0_down_Decoder_ALUOP_3_19;
+  wire       [31:0]   _zz__zz_d0_down_Decoder_ALUOP_3_20;
+  wire       [31:0]   _zz__zz_d0_down_Decoder_ALUOP_3_21;
+  wire       [0:0]    _zz__zz_d0_down_Decoder_ALUOP_3_22;
+  wire       [1:0]    _zz__zz_d0_down_Decoder_ALUOP_3_23;
+  wire       [31:0]   _zz__zz_d0_down_Decoder_ALUOP_3_24;
+  wire       [31:0]   _zz__zz_d0_down_Decoder_ALUOP_3_25;
   wire                _zz_intregFile_reggy_mem_port;
   wire       [11:0]   _zz__zz_srcPlugin_immsel_sext;
   wire       [11:0]   _zz__zz_srcPlugin_immsel_sext_1;
@@ -218,17 +218,17 @@ module nebulaRVIO (
   wire       [4:0]    d0_down_Decoder_RS2;
   wire       [4:0]    d0_down_Decoder_RS1;
   wire       [4:0]    d0_down_Decoder_RD;
-  wire       [0:0]    d0_down_Decoder_IS_W;
-  wire       [0:0]    d0_down_Decoder_IS_BR;
-  wire       [3:0]    d0_down_Decoder_ALUOP;
-  wire       [1:0]    d0_down_Decoder_IMMSEL;
-  wire       [0:0]    d0_down_Decoder_FSR3EN;
-  wire       [2:0]    d0_down_Decoder_RS2TYPE;
-  wire       [2:0]    d0_down_Decoder_RS1TYPE;
-  wire       [1:0]    d0_down_Decoder_RDTYPE;
-  wire       [1:0]    d0_down_Decoder_EXECUTION_UNIT;
-  wire       [0:0]    d0_down_Decoder_IS_FP;
+  reg        [0:0]    d0_down_Decoder_IS_W;
+  reg        [0:0]    d0_down_Decoder_IS_BR;
+  reg        [3:0]    d0_down_Decoder_ALUOP;
+  reg        [1:0]    d0_down_Decoder_IMMSEL;
+  reg        [0:0]    d0_down_Decoder_FSR3EN;
+  reg        [2:0]    d0_down_Decoder_RS2TYPE;
+  reg        [2:0]    d0_down_Decoder_RS1TYPE;
+  reg        [1:0]    d0_down_Decoder_RDTYPE;
+  reg        [1:0]    d0_down_Decoder_EXECUTION_UNIT;
   wire                d0_up_isFiring;
+  reg        [0:0]    d0_down_Decoder_IS_FP;
   reg        [31:0]   d0_up_Decoder_INSTRUCTION;
   wire       [31:0]   fetch_down_Decoder_INSTRUCTION;
   wire       [7:0]    fetch_down_PC;
@@ -240,52 +240,52 @@ module nebulaRVIO (
   reg        [63:0]   fetcher_pass_test_reg;
   wire                fetch_haltRequest_nebulainorder_l78;
   wire       [31:0]   fetcher_instrn;
-  reg        [0:0]    decoder_ctrlSigs_is_fp;
-  reg        [1:0]    decoder_ctrlSigs_execution_unit;
-  reg        [1:0]    decoder_ctrlSigs_rdtype;
-  reg        [2:0]    decoder_ctrlSigs_rs1type;
-  reg        [2:0]    decoder_ctrlSigs_rs2type;
-  reg        [0:0]    decoder_ctrlSigs_fsr3en;
-  reg        [1:0]    decoder_ctrlSigs_immSel;
-  reg        [3:0]    decoder_ctrlSigs_aluop;
-  reg        [0:0]    decoder_ctrlSigs_is_br;
-  reg        [0:0]    decoder_ctrlSigs_is_w;
+  wire       [0:0]    decoder_ctrlSigs_is_fp;
+  wire       [1:0]    decoder_ctrlSigs_execution_unit;
+  wire       [1:0]    decoder_ctrlSigs_rdtype;
+  wire       [2:0]    decoder_ctrlSigs_rs1type;
+  wire       [2:0]    decoder_ctrlSigs_rs2type;
+  wire       [0:0]    decoder_ctrlSigs_fsr3en;
+  wire       [1:0]    decoder_ctrlSigs_immSel;
+  wire       [3:0]    decoder_ctrlSigs_aluop;
+  wire       [0:0]    decoder_ctrlSigs_is_br;
+  wire       [0:0]    decoder_ctrlSigs_is_w;
   wire                decoder_trap_shouldHalt;
   wire                _zz_decoder_trap_shouldHalt;
-  wire                d0_haltRequest_Decode_l119;
-  wire       [0:0]    _zz_decoder_ctrlSigs_is_fp;
-  wire       [0:0]    _zz_decoder_ctrlSigs_is_fp_1;
-  wire       [0:0]    _zz_decoder_ctrlSigs_is_fp_2;
-  wire       [1:0]    _zz_decoder_ctrlSigs_execution_unit;
-  wire       [1:0]    _zz_decoder_ctrlSigs_execution_unit_1;
-  wire       [1:0]    _zz_decoder_ctrlSigs_execution_unit_2;
-  wire                _zz_decoder_ctrlSigs_rdtype;
-  wire       [1:0]    _zz_decoder_ctrlSigs_rdtype_1;
-  wire       [1:0]    _zz_decoder_ctrlSigs_rdtype_2;
-  wire       [1:0]    _zz_decoder_ctrlSigs_rdtype_3;
-  wire       [2:0]    _zz_decoder_ctrlSigs_rs1type;
-  wire       [2:0]    _zz_decoder_ctrlSigs_rs1type_1;
-  wire       [2:0]    _zz_decoder_ctrlSigs_rs1type_2;
-  wire                _zz_decoder_ctrlSigs_rs2type;
-  wire       [2:0]    _zz_decoder_ctrlSigs_rs2type_1;
-  wire       [2:0]    _zz_decoder_ctrlSigs_rs2type_2;
-  wire       [2:0]    _zz_decoder_ctrlSigs_rs2type_3;
-  wire       [0:0]    _zz_decoder_ctrlSigs_fsr3en;
-  wire       [0:0]    _zz_decoder_ctrlSigs_fsr3en_1;
-  wire       [0:0]    _zz_decoder_ctrlSigs_fsr3en_2;
-  wire       [1:0]    _zz_decoder_ctrlSigs_immSel;
-  wire       [1:0]    _zz_decoder_ctrlSigs_immSel_1;
-  wire       [1:0]    _zz_decoder_ctrlSigs_immSel_2;
-  wire                _zz_decoder_ctrlSigs_aluop;
-  wire       [3:0]    _zz_decoder_ctrlSigs_aluop_1;
-  wire       [3:0]    _zz_decoder_ctrlSigs_aluop_2;
-  wire       [3:0]    _zz_decoder_ctrlSigs_aluop_3;
-  wire       [0:0]    _zz_decoder_ctrlSigs_is_br;
-  wire       [0:0]    _zz_decoder_ctrlSigs_is_br_1;
-  wire       [0:0]    _zz_decoder_ctrlSigs_is_br_2;
-  wire       [0:0]    _zz_decoder_ctrlSigs_is_w;
-  wire       [0:0]    _zz_decoder_ctrlSigs_is_w_1;
-  wire       [0:0]    _zz_decoder_ctrlSigs_is_w_2;
+  wire                d0_haltRequest_Decode_l138;
+  wire       [0:0]    _zz_d0_down_Decoder_IS_FP;
+  wire       [0:0]    _zz_d0_down_Decoder_IS_FP_1;
+  wire       [0:0]    _zz_d0_down_Decoder_IS_FP_2;
+  wire       [1:0]    _zz_d0_down_Decoder_EXECUTION_UNIT;
+  wire       [1:0]    _zz_d0_down_Decoder_EXECUTION_UNIT_1;
+  wire       [1:0]    _zz_d0_down_Decoder_EXECUTION_UNIT_2;
+  wire                _zz_d0_down_Decoder_ALUOP;
+  wire       [1:0]    _zz_d0_down_Decoder_RDTYPE;
+  wire       [1:0]    _zz_d0_down_Decoder_RDTYPE_1;
+  wire       [1:0]    _zz_d0_down_Decoder_RDTYPE_2;
+  wire       [2:0]    _zz_d0_down_Decoder_RS1TYPE;
+  wire       [2:0]    _zz_d0_down_Decoder_RS1TYPE_1;
+  wire       [2:0]    _zz_d0_down_Decoder_RS1TYPE_2;
+  wire                _zz_d0_down_Decoder_RS2TYPE;
+  wire       [2:0]    _zz_d0_down_Decoder_RS2TYPE_1;
+  wire       [2:0]    _zz_d0_down_Decoder_RS2TYPE_2;
+  wire       [2:0]    _zz_d0_down_Decoder_RS2TYPE_3;
+  wire       [0:0]    _zz_d0_down_Decoder_FSR3EN;
+  wire       [0:0]    _zz_d0_down_Decoder_FSR3EN_1;
+  wire       [0:0]    _zz_d0_down_Decoder_FSR3EN_2;
+  wire       [1:0]    _zz_d0_down_Decoder_IMMSEL;
+  wire       [1:0]    _zz_d0_down_Decoder_IMMSEL_1;
+  wire       [1:0]    _zz_d0_down_Decoder_IMMSEL_2;
+  wire                _zz_d0_down_Decoder_ALUOP_1;
+  wire       [3:0]    _zz_d0_down_Decoder_ALUOP_2;
+  wire       [3:0]    _zz_d0_down_Decoder_ALUOP_3;
+  wire       [3:0]    _zz_d0_down_Decoder_ALUOP_4;
+  wire       [0:0]    _zz_d0_down_Decoder_IS_BR;
+  wire       [0:0]    _zz_d0_down_Decoder_IS_BR_1;
+  wire       [0:0]    _zz_d0_down_Decoder_IS_BR_2;
+  wire       [0:0]    _zz_d0_down_Decoder_IS_W;
+  wire       [0:0]    _zz_d0_down_Decoder_IS_W_1;
+  wire       [0:0]    _zz_d0_down_Decoder_IS_W_2;
   wire                when_scheduler_l128;
   wire       [4:0]    intregFile_io_RD_address;
   wire                intregFile_io_RD_Enable;
@@ -374,36 +374,36 @@ module nebulaRVIO (
   reg [39:0] decoder_ctrlSigs_aluop_string;
   reg [7:0] decoder_ctrlSigs_is_br_string;
   reg [7:0] decoder_ctrlSigs_is_w_string;
-  reg [7:0] _zz_decoder_ctrlSigs_is_fp_string;
-  reg [7:0] _zz_decoder_ctrlSigs_is_fp_1_string;
-  reg [7:0] _zz_decoder_ctrlSigs_is_fp_2_string;
-  reg [23:0] _zz_decoder_ctrlSigs_execution_unit_string;
-  reg [23:0] _zz_decoder_ctrlSigs_execution_unit_1_string;
-  reg [23:0] _zz_decoder_ctrlSigs_execution_unit_2_string;
-  reg [47:0] _zz_decoder_ctrlSigs_rdtype_1_string;
-  reg [47:0] _zz_decoder_ctrlSigs_rdtype_2_string;
-  reg [47:0] _zz_decoder_ctrlSigs_rdtype_3_string;
-  reg [47:0] _zz_decoder_ctrlSigs_rs1type_string;
-  reg [47:0] _zz_decoder_ctrlSigs_rs1type_1_string;
-  reg [47:0] _zz_decoder_ctrlSigs_rs1type_2_string;
-  reg [47:0] _zz_decoder_ctrlSigs_rs2type_1_string;
-  reg [47:0] _zz_decoder_ctrlSigs_rs2type_2_string;
-  reg [47:0] _zz_decoder_ctrlSigs_rs2type_3_string;
-  reg [7:0] _zz_decoder_ctrlSigs_fsr3en_string;
-  reg [7:0] _zz_decoder_ctrlSigs_fsr3en_1_string;
-  reg [7:0] _zz_decoder_ctrlSigs_fsr3en_2_string;
-  reg [39:0] _zz_decoder_ctrlSigs_immSel_string;
-  reg [39:0] _zz_decoder_ctrlSigs_immSel_1_string;
-  reg [39:0] _zz_decoder_ctrlSigs_immSel_2_string;
-  reg [39:0] _zz_decoder_ctrlSigs_aluop_1_string;
-  reg [39:0] _zz_decoder_ctrlSigs_aluop_2_string;
-  reg [39:0] _zz_decoder_ctrlSigs_aluop_3_string;
-  reg [7:0] _zz_decoder_ctrlSigs_is_br_string;
-  reg [7:0] _zz_decoder_ctrlSigs_is_br_1_string;
-  reg [7:0] _zz_decoder_ctrlSigs_is_br_2_string;
-  reg [7:0] _zz_decoder_ctrlSigs_is_w_string;
-  reg [7:0] _zz_decoder_ctrlSigs_is_w_1_string;
-  reg [7:0] _zz_decoder_ctrlSigs_is_w_2_string;
+  reg [7:0] _zz_d0_down_Decoder_IS_FP_string;
+  reg [7:0] _zz_d0_down_Decoder_IS_FP_1_string;
+  reg [7:0] _zz_d0_down_Decoder_IS_FP_2_string;
+  reg [23:0] _zz_d0_down_Decoder_EXECUTION_UNIT_string;
+  reg [23:0] _zz_d0_down_Decoder_EXECUTION_UNIT_1_string;
+  reg [23:0] _zz_d0_down_Decoder_EXECUTION_UNIT_2_string;
+  reg [47:0] _zz_d0_down_Decoder_RDTYPE_string;
+  reg [47:0] _zz_d0_down_Decoder_RDTYPE_1_string;
+  reg [47:0] _zz_d0_down_Decoder_RDTYPE_2_string;
+  reg [47:0] _zz_d0_down_Decoder_RS1TYPE_string;
+  reg [47:0] _zz_d0_down_Decoder_RS1TYPE_1_string;
+  reg [47:0] _zz_d0_down_Decoder_RS1TYPE_2_string;
+  reg [47:0] _zz_d0_down_Decoder_RS2TYPE_1_string;
+  reg [47:0] _zz_d0_down_Decoder_RS2TYPE_2_string;
+  reg [47:0] _zz_d0_down_Decoder_RS2TYPE_3_string;
+  reg [7:0] _zz_d0_down_Decoder_FSR3EN_string;
+  reg [7:0] _zz_d0_down_Decoder_FSR3EN_1_string;
+  reg [7:0] _zz_d0_down_Decoder_FSR3EN_2_string;
+  reg [39:0] _zz_d0_down_Decoder_IMMSEL_string;
+  reg [39:0] _zz_d0_down_Decoder_IMMSEL_1_string;
+  reg [39:0] _zz_d0_down_Decoder_IMMSEL_2_string;
+  reg [39:0] _zz_d0_down_Decoder_ALUOP_2_string;
+  reg [39:0] _zz_d0_down_Decoder_ALUOP_3_string;
+  reg [39:0] _zz_d0_down_Decoder_ALUOP_4_string;
+  reg [7:0] _zz_d0_down_Decoder_IS_BR_string;
+  reg [7:0] _zz_d0_down_Decoder_IS_BR_1_string;
+  reg [7:0] _zz_d0_down_Decoder_IS_BR_2_string;
+  reg [7:0] _zz_d0_down_Decoder_IS_W_string;
+  reg [7:0] _zz_d0_down_Decoder_IS_W_1_string;
+  reg [7:0] _zz_d0_down_Decoder_IS_W_2_string;
   `endif
 
   reg [31:0] fetcher_mem [0:255];
@@ -455,32 +455,32 @@ module nebulaRVIO (
   assign _zz_intalu_aluNodeStage_logic_result_6 = (E1_down_SrcPlugin_RS1 - E1_down_SrcPlugin_RS2);
   assign _zz_E1_down_Execute_RESULT = intalu_aluNodeStage_logic_result[31 : 0];
   assign _zz_intregFile_reggy_mem_port = (intregFile_io_RD_Enable && (! (intregFile_io_RD_address == 5'h0)));
-  assign _zz__zz_decoder_ctrlSigs_aluop_2 = (d0_up_Decoder_INSTRUCTION & 32'h00000008);
-  assign _zz__zz_decoder_ctrlSigs_aluop_2_1 = 32'h00000008;
-  assign _zz__zz_decoder_ctrlSigs_aluop_2_2 = (d0_up_Decoder_INSTRUCTION & 32'h00003000);
-  assign _zz__zz_decoder_ctrlSigs_aluop_2_3 = 32'h00003000;
-  assign _zz__zz_decoder_ctrlSigs_aluop_2_4 = ((d0_up_Decoder_INSTRUCTION & 32'h00004008) == 32'h00004008);
-  assign _zz__zz_decoder_ctrlSigs_aluop_2_5 = ((d0_up_Decoder_INSTRUCTION & _zz__zz_decoder_ctrlSigs_aluop_2_6) == 32'h00004000);
-  assign _zz__zz_decoder_ctrlSigs_aluop_2_7 = {_zz_decoder_ctrlSigs_aluop,{_zz__zz_decoder_ctrlSigs_aluop_2_8,_zz__zz_decoder_ctrlSigs_aluop_2_9}};
-  assign _zz__zz_decoder_ctrlSigs_aluop_2_10 = ((d0_up_Decoder_INSTRUCTION & _zz__zz_decoder_ctrlSigs_aluop_2_11) == 32'h00000008);
-  assign _zz__zz_decoder_ctrlSigs_aluop_2_12 = {(_zz__zz_decoder_ctrlSigs_aluop_2_13 == _zz__zz_decoder_ctrlSigs_aluop_2_14),{_zz__zz_decoder_ctrlSigs_aluop_2_15,{_zz__zz_decoder_ctrlSigs_aluop_2_16,_zz__zz_decoder_ctrlSigs_aluop_2_17}}};
-  assign _zz__zz_decoder_ctrlSigs_aluop_2_18 = _zz_decoder_ctrlSigs_rdtype;
-  assign _zz__zz_decoder_ctrlSigs_aluop_2_19 = {(_zz__zz_decoder_ctrlSigs_aluop_2_20 == _zz__zz_decoder_ctrlSigs_aluop_2_21),{_zz_decoder_ctrlSigs_aluop,{_zz__zz_decoder_ctrlSigs_aluop_2_22,_zz__zz_decoder_ctrlSigs_aluop_2_23}}};
-  assign _zz__zz_decoder_ctrlSigs_aluop_2_6 = 32'h00005000;
-  assign _zz__zz_decoder_ctrlSigs_aluop_2_8 = ((d0_up_Decoder_INSTRUCTION & 32'h40000028) == 32'h40000028);
-  assign _zz__zz_decoder_ctrlSigs_aluop_2_9 = ((d0_up_Decoder_INSTRUCTION & 32'h40006000) == 32'h40004000);
-  assign _zz__zz_decoder_ctrlSigs_aluop_2_11 = 32'h00004008;
-  assign _zz__zz_decoder_ctrlSigs_aluop_2_13 = (d0_up_Decoder_INSTRUCTION & 32'h00007000);
-  assign _zz__zz_decoder_ctrlSigs_aluop_2_14 = 32'h00004000;
-  assign _zz__zz_decoder_ctrlSigs_aluop_2_15 = ((d0_up_Decoder_INSTRUCTION & 32'h00007000) == 32'h00002000);
-  assign _zz__zz_decoder_ctrlSigs_aluop_2_16 = ((d0_up_Decoder_INSTRUCTION & 32'h00007040) == 32'h00001000);
-  assign _zz__zz_decoder_ctrlSigs_aluop_2_17 = ((d0_up_Decoder_INSTRUCTION & 32'h40006008) == 32'h00004000);
-  assign _zz__zz_decoder_ctrlSigs_aluop_2_20 = (d0_up_Decoder_INSTRUCTION & 32'h00006000);
-  assign _zz__zz_decoder_ctrlSigs_aluop_2_21 = 32'h00006000;
-  assign _zz__zz_decoder_ctrlSigs_aluop_2_22 = ((d0_up_Decoder_INSTRUCTION & 32'h40001008) == 32'h00001008);
-  assign _zz__zz_decoder_ctrlSigs_aluop_2_23 = {((d0_up_Decoder_INSTRUCTION & _zz__zz_decoder_ctrlSigs_aluop_2_24) == 32'h00005000),((d0_up_Decoder_INSTRUCTION & _zz__zz_decoder_ctrlSigs_aluop_2_25) == 32'h40000020)};
-  assign _zz__zz_decoder_ctrlSigs_aluop_2_24 = 32'h40005000;
-  assign _zz__zz_decoder_ctrlSigs_aluop_2_25 = 32'h40004028;
+  assign _zz__zz_d0_down_Decoder_ALUOP_3 = (d0_up_Decoder_INSTRUCTION & 32'h00000008);
+  assign _zz__zz_d0_down_Decoder_ALUOP_3_1 = 32'h00000008;
+  assign _zz__zz_d0_down_Decoder_ALUOP_3_2 = (d0_up_Decoder_INSTRUCTION & 32'h00003000);
+  assign _zz__zz_d0_down_Decoder_ALUOP_3_3 = 32'h00003000;
+  assign _zz__zz_d0_down_Decoder_ALUOP_3_4 = ((d0_up_Decoder_INSTRUCTION & 32'h00004008) == 32'h00004008);
+  assign _zz__zz_d0_down_Decoder_ALUOP_3_5 = ((d0_up_Decoder_INSTRUCTION & _zz__zz_d0_down_Decoder_ALUOP_3_6) == 32'h00004000);
+  assign _zz__zz_d0_down_Decoder_ALUOP_3_7 = {_zz_d0_down_Decoder_ALUOP_1,{_zz__zz_d0_down_Decoder_ALUOP_3_8,_zz__zz_d0_down_Decoder_ALUOP_3_9}};
+  assign _zz__zz_d0_down_Decoder_ALUOP_3_10 = ((d0_up_Decoder_INSTRUCTION & _zz__zz_d0_down_Decoder_ALUOP_3_11) == 32'h00000008);
+  assign _zz__zz_d0_down_Decoder_ALUOP_3_12 = {(_zz__zz_d0_down_Decoder_ALUOP_3_13 == _zz__zz_d0_down_Decoder_ALUOP_3_14),{_zz__zz_d0_down_Decoder_ALUOP_3_15,{_zz__zz_d0_down_Decoder_ALUOP_3_16,_zz__zz_d0_down_Decoder_ALUOP_3_17}}};
+  assign _zz__zz_d0_down_Decoder_ALUOP_3_18 = _zz_d0_down_Decoder_ALUOP;
+  assign _zz__zz_d0_down_Decoder_ALUOP_3_19 = {(_zz__zz_d0_down_Decoder_ALUOP_3_20 == _zz__zz_d0_down_Decoder_ALUOP_3_21),{_zz_d0_down_Decoder_ALUOP_1,{_zz__zz_d0_down_Decoder_ALUOP_3_22,_zz__zz_d0_down_Decoder_ALUOP_3_23}}};
+  assign _zz__zz_d0_down_Decoder_ALUOP_3_6 = 32'h00005000;
+  assign _zz__zz_d0_down_Decoder_ALUOP_3_8 = ((d0_up_Decoder_INSTRUCTION & 32'h40000028) == 32'h40000028);
+  assign _zz__zz_d0_down_Decoder_ALUOP_3_9 = ((d0_up_Decoder_INSTRUCTION & 32'h40006000) == 32'h40004000);
+  assign _zz__zz_d0_down_Decoder_ALUOP_3_11 = 32'h00004008;
+  assign _zz__zz_d0_down_Decoder_ALUOP_3_13 = (d0_up_Decoder_INSTRUCTION & 32'h00007000);
+  assign _zz__zz_d0_down_Decoder_ALUOP_3_14 = 32'h00004000;
+  assign _zz__zz_d0_down_Decoder_ALUOP_3_15 = ((d0_up_Decoder_INSTRUCTION & 32'h00007000) == 32'h00002000);
+  assign _zz__zz_d0_down_Decoder_ALUOP_3_16 = ((d0_up_Decoder_INSTRUCTION & 32'h00007040) == 32'h00001000);
+  assign _zz__zz_d0_down_Decoder_ALUOP_3_17 = ((d0_up_Decoder_INSTRUCTION & 32'h40006008) == 32'h00004000);
+  assign _zz__zz_d0_down_Decoder_ALUOP_3_20 = (d0_up_Decoder_INSTRUCTION & 32'h00006000);
+  assign _zz__zz_d0_down_Decoder_ALUOP_3_21 = 32'h00006000;
+  assign _zz__zz_d0_down_Decoder_ALUOP_3_22 = ((d0_up_Decoder_INSTRUCTION & 32'h40001008) == 32'h00001008);
+  assign _zz__zz_d0_down_Decoder_ALUOP_3_23 = {((d0_up_Decoder_INSTRUCTION & _zz__zz_d0_down_Decoder_ALUOP_3_24) == 32'h00005000),((d0_up_Decoder_INSTRUCTION & _zz__zz_d0_down_Decoder_ALUOP_3_25) == 32'h40000020)};
+  assign _zz__zz_d0_down_Decoder_ALUOP_3_24 = 32'h40005000;
+  assign _zz__zz_d0_down_Decoder_ALUOP_3_25 = 32'h40004028;
   initial begin
     $readmemb("nebulaRVIO.v_toplevel_fetcher_mem.bin",fetcher_mem);
   end
@@ -1000,285 +1000,285 @@ module nebulaRVIO (
     endcase
   end
   always @(*) begin
-    case(_zz_decoder_ctrlSigs_is_fp)
-      YESNO_Y : _zz_decoder_ctrlSigs_is_fp_string = "Y";
-      YESNO_N : _zz_decoder_ctrlSigs_is_fp_string = "N";
-      default : _zz_decoder_ctrlSigs_is_fp_string = "?";
+    case(_zz_d0_down_Decoder_IS_FP)
+      YESNO_Y : _zz_d0_down_Decoder_IS_FP_string = "Y";
+      YESNO_N : _zz_d0_down_Decoder_IS_FP_string = "N";
+      default : _zz_d0_down_Decoder_IS_FP_string = "?";
     endcase
   end
   always @(*) begin
-    case(_zz_decoder_ctrlSigs_is_fp_1)
-      YESNO_Y : _zz_decoder_ctrlSigs_is_fp_1_string = "Y";
-      YESNO_N : _zz_decoder_ctrlSigs_is_fp_1_string = "N";
-      default : _zz_decoder_ctrlSigs_is_fp_1_string = "?";
+    case(_zz_d0_down_Decoder_IS_FP_1)
+      YESNO_Y : _zz_d0_down_Decoder_IS_FP_1_string = "Y";
+      YESNO_N : _zz_d0_down_Decoder_IS_FP_1_string = "N";
+      default : _zz_d0_down_Decoder_IS_FP_1_string = "?";
     endcase
   end
   always @(*) begin
-    case(_zz_decoder_ctrlSigs_is_fp_2)
-      YESNO_Y : _zz_decoder_ctrlSigs_is_fp_2_string = "Y";
-      YESNO_N : _zz_decoder_ctrlSigs_is_fp_2_string = "N";
-      default : _zz_decoder_ctrlSigs_is_fp_2_string = "?";
+    case(_zz_d0_down_Decoder_IS_FP_2)
+      YESNO_Y : _zz_d0_down_Decoder_IS_FP_2_string = "Y";
+      YESNO_N : _zz_d0_down_Decoder_IS_FP_2_string = "N";
+      default : _zz_d0_down_Decoder_IS_FP_2_string = "?";
     endcase
   end
   always @(*) begin
-    case(_zz_decoder_ctrlSigs_execution_unit)
-      ExecutionUnit_ALU : _zz_decoder_ctrlSigs_execution_unit_string = "ALU";
-      ExecutionUnit_FPU : _zz_decoder_ctrlSigs_execution_unit_string = "FPU";
-      ExecutionUnit_AGU : _zz_decoder_ctrlSigs_execution_unit_string = "AGU";
-      default : _zz_decoder_ctrlSigs_execution_unit_string = "???";
+    case(_zz_d0_down_Decoder_EXECUTION_UNIT)
+      ExecutionUnit_ALU : _zz_d0_down_Decoder_EXECUTION_UNIT_string = "ALU";
+      ExecutionUnit_FPU : _zz_d0_down_Decoder_EXECUTION_UNIT_string = "FPU";
+      ExecutionUnit_AGU : _zz_d0_down_Decoder_EXECUTION_UNIT_string = "AGU";
+      default : _zz_d0_down_Decoder_EXECUTION_UNIT_string = "???";
     endcase
   end
   always @(*) begin
-    case(_zz_decoder_ctrlSigs_execution_unit_1)
-      ExecutionUnit_ALU : _zz_decoder_ctrlSigs_execution_unit_1_string = "ALU";
-      ExecutionUnit_FPU : _zz_decoder_ctrlSigs_execution_unit_1_string = "FPU";
-      ExecutionUnit_AGU : _zz_decoder_ctrlSigs_execution_unit_1_string = "AGU";
-      default : _zz_decoder_ctrlSigs_execution_unit_1_string = "???";
+    case(_zz_d0_down_Decoder_EXECUTION_UNIT_1)
+      ExecutionUnit_ALU : _zz_d0_down_Decoder_EXECUTION_UNIT_1_string = "ALU";
+      ExecutionUnit_FPU : _zz_d0_down_Decoder_EXECUTION_UNIT_1_string = "FPU";
+      ExecutionUnit_AGU : _zz_d0_down_Decoder_EXECUTION_UNIT_1_string = "AGU";
+      default : _zz_d0_down_Decoder_EXECUTION_UNIT_1_string = "???";
     endcase
   end
   always @(*) begin
-    case(_zz_decoder_ctrlSigs_execution_unit_2)
-      ExecutionUnit_ALU : _zz_decoder_ctrlSigs_execution_unit_2_string = "ALU";
-      ExecutionUnit_FPU : _zz_decoder_ctrlSigs_execution_unit_2_string = "FPU";
-      ExecutionUnit_AGU : _zz_decoder_ctrlSigs_execution_unit_2_string = "AGU";
-      default : _zz_decoder_ctrlSigs_execution_unit_2_string = "???";
+    case(_zz_d0_down_Decoder_EXECUTION_UNIT_2)
+      ExecutionUnit_ALU : _zz_d0_down_Decoder_EXECUTION_UNIT_2_string = "ALU";
+      ExecutionUnit_FPU : _zz_d0_down_Decoder_EXECUTION_UNIT_2_string = "FPU";
+      ExecutionUnit_AGU : _zz_d0_down_Decoder_EXECUTION_UNIT_2_string = "AGU";
+      default : _zz_d0_down_Decoder_EXECUTION_UNIT_2_string = "???";
     endcase
   end
   always @(*) begin
-    case(_zz_decoder_ctrlSigs_rdtype_1)
-      RDTYPE_RD_INT : _zz_decoder_ctrlSigs_rdtype_1_string = "RD_INT";
-      RDTYPE_RD_FP : _zz_decoder_ctrlSigs_rdtype_1_string = "RD_FP ";
-      RDTYPE_RD_VEC : _zz_decoder_ctrlSigs_rdtype_1_string = "RD_VEC";
-      RDTYPE_RD_NA : _zz_decoder_ctrlSigs_rdtype_1_string = "RD_NA ";
-      default : _zz_decoder_ctrlSigs_rdtype_1_string = "??????";
+    case(_zz_d0_down_Decoder_RDTYPE)
+      RDTYPE_RD_INT : _zz_d0_down_Decoder_RDTYPE_string = "RD_INT";
+      RDTYPE_RD_FP : _zz_d0_down_Decoder_RDTYPE_string = "RD_FP ";
+      RDTYPE_RD_VEC : _zz_d0_down_Decoder_RDTYPE_string = "RD_VEC";
+      RDTYPE_RD_NA : _zz_d0_down_Decoder_RDTYPE_string = "RD_NA ";
+      default : _zz_d0_down_Decoder_RDTYPE_string = "??????";
     endcase
   end
   always @(*) begin
-    case(_zz_decoder_ctrlSigs_rdtype_2)
-      RDTYPE_RD_INT : _zz_decoder_ctrlSigs_rdtype_2_string = "RD_INT";
-      RDTYPE_RD_FP : _zz_decoder_ctrlSigs_rdtype_2_string = "RD_FP ";
-      RDTYPE_RD_VEC : _zz_decoder_ctrlSigs_rdtype_2_string = "RD_VEC";
-      RDTYPE_RD_NA : _zz_decoder_ctrlSigs_rdtype_2_string = "RD_NA ";
-      default : _zz_decoder_ctrlSigs_rdtype_2_string = "??????";
+    case(_zz_d0_down_Decoder_RDTYPE_1)
+      RDTYPE_RD_INT : _zz_d0_down_Decoder_RDTYPE_1_string = "RD_INT";
+      RDTYPE_RD_FP : _zz_d0_down_Decoder_RDTYPE_1_string = "RD_FP ";
+      RDTYPE_RD_VEC : _zz_d0_down_Decoder_RDTYPE_1_string = "RD_VEC";
+      RDTYPE_RD_NA : _zz_d0_down_Decoder_RDTYPE_1_string = "RD_NA ";
+      default : _zz_d0_down_Decoder_RDTYPE_1_string = "??????";
     endcase
   end
   always @(*) begin
-    case(_zz_decoder_ctrlSigs_rdtype_3)
-      RDTYPE_RD_INT : _zz_decoder_ctrlSigs_rdtype_3_string = "RD_INT";
-      RDTYPE_RD_FP : _zz_decoder_ctrlSigs_rdtype_3_string = "RD_FP ";
-      RDTYPE_RD_VEC : _zz_decoder_ctrlSigs_rdtype_3_string = "RD_VEC";
-      RDTYPE_RD_NA : _zz_decoder_ctrlSigs_rdtype_3_string = "RD_NA ";
-      default : _zz_decoder_ctrlSigs_rdtype_3_string = "??????";
+    case(_zz_d0_down_Decoder_RDTYPE_2)
+      RDTYPE_RD_INT : _zz_d0_down_Decoder_RDTYPE_2_string = "RD_INT";
+      RDTYPE_RD_FP : _zz_d0_down_Decoder_RDTYPE_2_string = "RD_FP ";
+      RDTYPE_RD_VEC : _zz_d0_down_Decoder_RDTYPE_2_string = "RD_VEC";
+      RDTYPE_RD_NA : _zz_d0_down_Decoder_RDTYPE_2_string = "RD_NA ";
+      default : _zz_d0_down_Decoder_RDTYPE_2_string = "??????";
     endcase
   end
   always @(*) begin
-    case(_zz_decoder_ctrlSigs_rs1type)
-      RSTYPE_RS_INT : _zz_decoder_ctrlSigs_rs1type_string = "RS_INT";
-      RSTYPE_RS_FP : _zz_decoder_ctrlSigs_rs1type_string = "RS_FP ";
-      RSTYPE_RS_VEC : _zz_decoder_ctrlSigs_rs1type_string = "RS_VEC";
-      RSTYPE_IMMED : _zz_decoder_ctrlSigs_rs1type_string = "IMMED ";
-      RSTYPE_RS_NA : _zz_decoder_ctrlSigs_rs1type_string = "RS_NA ";
-      default : _zz_decoder_ctrlSigs_rs1type_string = "??????";
+    case(_zz_d0_down_Decoder_RS1TYPE)
+      RSTYPE_RS_INT : _zz_d0_down_Decoder_RS1TYPE_string = "RS_INT";
+      RSTYPE_RS_FP : _zz_d0_down_Decoder_RS1TYPE_string = "RS_FP ";
+      RSTYPE_RS_VEC : _zz_d0_down_Decoder_RS1TYPE_string = "RS_VEC";
+      RSTYPE_IMMED : _zz_d0_down_Decoder_RS1TYPE_string = "IMMED ";
+      RSTYPE_RS_NA : _zz_d0_down_Decoder_RS1TYPE_string = "RS_NA ";
+      default : _zz_d0_down_Decoder_RS1TYPE_string = "??????";
     endcase
   end
   always @(*) begin
-    case(_zz_decoder_ctrlSigs_rs1type_1)
-      RSTYPE_RS_INT : _zz_decoder_ctrlSigs_rs1type_1_string = "RS_INT";
-      RSTYPE_RS_FP : _zz_decoder_ctrlSigs_rs1type_1_string = "RS_FP ";
-      RSTYPE_RS_VEC : _zz_decoder_ctrlSigs_rs1type_1_string = "RS_VEC";
-      RSTYPE_IMMED : _zz_decoder_ctrlSigs_rs1type_1_string = "IMMED ";
-      RSTYPE_RS_NA : _zz_decoder_ctrlSigs_rs1type_1_string = "RS_NA ";
-      default : _zz_decoder_ctrlSigs_rs1type_1_string = "??????";
+    case(_zz_d0_down_Decoder_RS1TYPE_1)
+      RSTYPE_RS_INT : _zz_d0_down_Decoder_RS1TYPE_1_string = "RS_INT";
+      RSTYPE_RS_FP : _zz_d0_down_Decoder_RS1TYPE_1_string = "RS_FP ";
+      RSTYPE_RS_VEC : _zz_d0_down_Decoder_RS1TYPE_1_string = "RS_VEC";
+      RSTYPE_IMMED : _zz_d0_down_Decoder_RS1TYPE_1_string = "IMMED ";
+      RSTYPE_RS_NA : _zz_d0_down_Decoder_RS1TYPE_1_string = "RS_NA ";
+      default : _zz_d0_down_Decoder_RS1TYPE_1_string = "??????";
     endcase
   end
   always @(*) begin
-    case(_zz_decoder_ctrlSigs_rs1type_2)
-      RSTYPE_RS_INT : _zz_decoder_ctrlSigs_rs1type_2_string = "RS_INT";
-      RSTYPE_RS_FP : _zz_decoder_ctrlSigs_rs1type_2_string = "RS_FP ";
-      RSTYPE_RS_VEC : _zz_decoder_ctrlSigs_rs1type_2_string = "RS_VEC";
-      RSTYPE_IMMED : _zz_decoder_ctrlSigs_rs1type_2_string = "IMMED ";
-      RSTYPE_RS_NA : _zz_decoder_ctrlSigs_rs1type_2_string = "RS_NA ";
-      default : _zz_decoder_ctrlSigs_rs1type_2_string = "??????";
+    case(_zz_d0_down_Decoder_RS1TYPE_2)
+      RSTYPE_RS_INT : _zz_d0_down_Decoder_RS1TYPE_2_string = "RS_INT";
+      RSTYPE_RS_FP : _zz_d0_down_Decoder_RS1TYPE_2_string = "RS_FP ";
+      RSTYPE_RS_VEC : _zz_d0_down_Decoder_RS1TYPE_2_string = "RS_VEC";
+      RSTYPE_IMMED : _zz_d0_down_Decoder_RS1TYPE_2_string = "IMMED ";
+      RSTYPE_RS_NA : _zz_d0_down_Decoder_RS1TYPE_2_string = "RS_NA ";
+      default : _zz_d0_down_Decoder_RS1TYPE_2_string = "??????";
     endcase
   end
   always @(*) begin
-    case(_zz_decoder_ctrlSigs_rs2type_1)
-      RSTYPE_RS_INT : _zz_decoder_ctrlSigs_rs2type_1_string = "RS_INT";
-      RSTYPE_RS_FP : _zz_decoder_ctrlSigs_rs2type_1_string = "RS_FP ";
-      RSTYPE_RS_VEC : _zz_decoder_ctrlSigs_rs2type_1_string = "RS_VEC";
-      RSTYPE_IMMED : _zz_decoder_ctrlSigs_rs2type_1_string = "IMMED ";
-      RSTYPE_RS_NA : _zz_decoder_ctrlSigs_rs2type_1_string = "RS_NA ";
-      default : _zz_decoder_ctrlSigs_rs2type_1_string = "??????";
+    case(_zz_d0_down_Decoder_RS2TYPE_1)
+      RSTYPE_RS_INT : _zz_d0_down_Decoder_RS2TYPE_1_string = "RS_INT";
+      RSTYPE_RS_FP : _zz_d0_down_Decoder_RS2TYPE_1_string = "RS_FP ";
+      RSTYPE_RS_VEC : _zz_d0_down_Decoder_RS2TYPE_1_string = "RS_VEC";
+      RSTYPE_IMMED : _zz_d0_down_Decoder_RS2TYPE_1_string = "IMMED ";
+      RSTYPE_RS_NA : _zz_d0_down_Decoder_RS2TYPE_1_string = "RS_NA ";
+      default : _zz_d0_down_Decoder_RS2TYPE_1_string = "??????";
     endcase
   end
   always @(*) begin
-    case(_zz_decoder_ctrlSigs_rs2type_2)
-      RSTYPE_RS_INT : _zz_decoder_ctrlSigs_rs2type_2_string = "RS_INT";
-      RSTYPE_RS_FP : _zz_decoder_ctrlSigs_rs2type_2_string = "RS_FP ";
-      RSTYPE_RS_VEC : _zz_decoder_ctrlSigs_rs2type_2_string = "RS_VEC";
-      RSTYPE_IMMED : _zz_decoder_ctrlSigs_rs2type_2_string = "IMMED ";
-      RSTYPE_RS_NA : _zz_decoder_ctrlSigs_rs2type_2_string = "RS_NA ";
-      default : _zz_decoder_ctrlSigs_rs2type_2_string = "??????";
+    case(_zz_d0_down_Decoder_RS2TYPE_2)
+      RSTYPE_RS_INT : _zz_d0_down_Decoder_RS2TYPE_2_string = "RS_INT";
+      RSTYPE_RS_FP : _zz_d0_down_Decoder_RS2TYPE_2_string = "RS_FP ";
+      RSTYPE_RS_VEC : _zz_d0_down_Decoder_RS2TYPE_2_string = "RS_VEC";
+      RSTYPE_IMMED : _zz_d0_down_Decoder_RS2TYPE_2_string = "IMMED ";
+      RSTYPE_RS_NA : _zz_d0_down_Decoder_RS2TYPE_2_string = "RS_NA ";
+      default : _zz_d0_down_Decoder_RS2TYPE_2_string = "??????";
     endcase
   end
   always @(*) begin
-    case(_zz_decoder_ctrlSigs_rs2type_3)
-      RSTYPE_RS_INT : _zz_decoder_ctrlSigs_rs2type_3_string = "RS_INT";
-      RSTYPE_RS_FP : _zz_decoder_ctrlSigs_rs2type_3_string = "RS_FP ";
-      RSTYPE_RS_VEC : _zz_decoder_ctrlSigs_rs2type_3_string = "RS_VEC";
-      RSTYPE_IMMED : _zz_decoder_ctrlSigs_rs2type_3_string = "IMMED ";
-      RSTYPE_RS_NA : _zz_decoder_ctrlSigs_rs2type_3_string = "RS_NA ";
-      default : _zz_decoder_ctrlSigs_rs2type_3_string = "??????";
+    case(_zz_d0_down_Decoder_RS2TYPE_3)
+      RSTYPE_RS_INT : _zz_d0_down_Decoder_RS2TYPE_3_string = "RS_INT";
+      RSTYPE_RS_FP : _zz_d0_down_Decoder_RS2TYPE_3_string = "RS_FP ";
+      RSTYPE_RS_VEC : _zz_d0_down_Decoder_RS2TYPE_3_string = "RS_VEC";
+      RSTYPE_IMMED : _zz_d0_down_Decoder_RS2TYPE_3_string = "IMMED ";
+      RSTYPE_RS_NA : _zz_d0_down_Decoder_RS2TYPE_3_string = "RS_NA ";
+      default : _zz_d0_down_Decoder_RS2TYPE_3_string = "??????";
     endcase
   end
   always @(*) begin
-    case(_zz_decoder_ctrlSigs_fsr3en)
-      YESNO_Y : _zz_decoder_ctrlSigs_fsr3en_string = "Y";
-      YESNO_N : _zz_decoder_ctrlSigs_fsr3en_string = "N";
-      default : _zz_decoder_ctrlSigs_fsr3en_string = "?";
+    case(_zz_d0_down_Decoder_FSR3EN)
+      YESNO_Y : _zz_d0_down_Decoder_FSR3EN_string = "Y";
+      YESNO_N : _zz_d0_down_Decoder_FSR3EN_string = "N";
+      default : _zz_d0_down_Decoder_FSR3EN_string = "?";
     endcase
   end
   always @(*) begin
-    case(_zz_decoder_ctrlSigs_fsr3en_1)
-      YESNO_Y : _zz_decoder_ctrlSigs_fsr3en_1_string = "Y";
-      YESNO_N : _zz_decoder_ctrlSigs_fsr3en_1_string = "N";
-      default : _zz_decoder_ctrlSigs_fsr3en_1_string = "?";
+    case(_zz_d0_down_Decoder_FSR3EN_1)
+      YESNO_Y : _zz_d0_down_Decoder_FSR3EN_1_string = "Y";
+      YESNO_N : _zz_d0_down_Decoder_FSR3EN_1_string = "N";
+      default : _zz_d0_down_Decoder_FSR3EN_1_string = "?";
     endcase
   end
   always @(*) begin
-    case(_zz_decoder_ctrlSigs_fsr3en_2)
-      YESNO_Y : _zz_decoder_ctrlSigs_fsr3en_2_string = "Y";
-      YESNO_N : _zz_decoder_ctrlSigs_fsr3en_2_string = "N";
-      default : _zz_decoder_ctrlSigs_fsr3en_2_string = "?";
+    case(_zz_d0_down_Decoder_FSR3EN_2)
+      YESNO_Y : _zz_d0_down_Decoder_FSR3EN_2_string = "Y";
+      YESNO_N : _zz_d0_down_Decoder_FSR3EN_2_string = "N";
+      default : _zz_d0_down_Decoder_FSR3EN_2_string = "?";
     endcase
   end
   always @(*) begin
-    case(_zz_decoder_ctrlSigs_immSel)
-      Imm_Select_I_IMM : _zz_decoder_ctrlSigs_immSel_string = "I_IMM";
-      Imm_Select_S_IMM : _zz_decoder_ctrlSigs_immSel_string = "S_IMM";
-      Imm_Select_N_IMM : _zz_decoder_ctrlSigs_immSel_string = "N_IMM";
-      Imm_Select_B_IMM : _zz_decoder_ctrlSigs_immSel_string = "B_IMM";
-      default : _zz_decoder_ctrlSigs_immSel_string = "?????";
+    case(_zz_d0_down_Decoder_IMMSEL)
+      Imm_Select_I_IMM : _zz_d0_down_Decoder_IMMSEL_string = "I_IMM";
+      Imm_Select_S_IMM : _zz_d0_down_Decoder_IMMSEL_string = "S_IMM";
+      Imm_Select_N_IMM : _zz_d0_down_Decoder_IMMSEL_string = "N_IMM";
+      Imm_Select_B_IMM : _zz_d0_down_Decoder_IMMSEL_string = "B_IMM";
+      default : _zz_d0_down_Decoder_IMMSEL_string = "?????";
     endcase
   end
   always @(*) begin
-    case(_zz_decoder_ctrlSigs_immSel_1)
-      Imm_Select_I_IMM : _zz_decoder_ctrlSigs_immSel_1_string = "I_IMM";
-      Imm_Select_S_IMM : _zz_decoder_ctrlSigs_immSel_1_string = "S_IMM";
-      Imm_Select_N_IMM : _zz_decoder_ctrlSigs_immSel_1_string = "N_IMM";
-      Imm_Select_B_IMM : _zz_decoder_ctrlSigs_immSel_1_string = "B_IMM";
-      default : _zz_decoder_ctrlSigs_immSel_1_string = "?????";
+    case(_zz_d0_down_Decoder_IMMSEL_1)
+      Imm_Select_I_IMM : _zz_d0_down_Decoder_IMMSEL_1_string = "I_IMM";
+      Imm_Select_S_IMM : _zz_d0_down_Decoder_IMMSEL_1_string = "S_IMM";
+      Imm_Select_N_IMM : _zz_d0_down_Decoder_IMMSEL_1_string = "N_IMM";
+      Imm_Select_B_IMM : _zz_d0_down_Decoder_IMMSEL_1_string = "B_IMM";
+      default : _zz_d0_down_Decoder_IMMSEL_1_string = "?????";
     endcase
   end
   always @(*) begin
-    case(_zz_decoder_ctrlSigs_immSel_2)
-      Imm_Select_I_IMM : _zz_decoder_ctrlSigs_immSel_2_string = "I_IMM";
-      Imm_Select_S_IMM : _zz_decoder_ctrlSigs_immSel_2_string = "S_IMM";
-      Imm_Select_N_IMM : _zz_decoder_ctrlSigs_immSel_2_string = "N_IMM";
-      Imm_Select_B_IMM : _zz_decoder_ctrlSigs_immSel_2_string = "B_IMM";
-      default : _zz_decoder_ctrlSigs_immSel_2_string = "?????";
+    case(_zz_d0_down_Decoder_IMMSEL_2)
+      Imm_Select_I_IMM : _zz_d0_down_Decoder_IMMSEL_2_string = "I_IMM";
+      Imm_Select_S_IMM : _zz_d0_down_Decoder_IMMSEL_2_string = "S_IMM";
+      Imm_Select_N_IMM : _zz_d0_down_Decoder_IMMSEL_2_string = "N_IMM";
+      Imm_Select_B_IMM : _zz_d0_down_Decoder_IMMSEL_2_string = "B_IMM";
+      default : _zz_d0_down_Decoder_IMMSEL_2_string = "?????";
     endcase
   end
   always @(*) begin
-    case(_zz_decoder_ctrlSigs_aluop_1)
-      AluOp_add : _zz_decoder_ctrlSigs_aluop_1_string = "add  ";
-      AluOp_sub : _zz_decoder_ctrlSigs_aluop_1_string = "sub  ";
-      AluOp_sll_1 : _zz_decoder_ctrlSigs_aluop_1_string = "sll_1";
-      AluOp_srl_1 : _zz_decoder_ctrlSigs_aluop_1_string = "srl_1";
-      AluOp_sra_1 : _zz_decoder_ctrlSigs_aluop_1_string = "sra_1";
-      AluOp_or_1 : _zz_decoder_ctrlSigs_aluop_1_string = "or_1 ";
-      AluOp_xor_1 : _zz_decoder_ctrlSigs_aluop_1_string = "xor_1";
-      AluOp_slt : _zz_decoder_ctrlSigs_aluop_1_string = "slt  ";
-      AluOp_sltu : _zz_decoder_ctrlSigs_aluop_1_string = "sltu ";
-      AluOp_and_1 : _zz_decoder_ctrlSigs_aluop_1_string = "and_1";
-      AluOp_addw : _zz_decoder_ctrlSigs_aluop_1_string = "addw ";
-      AluOp_sllw : _zz_decoder_ctrlSigs_aluop_1_string = "sllw ";
-      AluOp_sraw : _zz_decoder_ctrlSigs_aluop_1_string = "sraw ";
-      AluOp_srlw : _zz_decoder_ctrlSigs_aluop_1_string = "srlw ";
-      AluOp_subw : _zz_decoder_ctrlSigs_aluop_1_string = "subw ";
-      default : _zz_decoder_ctrlSigs_aluop_1_string = "?????";
+    case(_zz_d0_down_Decoder_ALUOP_2)
+      AluOp_add : _zz_d0_down_Decoder_ALUOP_2_string = "add  ";
+      AluOp_sub : _zz_d0_down_Decoder_ALUOP_2_string = "sub  ";
+      AluOp_sll_1 : _zz_d0_down_Decoder_ALUOP_2_string = "sll_1";
+      AluOp_srl_1 : _zz_d0_down_Decoder_ALUOP_2_string = "srl_1";
+      AluOp_sra_1 : _zz_d0_down_Decoder_ALUOP_2_string = "sra_1";
+      AluOp_or_1 : _zz_d0_down_Decoder_ALUOP_2_string = "or_1 ";
+      AluOp_xor_1 : _zz_d0_down_Decoder_ALUOP_2_string = "xor_1";
+      AluOp_slt : _zz_d0_down_Decoder_ALUOP_2_string = "slt  ";
+      AluOp_sltu : _zz_d0_down_Decoder_ALUOP_2_string = "sltu ";
+      AluOp_and_1 : _zz_d0_down_Decoder_ALUOP_2_string = "and_1";
+      AluOp_addw : _zz_d0_down_Decoder_ALUOP_2_string = "addw ";
+      AluOp_sllw : _zz_d0_down_Decoder_ALUOP_2_string = "sllw ";
+      AluOp_sraw : _zz_d0_down_Decoder_ALUOP_2_string = "sraw ";
+      AluOp_srlw : _zz_d0_down_Decoder_ALUOP_2_string = "srlw ";
+      AluOp_subw : _zz_d0_down_Decoder_ALUOP_2_string = "subw ";
+      default : _zz_d0_down_Decoder_ALUOP_2_string = "?????";
     endcase
   end
   always @(*) begin
-    case(_zz_decoder_ctrlSigs_aluop_2)
-      AluOp_add : _zz_decoder_ctrlSigs_aluop_2_string = "add  ";
-      AluOp_sub : _zz_decoder_ctrlSigs_aluop_2_string = "sub  ";
-      AluOp_sll_1 : _zz_decoder_ctrlSigs_aluop_2_string = "sll_1";
-      AluOp_srl_1 : _zz_decoder_ctrlSigs_aluop_2_string = "srl_1";
-      AluOp_sra_1 : _zz_decoder_ctrlSigs_aluop_2_string = "sra_1";
-      AluOp_or_1 : _zz_decoder_ctrlSigs_aluop_2_string = "or_1 ";
-      AluOp_xor_1 : _zz_decoder_ctrlSigs_aluop_2_string = "xor_1";
-      AluOp_slt : _zz_decoder_ctrlSigs_aluop_2_string = "slt  ";
-      AluOp_sltu : _zz_decoder_ctrlSigs_aluop_2_string = "sltu ";
-      AluOp_and_1 : _zz_decoder_ctrlSigs_aluop_2_string = "and_1";
-      AluOp_addw : _zz_decoder_ctrlSigs_aluop_2_string = "addw ";
-      AluOp_sllw : _zz_decoder_ctrlSigs_aluop_2_string = "sllw ";
-      AluOp_sraw : _zz_decoder_ctrlSigs_aluop_2_string = "sraw ";
-      AluOp_srlw : _zz_decoder_ctrlSigs_aluop_2_string = "srlw ";
-      AluOp_subw : _zz_decoder_ctrlSigs_aluop_2_string = "subw ";
-      default : _zz_decoder_ctrlSigs_aluop_2_string = "?????";
+    case(_zz_d0_down_Decoder_ALUOP_3)
+      AluOp_add : _zz_d0_down_Decoder_ALUOP_3_string = "add  ";
+      AluOp_sub : _zz_d0_down_Decoder_ALUOP_3_string = "sub  ";
+      AluOp_sll_1 : _zz_d0_down_Decoder_ALUOP_3_string = "sll_1";
+      AluOp_srl_1 : _zz_d0_down_Decoder_ALUOP_3_string = "srl_1";
+      AluOp_sra_1 : _zz_d0_down_Decoder_ALUOP_3_string = "sra_1";
+      AluOp_or_1 : _zz_d0_down_Decoder_ALUOP_3_string = "or_1 ";
+      AluOp_xor_1 : _zz_d0_down_Decoder_ALUOP_3_string = "xor_1";
+      AluOp_slt : _zz_d0_down_Decoder_ALUOP_3_string = "slt  ";
+      AluOp_sltu : _zz_d0_down_Decoder_ALUOP_3_string = "sltu ";
+      AluOp_and_1 : _zz_d0_down_Decoder_ALUOP_3_string = "and_1";
+      AluOp_addw : _zz_d0_down_Decoder_ALUOP_3_string = "addw ";
+      AluOp_sllw : _zz_d0_down_Decoder_ALUOP_3_string = "sllw ";
+      AluOp_sraw : _zz_d0_down_Decoder_ALUOP_3_string = "sraw ";
+      AluOp_srlw : _zz_d0_down_Decoder_ALUOP_3_string = "srlw ";
+      AluOp_subw : _zz_d0_down_Decoder_ALUOP_3_string = "subw ";
+      default : _zz_d0_down_Decoder_ALUOP_3_string = "?????";
     endcase
   end
   always @(*) begin
-    case(_zz_decoder_ctrlSigs_aluop_3)
-      AluOp_add : _zz_decoder_ctrlSigs_aluop_3_string = "add  ";
-      AluOp_sub : _zz_decoder_ctrlSigs_aluop_3_string = "sub  ";
-      AluOp_sll_1 : _zz_decoder_ctrlSigs_aluop_3_string = "sll_1";
-      AluOp_srl_1 : _zz_decoder_ctrlSigs_aluop_3_string = "srl_1";
-      AluOp_sra_1 : _zz_decoder_ctrlSigs_aluop_3_string = "sra_1";
-      AluOp_or_1 : _zz_decoder_ctrlSigs_aluop_3_string = "or_1 ";
-      AluOp_xor_1 : _zz_decoder_ctrlSigs_aluop_3_string = "xor_1";
-      AluOp_slt : _zz_decoder_ctrlSigs_aluop_3_string = "slt  ";
-      AluOp_sltu : _zz_decoder_ctrlSigs_aluop_3_string = "sltu ";
-      AluOp_and_1 : _zz_decoder_ctrlSigs_aluop_3_string = "and_1";
-      AluOp_addw : _zz_decoder_ctrlSigs_aluop_3_string = "addw ";
-      AluOp_sllw : _zz_decoder_ctrlSigs_aluop_3_string = "sllw ";
-      AluOp_sraw : _zz_decoder_ctrlSigs_aluop_3_string = "sraw ";
-      AluOp_srlw : _zz_decoder_ctrlSigs_aluop_3_string = "srlw ";
-      AluOp_subw : _zz_decoder_ctrlSigs_aluop_3_string = "subw ";
-      default : _zz_decoder_ctrlSigs_aluop_3_string = "?????";
+    case(_zz_d0_down_Decoder_ALUOP_4)
+      AluOp_add : _zz_d0_down_Decoder_ALUOP_4_string = "add  ";
+      AluOp_sub : _zz_d0_down_Decoder_ALUOP_4_string = "sub  ";
+      AluOp_sll_1 : _zz_d0_down_Decoder_ALUOP_4_string = "sll_1";
+      AluOp_srl_1 : _zz_d0_down_Decoder_ALUOP_4_string = "srl_1";
+      AluOp_sra_1 : _zz_d0_down_Decoder_ALUOP_4_string = "sra_1";
+      AluOp_or_1 : _zz_d0_down_Decoder_ALUOP_4_string = "or_1 ";
+      AluOp_xor_1 : _zz_d0_down_Decoder_ALUOP_4_string = "xor_1";
+      AluOp_slt : _zz_d0_down_Decoder_ALUOP_4_string = "slt  ";
+      AluOp_sltu : _zz_d0_down_Decoder_ALUOP_4_string = "sltu ";
+      AluOp_and_1 : _zz_d0_down_Decoder_ALUOP_4_string = "and_1";
+      AluOp_addw : _zz_d0_down_Decoder_ALUOP_4_string = "addw ";
+      AluOp_sllw : _zz_d0_down_Decoder_ALUOP_4_string = "sllw ";
+      AluOp_sraw : _zz_d0_down_Decoder_ALUOP_4_string = "sraw ";
+      AluOp_srlw : _zz_d0_down_Decoder_ALUOP_4_string = "srlw ";
+      AluOp_subw : _zz_d0_down_Decoder_ALUOP_4_string = "subw ";
+      default : _zz_d0_down_Decoder_ALUOP_4_string = "?????";
     endcase
   end
   always @(*) begin
-    case(_zz_decoder_ctrlSigs_is_br)
-      YESNO_Y : _zz_decoder_ctrlSigs_is_br_string = "Y";
-      YESNO_N : _zz_decoder_ctrlSigs_is_br_string = "N";
-      default : _zz_decoder_ctrlSigs_is_br_string = "?";
+    case(_zz_d0_down_Decoder_IS_BR)
+      YESNO_Y : _zz_d0_down_Decoder_IS_BR_string = "Y";
+      YESNO_N : _zz_d0_down_Decoder_IS_BR_string = "N";
+      default : _zz_d0_down_Decoder_IS_BR_string = "?";
     endcase
   end
   always @(*) begin
-    case(_zz_decoder_ctrlSigs_is_br_1)
-      YESNO_Y : _zz_decoder_ctrlSigs_is_br_1_string = "Y";
-      YESNO_N : _zz_decoder_ctrlSigs_is_br_1_string = "N";
-      default : _zz_decoder_ctrlSigs_is_br_1_string = "?";
+    case(_zz_d0_down_Decoder_IS_BR_1)
+      YESNO_Y : _zz_d0_down_Decoder_IS_BR_1_string = "Y";
+      YESNO_N : _zz_d0_down_Decoder_IS_BR_1_string = "N";
+      default : _zz_d0_down_Decoder_IS_BR_1_string = "?";
     endcase
   end
   always @(*) begin
-    case(_zz_decoder_ctrlSigs_is_br_2)
-      YESNO_Y : _zz_decoder_ctrlSigs_is_br_2_string = "Y";
-      YESNO_N : _zz_decoder_ctrlSigs_is_br_2_string = "N";
-      default : _zz_decoder_ctrlSigs_is_br_2_string = "?";
+    case(_zz_d0_down_Decoder_IS_BR_2)
+      YESNO_Y : _zz_d0_down_Decoder_IS_BR_2_string = "Y";
+      YESNO_N : _zz_d0_down_Decoder_IS_BR_2_string = "N";
+      default : _zz_d0_down_Decoder_IS_BR_2_string = "?";
     endcase
   end
   always @(*) begin
-    case(_zz_decoder_ctrlSigs_is_w)
-      YESNO_Y : _zz_decoder_ctrlSigs_is_w_string = "Y";
-      YESNO_N : _zz_decoder_ctrlSigs_is_w_string = "N";
-      default : _zz_decoder_ctrlSigs_is_w_string = "?";
+    case(_zz_d0_down_Decoder_IS_W)
+      YESNO_Y : _zz_d0_down_Decoder_IS_W_string = "Y";
+      YESNO_N : _zz_d0_down_Decoder_IS_W_string = "N";
+      default : _zz_d0_down_Decoder_IS_W_string = "?";
     endcase
   end
   always @(*) begin
-    case(_zz_decoder_ctrlSigs_is_w_1)
-      YESNO_Y : _zz_decoder_ctrlSigs_is_w_1_string = "Y";
-      YESNO_N : _zz_decoder_ctrlSigs_is_w_1_string = "N";
-      default : _zz_decoder_ctrlSigs_is_w_1_string = "?";
+    case(_zz_d0_down_Decoder_IS_W_1)
+      YESNO_Y : _zz_d0_down_Decoder_IS_W_1_string = "Y";
+      YESNO_N : _zz_d0_down_Decoder_IS_W_1_string = "N";
+      default : _zz_d0_down_Decoder_IS_W_1_string = "?";
     endcase
   end
   always @(*) begin
-    case(_zz_decoder_ctrlSigs_is_w_2)
-      YESNO_Y : _zz_decoder_ctrlSigs_is_w_2_string = "Y";
-      YESNO_N : _zz_decoder_ctrlSigs_is_w_2_string = "N";
-      default : _zz_decoder_ctrlSigs_is_w_2_string = "?";
+    case(_zz_d0_down_Decoder_IS_W_2)
+      YESNO_Y : _zz_d0_down_Decoder_IS_W_2_string = "Y";
+      YESNO_N : _zz_d0_down_Decoder_IS_W_2_string = "N";
+      default : _zz_d0_down_Decoder_IS_W_2_string = "?";
     endcase
   end
   `endif
@@ -1297,120 +1297,110 @@ module nebulaRVIO (
   assign fetch_down_Decoder_INSTRUCTION = fetcher_mem_spinal_port1;
   assign _zz_decoder_trap_shouldHalt = ((d0_up_Decoder_INSTRUCTION & 32'h0) == 32'h0);
   assign decoder_trap_shouldHalt = (! _zz_decoder_trap_shouldHalt_1[0]);
-  assign d0_haltRequest_Decode_l119 = decoder_trap_shouldHalt;
+  assign d0_haltRequest_Decode_l138 = decoder_trap_shouldHalt;
   always @(*) begin
-    decoder_ctrlSigs_is_fp = (1'bx);
+    d0_down_Decoder_IS_FP = (1'bx);
     if(d0_up_isFiring) begin
-      decoder_ctrlSigs_is_fp = _zz_decoder_ctrlSigs_is_fp_2;
+      d0_down_Decoder_IS_FP = _zz_d0_down_Decoder_IS_FP_2;
     end
   end
 
-  assign _zz_decoder_ctrlSigs_is_fp_1 = (|_zz_decoder_trap_shouldHalt);
-  assign _zz_decoder_ctrlSigs_is_fp = _zz_decoder_ctrlSigs_is_fp_1;
-  assign _zz_decoder_ctrlSigs_is_fp_2 = _zz_decoder_ctrlSigs_is_fp;
+  assign _zz_d0_down_Decoder_IS_FP_1 = (|_zz_decoder_trap_shouldHalt);
+  assign _zz_d0_down_Decoder_IS_FP = _zz_d0_down_Decoder_IS_FP_1;
+  assign _zz_d0_down_Decoder_IS_FP_2 = _zz_d0_down_Decoder_IS_FP;
   always @(*) begin
-    decoder_ctrlSigs_execution_unit = (2'bxx);
+    d0_down_Decoder_EXECUTION_UNIT = (2'bxx);
     if(d0_up_isFiring) begin
-      decoder_ctrlSigs_execution_unit = _zz_decoder_ctrlSigs_execution_unit_2;
+      d0_down_Decoder_EXECUTION_UNIT = _zz_d0_down_Decoder_EXECUTION_UNIT_2;
     end
   end
 
-  assign _zz_decoder_ctrlSigs_execution_unit_1 = {1'b0,1'b0};
-  assign _zz_decoder_ctrlSigs_execution_unit = _zz_decoder_ctrlSigs_execution_unit_1;
-  assign _zz_decoder_ctrlSigs_execution_unit_2 = _zz_decoder_ctrlSigs_execution_unit;
+  assign _zz_d0_down_Decoder_EXECUTION_UNIT_1 = {1'b0,1'b0};
+  assign _zz_d0_down_Decoder_EXECUTION_UNIT = _zz_d0_down_Decoder_EXECUTION_UNIT_1;
+  assign _zz_d0_down_Decoder_EXECUTION_UNIT_2 = _zz_d0_down_Decoder_EXECUTION_UNIT;
   always @(*) begin
-    decoder_ctrlSigs_rdtype = (2'bxx);
+    d0_down_Decoder_RDTYPE = (2'bxx);
     if(d0_up_isFiring) begin
-      decoder_ctrlSigs_rdtype = _zz_decoder_ctrlSigs_rdtype_3;
+      d0_down_Decoder_RDTYPE = _zz_d0_down_Decoder_RDTYPE_2;
     end
   end
 
-  assign _zz_decoder_ctrlSigs_rdtype = ((d0_up_Decoder_INSTRUCTION & 32'h00000010) == 32'h0);
-  assign _zz_decoder_ctrlSigs_rdtype_2 = {(|_zz_decoder_ctrlSigs_rdtype),(|_zz_decoder_ctrlSigs_rdtype)};
-  assign _zz_decoder_ctrlSigs_rdtype_1 = _zz_decoder_ctrlSigs_rdtype_2;
-  assign _zz_decoder_ctrlSigs_rdtype_3 = _zz_decoder_ctrlSigs_rdtype_1;
+  assign _zz_d0_down_Decoder_ALUOP = ((d0_up_Decoder_INSTRUCTION & 32'h00000010) == 32'h0);
+  assign _zz_d0_down_Decoder_RDTYPE_1 = {(|_zz_d0_down_Decoder_ALUOP),(|_zz_d0_down_Decoder_ALUOP)};
+  assign _zz_d0_down_Decoder_RDTYPE = _zz_d0_down_Decoder_RDTYPE_1;
+  assign _zz_d0_down_Decoder_RDTYPE_2 = _zz_d0_down_Decoder_RDTYPE;
   always @(*) begin
-    decoder_ctrlSigs_rs1type = (3'bxxx);
+    d0_down_Decoder_RS1TYPE = (3'bxxx);
     if(d0_up_isFiring) begin
-      decoder_ctrlSigs_rs1type = _zz_decoder_ctrlSigs_rs1type_2;
+      d0_down_Decoder_RS1TYPE = _zz_d0_down_Decoder_RS1TYPE_2;
     end
   end
 
-  assign _zz_decoder_ctrlSigs_rs1type_1 = {1'b0,{1'b0,1'b0}};
-  assign _zz_decoder_ctrlSigs_rs1type = _zz_decoder_ctrlSigs_rs1type_1;
-  assign _zz_decoder_ctrlSigs_rs1type_2 = _zz_decoder_ctrlSigs_rs1type;
+  assign _zz_d0_down_Decoder_RS1TYPE_1 = {1'b0,{1'b0,1'b0}};
+  assign _zz_d0_down_Decoder_RS1TYPE = _zz_d0_down_Decoder_RS1TYPE_1;
+  assign _zz_d0_down_Decoder_RS1TYPE_2 = _zz_d0_down_Decoder_RS1TYPE;
   always @(*) begin
-    decoder_ctrlSigs_rs2type = (3'bxxx);
+    d0_down_Decoder_RS2TYPE = (3'bxxx);
     if(d0_up_isFiring) begin
-      decoder_ctrlSigs_rs2type = _zz_decoder_ctrlSigs_rs2type_3;
+      d0_down_Decoder_RS2TYPE = _zz_d0_down_Decoder_RS2TYPE_3;
     end
   end
 
-  assign _zz_decoder_ctrlSigs_rs2type = ((d0_up_Decoder_INSTRUCTION & 32'h00000020) == 32'h0);
-  assign _zz_decoder_ctrlSigs_rs2type_2 = {1'b0,{(|_zz_decoder_ctrlSigs_rs2type),(|_zz_decoder_ctrlSigs_rs2type)}};
-  assign _zz_decoder_ctrlSigs_rs2type_1 = _zz_decoder_ctrlSigs_rs2type_2;
-  assign _zz_decoder_ctrlSigs_rs2type_3 = _zz_decoder_ctrlSigs_rs2type_1;
+  assign _zz_d0_down_Decoder_RS2TYPE = ((d0_up_Decoder_INSTRUCTION & 32'h00000020) == 32'h0);
+  assign _zz_d0_down_Decoder_RS2TYPE_2 = {1'b0,{(|_zz_d0_down_Decoder_RS2TYPE),(|_zz_d0_down_Decoder_RS2TYPE)}};
+  assign _zz_d0_down_Decoder_RS2TYPE_1 = _zz_d0_down_Decoder_RS2TYPE_2;
+  assign _zz_d0_down_Decoder_RS2TYPE_3 = _zz_d0_down_Decoder_RS2TYPE_1;
   always @(*) begin
-    decoder_ctrlSigs_fsr3en = (1'bx);
+    d0_down_Decoder_FSR3EN = (1'bx);
     if(d0_up_isFiring) begin
-      decoder_ctrlSigs_fsr3en = _zz_decoder_ctrlSigs_fsr3en_2;
+      d0_down_Decoder_FSR3EN = _zz_d0_down_Decoder_FSR3EN_2;
     end
   end
 
-  assign _zz_decoder_ctrlSigs_fsr3en_1 = (|_zz_decoder_trap_shouldHalt);
-  assign _zz_decoder_ctrlSigs_fsr3en = _zz_decoder_ctrlSigs_fsr3en_1;
-  assign _zz_decoder_ctrlSigs_fsr3en_2 = _zz_decoder_ctrlSigs_fsr3en;
+  assign _zz_d0_down_Decoder_FSR3EN_1 = (|_zz_decoder_trap_shouldHalt);
+  assign _zz_d0_down_Decoder_FSR3EN = _zz_d0_down_Decoder_FSR3EN_1;
+  assign _zz_d0_down_Decoder_FSR3EN_2 = _zz_d0_down_Decoder_FSR3EN;
   always @(*) begin
-    decoder_ctrlSigs_immSel = (2'bxx);
+    d0_down_Decoder_IMMSEL = (2'bxx);
     if(d0_up_isFiring) begin
-      decoder_ctrlSigs_immSel = _zz_decoder_ctrlSigs_immSel_2;
+      d0_down_Decoder_IMMSEL = _zz_d0_down_Decoder_IMMSEL_2;
     end
   end
 
-  assign _zz_decoder_ctrlSigs_immSel_1 = {(|((d0_up_Decoder_INSTRUCTION & 32'h00000020) == 32'h00000020)),(|_zz_decoder_ctrlSigs_rdtype)};
-  assign _zz_decoder_ctrlSigs_immSel = _zz_decoder_ctrlSigs_immSel_1;
-  assign _zz_decoder_ctrlSigs_immSel_2 = _zz_decoder_ctrlSigs_immSel;
+  assign _zz_d0_down_Decoder_IMMSEL_1 = {(|((d0_up_Decoder_INSTRUCTION & 32'h00000020) == 32'h00000020)),(|_zz_d0_down_Decoder_ALUOP)};
+  assign _zz_d0_down_Decoder_IMMSEL = _zz_d0_down_Decoder_IMMSEL_1;
+  assign _zz_d0_down_Decoder_IMMSEL_2 = _zz_d0_down_Decoder_IMMSEL;
   always @(*) begin
-    decoder_ctrlSigs_aluop = (4'bxxxx);
+    d0_down_Decoder_ALUOP = (4'bxxxx);
     if(d0_up_isFiring) begin
-      decoder_ctrlSigs_aluop = _zz_decoder_ctrlSigs_aluop_3;
+      d0_down_Decoder_ALUOP = _zz_d0_down_Decoder_ALUOP_4;
     end
   end
 
-  assign _zz_decoder_ctrlSigs_aluop = ((d0_up_Decoder_INSTRUCTION & 32'h00003000) == 32'h00002000);
-  assign _zz_decoder_ctrlSigs_aluop_2 = {(|{(_zz__zz_decoder_ctrlSigs_aluop_2 == _zz__zz_decoder_ctrlSigs_aluop_2_1),(_zz__zz_decoder_ctrlSigs_aluop_2_2 == _zz__zz_decoder_ctrlSigs_aluop_2_3)}),{(|{_zz__zz_decoder_ctrlSigs_aluop_2_4,{_zz__zz_decoder_ctrlSigs_aluop_2_5,_zz__zz_decoder_ctrlSigs_aluop_2_7}}),{(|{_zz__zz_decoder_ctrlSigs_aluop_2_10,_zz__zz_decoder_ctrlSigs_aluop_2_12}),(|{_zz__zz_decoder_ctrlSigs_aluop_2_18,_zz__zz_decoder_ctrlSigs_aluop_2_19})}}};
-  assign _zz_decoder_ctrlSigs_aluop_1 = _zz_decoder_ctrlSigs_aluop_2;
-  assign _zz_decoder_ctrlSigs_aluop_3 = _zz_decoder_ctrlSigs_aluop_1;
+  assign _zz_d0_down_Decoder_ALUOP_1 = ((d0_up_Decoder_INSTRUCTION & 32'h00003000) == 32'h00002000);
+  assign _zz_d0_down_Decoder_ALUOP_3 = {(|{(_zz__zz_d0_down_Decoder_ALUOP_3 == _zz__zz_d0_down_Decoder_ALUOP_3_1),(_zz__zz_d0_down_Decoder_ALUOP_3_2 == _zz__zz_d0_down_Decoder_ALUOP_3_3)}),{(|{_zz__zz_d0_down_Decoder_ALUOP_3_4,{_zz__zz_d0_down_Decoder_ALUOP_3_5,_zz__zz_d0_down_Decoder_ALUOP_3_7}}),{(|{_zz__zz_d0_down_Decoder_ALUOP_3_10,_zz__zz_d0_down_Decoder_ALUOP_3_12}),(|{_zz__zz_d0_down_Decoder_ALUOP_3_18,_zz__zz_d0_down_Decoder_ALUOP_3_19})}}};
+  assign _zz_d0_down_Decoder_ALUOP_2 = _zz_d0_down_Decoder_ALUOP_3;
+  assign _zz_d0_down_Decoder_ALUOP_4 = _zz_d0_down_Decoder_ALUOP_2;
   always @(*) begin
-    decoder_ctrlSigs_is_br = (1'bx);
+    d0_down_Decoder_IS_BR = (1'bx);
     if(d0_up_isFiring) begin
-      decoder_ctrlSigs_is_br = _zz_decoder_ctrlSigs_is_br_2;
+      d0_down_Decoder_IS_BR = _zz_d0_down_Decoder_IS_BR_2;
     end
   end
 
-  assign _zz_decoder_ctrlSigs_is_br_1 = (|((d0_up_Decoder_INSTRUCTION & 32'h00000040) == 32'h0));
-  assign _zz_decoder_ctrlSigs_is_br = _zz_decoder_ctrlSigs_is_br_1;
-  assign _zz_decoder_ctrlSigs_is_br_2 = _zz_decoder_ctrlSigs_is_br;
+  assign _zz_d0_down_Decoder_IS_BR_1 = (|((d0_up_Decoder_INSTRUCTION & 32'h00000040) == 32'h0));
+  assign _zz_d0_down_Decoder_IS_BR = _zz_d0_down_Decoder_IS_BR_1;
+  assign _zz_d0_down_Decoder_IS_BR_2 = _zz_d0_down_Decoder_IS_BR;
   always @(*) begin
-    decoder_ctrlSigs_is_w = (1'bx);
+    d0_down_Decoder_IS_W = (1'bx);
     if(d0_up_isFiring) begin
-      decoder_ctrlSigs_is_w = _zz_decoder_ctrlSigs_is_w_2;
+      d0_down_Decoder_IS_W = _zz_d0_down_Decoder_IS_W_2;
     end
   end
 
-  assign _zz_decoder_ctrlSigs_is_w_1 = (|((d0_up_Decoder_INSTRUCTION & 32'h00000008) == 32'h0));
-  assign _zz_decoder_ctrlSigs_is_w = _zz_decoder_ctrlSigs_is_w_1;
-  assign _zz_decoder_ctrlSigs_is_w_2 = _zz_decoder_ctrlSigs_is_w;
-  assign d0_down_Decoder_IS_FP = decoder_ctrlSigs_is_fp;
-  assign d0_down_Decoder_EXECUTION_UNIT = decoder_ctrlSigs_execution_unit;
-  assign d0_down_Decoder_RDTYPE = decoder_ctrlSigs_rdtype;
-  assign d0_down_Decoder_RS1TYPE = decoder_ctrlSigs_rs1type;
-  assign d0_down_Decoder_RS2TYPE = decoder_ctrlSigs_rs2type;
-  assign d0_down_Decoder_FSR3EN = decoder_ctrlSigs_fsr3en;
-  assign d0_down_Decoder_IMMSEL = decoder_ctrlSigs_immSel;
-  assign d0_down_Decoder_ALUOP = decoder_ctrlSigs_aluop;
-  assign d0_down_Decoder_IS_BR = decoder_ctrlSigs_is_br;
-  assign d0_down_Decoder_IS_W = decoder_ctrlSigs_is_w;
+  assign _zz_d0_down_Decoder_IS_W_1 = (|((d0_up_Decoder_INSTRUCTION & 32'h00000008) == 32'h0));
+  assign _zz_d0_down_Decoder_IS_W = _zz_d0_down_Decoder_IS_W_1;
+  assign _zz_d0_down_Decoder_IS_W_2 = _zz_d0_down_Decoder_IS_W;
   assign d0_down_Decoder_RD = d0_up_Decoder_INSTRUCTION[11 : 7];
   assign d0_down_Decoder_RS1 = d0_up_Decoder_INSTRUCTION[19 : 15];
   assign d0_down_Decoder_RS2 = d0_up_Decoder_INSTRUCTION[24 : 20];
@@ -1647,7 +1637,7 @@ module nebulaRVIO (
     end
   end
 
-  assign when_CtrlLink_l150_1 = (|{d0_haltRequest_scheduler_l87,{d0_haltRequest_scheduler_l73,d0_haltRequest_Decode_l119}});
+  assign when_CtrlLink_l150_1 = (|{d0_haltRequest_scheduler_l87,{d0_haltRequest_scheduler_l73,d0_haltRequest_Decode_l138}});
   assign d0_down_Decoder_INSTRUCTION = d0_up_Decoder_INSTRUCTION;
   assign dis0_down_valid = dis0_up_valid;
   assign dis0_down_Decoder_INSTRUCTION = dis0_up_Decoder_INSTRUCTION;
