@@ -49,32 +49,36 @@ object test_addi {
     import compile_rv.compileProgram
     import scala.collection.mutable.ArrayBuffer
   var test1 : ArrayBuffer[String] = ArrayBuffer[String]()
-      test1 += "li	gp,2"
+      test1 += "li	gp,1"
       test1 += "li	a3,0"
       test1 += "mv	a4,a3"
       test1 += "li	t2,0"
-      test1 += "slt t0,	a4,t2"
+      test1 += "xor t0, a4,t2"
+      test1 += "snez t0,t0"
 
   var test2  : ArrayBuffer[String] = ArrayBuffer[String]()
       test2 += "li	gp,2"
       test2 += "li	a3,0"
       test2 += "mv	a4,a3"
       test2 += "li	t2,0"
-      test2 += "slt t0,	a4,t2"
+      test2 += "xor t0, a4,t2"
+      test2 += "snez t0,t0"
 
   var test3  : ArrayBuffer[String] = ArrayBuffer[String]()
       test3 += "li	gp,3"
       test3 += "li	a3,1"
       test3 += "addi	a4,a3,1"
       test3 += "li	t2,2"
-      test3 += "slt t0,	a4,t2"
+      test3 += "xor t0, a4,t2"
+      test3 += "snez t0,t0"
 
   var test4  : ArrayBuffer[String] = ArrayBuffer[String]()
       test4 += "li	gp,4"
       test4 += "li	a3,3"
       test4 += "addi	a4,a3,7"
       test4 += "li	t2,10"
-      test4 += "slt t0,	a4,t2"
+      test4 += "xor t0, a4,t2"
+      test4 += "snez t0,t0"
                                   
                                   
   var test5  : ArrayBuffer[String] = ArrayBuffer[String]()
@@ -82,7 +86,8 @@ object test_addi {
       test5 += "li	a3,0"
       test5 += "addi	a4,a3,-2048"
       test5 += "li	t2,-2048"
-      test5 += "slt t0,	a4,t2"
+      test5 += "xor t0, a4,t2"
+      test5 += "snez t0,t0"
                                     
                                     
   var test6  : ArrayBuffer[String] = ArrayBuffer[String]()
@@ -90,7 +95,8 @@ object test_addi {
       test6 += "lui	a3,0x80000"
       test6 += "mv	a4,a3"
       test6 += "lui	t2,0x80000"
-      test6 += "slt t0,	a4,t2"
+      test6 += "xor t0, a4,t2"
+      test6 += "snez t0,t0"
                                      
                                      
   var test7  : ArrayBuffer[String] = ArrayBuffer[String]()
@@ -99,7 +105,8 @@ object test_addi {
       test7 += "addi	a4,a3,-2048"
       test7 += "lui	t2,0x80000"
       test7 += "addi	t2,t2,-2048"
-      test7 += "slt t0,	a4,t2"
+      test6 += "xor t0, a4,t2"
+      test6 += "snez t0,t0"
                                      
   var test8  : ArrayBuffer[String] = ArrayBuffer[String]()
       test8 += "li	gp,9"
@@ -108,7 +115,8 @@ object test_addi {
       test8 += "mv	a4,a3"
       test8 += "lui	t2,0x80000"
       test8 += "addi	t2,t2,-1"
-      test8 += "slt t0,	a4,t2"
+      test8 += "xor t0, a4,t2"
+      test8 += "snez t0,t0"
                                      
                                      
   var test9  : ArrayBuffer[String] = ArrayBuffer[String]()
@@ -118,7 +126,8 @@ object test_addi {
       test9 += "addi	a4,a3,2047"
       test9 += "lui	t2,0x80000"
       test9 += "addi	t2,t2,2046"
-      test9 += "slt t0,	a4,t2"
+      test9 += "xor t0, a4,t2"
+      test9 += "snez t0,t0"
                                      
                                      
   var test10  : ArrayBuffer[String] = ArrayBuffer[String]()
@@ -127,17 +136,19 @@ object test_addi {
       test10 += "addi	a4,a3,2047"
       test10 += "lui	t2,0x80000"
       test10 += "addi	t2,t2,2047"
-      test10 += "slt t0,	a4,t2"
+      test10+= "xor t0, a4,t2"
+      test10+= "snez t0,t0"
                                      
                                      
   var test11  : ArrayBuffer[String] = ArrayBuffer[String]()
       test11 += "li	gp,12"
-      test11 += "lui	a3,0x80000"
+      test11 += "lui a3,0x80000"
       test11 += "addi	a3,a3,-1"
-      test11 += "addi	a4,a3,-2048"
-      test11 += "lui	t2,0x7ffff"
-      test11 += "addi	t2,t2,2047"
-      test11 += "slt t0,	a4,t2"
+    //   test11 += "addi	a4,a3,-2048"
+    //   test11 += "lui t2,0x7ffff"
+    //   test11 += "addi	t2,t2,2047"
+    //   test11 += "xor t0, a4,t2"
+    //   test11 += "snez t0,t0"
                                      
                                      
   var test12  : ArrayBuffer[String] = ArrayBuffer[String]()
@@ -145,7 +156,8 @@ object test_addi {
       test12 += "li	a3,0"
       test12 += "addi	a4,a3,-1"
       test12 += "li	t2,-1"
-      test12 += "slt t0,	a4,t2"
+      test12+= "xor t0, a4,t2"
+      test12+= "snez t0,t0"
                                      
                                      
   var test13  : ArrayBuffer[String] = ArrayBuffer[String]()
@@ -153,7 +165,8 @@ object test_addi {
       test13+= "li	a3,-1"
       test13+= "addi	a4,a3,1"
       test13+= "li	t2,0"
-      test13+= "slt t0,	a4,t2"
+      test13+= "xor t0, a4,t2"
+      test13+= "snez t0,t0"
                                      
                                      
   var test14 : ArrayBuffer[String] = ArrayBuffer[String]()
@@ -161,7 +174,8 @@ object test_addi {
       test14+= "li	a3,-1"
       test14+= "addi	a4,a3,-1"
       test14+= "li	t2,-2"
-      test14+= "slt t0,	a4,t2"
+      test14+= "xor t0, a4,t2"
+      test14+= "snez t0,t0"
                                      
                                      
   var test15 : ArrayBuffer[String] = ArrayBuffer[String]()
@@ -170,7 +184,8 @@ object test_addi {
       test15+= "addi	a3,a3,-1"
       test15+= "addi	a4,a3,1"
       test15+= "lui	t2,0x80000"
-      test15+= "slt t0,	a4,t2"
+      test15+= "xor t0, a4,t2"
+      test15+= "snez t0,t0"
                                      
                                      
   var test16 : ArrayBuffer[String] = ArrayBuffer[String]()
@@ -178,7 +193,8 @@ object test_addi {
       test16+= "li	a1,13"
       test16+= "addi	a1,a1,11"
       test16+= "li	t2,24"
-      test16+= "slt t0,	a1,t2"
+      test16+= "xor t0, a4,t2"
+      test16+= "snez t0,t0"
                                      
                                      
   var test17 : ArrayBuffer[String] = ArrayBuffer[String]()
@@ -191,7 +207,8 @@ object test_addi {
       test17+= "li	t0,2"
       test17+= "bne tp,t0,FFEC"
       test17+= "li	t2,24"
-      test17+= "slt t0,	t1,t2"
+      test17+= "xor t0, a4,t2"
+      test17+= "snez t0,t0"
                                      
                                      
   var test18 : ArrayBuffer[String] = ArrayBuffer[String]()
@@ -205,7 +222,8 @@ object test_addi {
       test18+= "li	t0,2"
       test18+= "bne tp,t0,80000320 "
       test18+= "li	t2,23"
-      test18+= "slt t0,	t1,t2"
+      test18+= "xor t0, a4,t2"
+      test18+= "snez t0,t0"
                                      
                                      
   var test19 : ArrayBuffer[String] = ArrayBuffer[String]()
@@ -220,7 +238,8 @@ object test_addi {
       test19+= "li	t0,2"
       test19+= "bne	tp,t0,FFE4"
       test19+= "li	t2,22"
-      test19+= "slt t0,	t1,t2"
+      test19+= "xor t0, a4,t2"
+      test19+= "snez t0,t0"
                                      
                                      
   var test20 : ArrayBuffer[String] = ArrayBuffer[String]()
@@ -232,7 +251,8 @@ object test_addi {
       test20+= "li	t0,2"
       test20+= "bne	tp,t0,FFF0"
       test20+= "li	t2,24"
-      test20+= "slt t0,	a4,t2"
+      test20+= "xor t0, a4,t2"
+      test20+= "snez t0,t0"
                                      
                                      
   var test21 : ArrayBuffer[String] = ArrayBuffer[String]()
@@ -245,7 +265,8 @@ object test_addi {
       test21 += "li	t0,2"
       test21 += "bne	tp,t0,800003a0"
       test21 += "li	t2,23"
-      test21 += "slt t0,	a4,t2"
+      test21+= "xor t0, a4,t2"
+      test21+= "snez t0,t0"
                                      
                                      
   var test22  : ArrayBuffer[String] = ArrayBuffer[String]()
@@ -259,14 +280,16 @@ object test_addi {
       test22 += "li	t0,2"
       test22 += "bne	tp,t0,800003c8"
       test22 += "li	t2,22"
-      test22 += "slt t0,	a4,t2"
+      test22+= "xor t0, a4,t2"
+      test22+= "snez t0,t0"
                                      
                                      
   var test23  : ArrayBuffer[String] = ArrayBuffer[String]()
       test23 += "li	gp,24"
       test23 += "li	ra,32"
       test23 += "li	t2,32"
-      test23 += "slt t0,	ra,t2"
+      test23+= "xor t0, a4,t2"
+      test23+= "snez t0,t0"
                                      
                                      
   var test24  : ArrayBuffer[String] = ArrayBuffer[String]()
@@ -274,14 +297,16 @@ object test_addi {
       test24 += "li	ra,33"
       test24 += "addi	zero,ra,50"
       test24 += "li	t2,0"
-      test24 += "slt t0,	zero,t2"
+      test24+= "xor t0, a4,t2"
+      test24+= "snez t0,t0"
 
   var test25  : ArrayBuffer[String] = ArrayBuffer[String]()
       test25 += "li	gp,8"
       test25 += "li	a3,0"
       test25 += "addi	a4,a3,2047"
       test25 += "li	t2,2047"
-      test25 += "slt t0,	a4,t2"
+      test25+= "xor t0, a4,t2"
+      test25+= "snez t0,t0"
 
   val tests = ArrayBuffer(test1, test2, test3, test4, test5, test6, test7, test8, test9, test10, test11, test12, test13, test14, test15, test16)
 

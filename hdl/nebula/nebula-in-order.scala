@@ -62,20 +62,22 @@ class nebulaRVIO() extends Component  {
   val E1 = CtrlLink()
   val wbStage = CtrlLink()
   
-  
-  val PC = Payload(UInt(8 bits)) 
+  val jumpTarget = UInt(64 bits)
+  val PC = Payload(UInt(64 bits)) 
+  val PCPLUS4 = Payload(UInt(64 bits))
+  val doJump = Bool()
+
   val fetcher = new fetch.Area {
     val pcReg = Reg(PC) init (0) simPublic()
     up(PC) := pcReg
+    PCPLUS4 := PC + 4
     up.valid := True
     when(up.isFiring) {
-      pcReg := PC + 1
+      pcReg := doJump ? (PC + 1) | jumpTarget
     }
-    val fail_test_reg = Reg(UInt(64 bits))
-    val pass_test_reg = Reg(UInt(64 bits))
 
-    val mem = Mem.fill(256)(Bits(32 bits)) init(Seq.fill(256)(B"0".resized)) simPublic()
-    haltWhen(PC === 255)
+    // val mem = Mem.fill(64)(Bits(32 bits)) init(Seq.fill(64)(B"0".resized)) simPublic()
+    haltWhen(PC === 15)
     
     val instrn = mem.readAsync(PC)
 
@@ -123,15 +125,6 @@ class nebulaRVIO() extends Component  {
   // io.rvfi.memWdata :=
   // io.rvfi.memMask :=
   
-
-
-
-
-
-
-
-
-
 
 
   val f2d = StageLink(fetch.down, d0.up)

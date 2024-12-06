@@ -25,16 +25,20 @@ case class IMM(instruction  : Bits) extends Area{
   def h = instruction(31 downto 24)
   def s = instruction(31 downto 25) ## instruction(11 downto 7)
   def b = instruction(31) ## instruction(7) ## instruction(30 downto 25) ## instruction(11 downto 8)
-  def u = instruction(31 downto 12) ## U"x000"
+  def u = instruction(31 downto 12) ## B(0, 12 bits)
   def j = instruction(31) ## instruction(19 downto 12) ## instruction(20) ## instruction(30 downto 21)
   def z = instruction(19 downto 15)
 
+  import spinal.core.sim._
   // sign-extend immediates
   def i_sext = S(i).resize(64)
   def h_sext = S(h).resize(64)
   def s_sext = S(s).resize(64)
   def b_sext = S(b ## False).resize(64)
   def j_sext = S(j ## False).resize(64)
+  def u_sext = S(u).resize(64) simPublic()
+  val u_sext_pub = SInt(64 bits) simPublic()
+  u_sext_pub := u_sext
 }
 
 
@@ -51,6 +55,7 @@ case class SrcPlugin(stage : CtrlLink) extends Area {
         Imm_Select.I_IMM -> imm.i_sext,
         Imm_Select.S_IMM -> imm.s_sext,
         Imm_Select.B_IMM -> imm.b_sext,
+        Imm_Select.U_IMM -> imm.u_sext,
       ).asBits
     }
   }
