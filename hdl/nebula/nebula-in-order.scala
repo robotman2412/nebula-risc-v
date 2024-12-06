@@ -63,20 +63,21 @@ class nebulaRVIO() extends Component  {
   val wbStage = CtrlLink()
   
   val jumpTarget = UInt(64 bits)
-  val PC = Payload(UInt(64 bits)) 
+  val PC = Payload(UInt(6 bits)) 
   val PCPLUS4 = Payload(UInt(64 bits))
   val doJump = Bool()
 
   val fetcher = new fetch.Area {
     val pcReg = Reg(PC) init (0) simPublic()
     up(PC) := pcReg
-    PCPLUS4 := PC + 4
+    // PCPLUS4 := PC + 4
     up.valid := True
     when(up.isFiring) {
-      pcReg := doJump ? (PC + 1) | jumpTarget
+      // pcReg := doJump ? (PC + 1) | jumpTarget
+      pcReg := PC + 1
     }
 
-    // val mem = Mem.fill(64)(Bits(32 bits)) init(Seq.fill(64)(B"0".resized)) simPublic()
+    val mem = Mem.fill(64)(Bits(32 bits)) init(Seq.fill(64)(B"0".resized)) simPublic()
     haltWhen(PC === 15)
     
     val instrn = mem.readAsync(PC)
@@ -90,12 +91,16 @@ class nebulaRVIO() extends Component  {
 
   val hazards = Seq(d0,dis0, rfread0, E1, wbStage)
 
+  // val PC = PC(pcNode)
   val decoder = Decoder(d0)
   val dispatch = Dispatch(dispatchNode = dis0)
   val intregFile = IntRegFile(rfread0, readSync = true, dataWidth = 64)
   val hazardChecker= HazardChecker(hazards)
   val srcPlugin = SrcPlugin(rfread0)
-  val intalu = IntAlu(E1)
+  // val intalu = IntAlu(E1)
+  val executePipeline = ExecutePipeline(E1)
+  // PC.jumpCmd << executePipeline.jal.jumpLocation
+  // PC.jumpCmd := jaller.jumpLocation
   val wb = IntWriteBackPlugin(wbStage, intregFile)
   
   

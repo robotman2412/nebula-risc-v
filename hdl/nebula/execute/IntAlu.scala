@@ -7,27 +7,24 @@ import nebula.decode.Decoder._
 import nebula.decode.YESNO
 import nebula.decode.Imm_Select
 import nebula.decode.ExecutionUnit.ALU
+import nebula.dispatch.SrcPlugin.IMMED
 
 
 case class IntAlu(aluNode : CtrlLink) extends ExecutionUnit with Area {
   val SRC1 = nebula.dispatch.SrcPlugin.RS1
   val SRC2 = nebula.dispatch.SrcPlugin.RS2
-  val BR_EQ = Payload(Bool())
   
   import nebula.execute.Execute._
   
   val aluNodeStage = new aluNode.Area {
-    val logic = new aluNode.Area {
       import nebula.dispatch.Dispatch._
       import nebula.decode.AluOp
       
-      down(BR_EQ) := SRC1 === SRC2
-
       val result = Bits(64 bits)
       result.assignDontCare()
       when(up(nebula.dispatch.Dispatch.SENDTOALU) === True && aluNode.isValid) {
         result := up(ALUOP).muxDc(
-          AluOp.xor  -> (up(SRC1) ^ up(SRC2)),
+          AluOp.xor  -> ((SRC1) ^ (SRC2)),
           AluOp.or   -> (SRC1 | SRC2),
           AluOp.and  -> (SRC1 & SRC2),
           AluOp.add      -> (SRC1.asSInt + SRC2.asSInt).asBits,
@@ -64,6 +61,5 @@ case class IntAlu(aluNode : CtrlLink) extends ExecutionUnit with Area {
           down(RESULT) := result.asBits
         }
       }
-    }
   }
 }

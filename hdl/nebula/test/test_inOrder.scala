@@ -167,22 +167,22 @@ object test_addi_seq extends App {
     var testIndex =0
   
     
-    // sequences.foreach(e => {
-    //   for(i <- 0 to 31){dut.intregFile.reggy.mem.setBigInt(i, BigInt("0"))}
-    //   e.zipWithIndex.foreach{e => dut.fetcher.mem.setBigInt(e._2, BigInt(e._1,16)); testIndex=e._2}
-    //   dut.clockDomain.waitSampling(100)
-    //   println(dut.intregFile.reggy.mem.getBigInt(5))
-    //   // assert(dut.intregFile.reggy.mem.getBigInt(5) == 0, s"failed at test ${testIndex}")
-    //   dut.clockDomain.assertReset()
-    //   sleep(2)
-    //   dut.clockDomain.deassertReset()
-    // })
+    sequences.foreach(e => {
+      for(i <- 0 to 31){dut.intregFile.reggy.mem.setBigInt(i, BigInt("0"))}
+      e.zipWithIndex.foreach{e => dut.fetcher.mem.setBigInt(e._2, BigInt(e._1,16)); testIndex=e._2}
+      dut.clockDomain.waitSampling(100)
+      println(dut.intregFile.reggy.mem.getBigInt(5))
+      // assert(dut.intregFile.reggy.mem.getBigInt(5) == 0, s"failed at test ${testIndex}")
+      dut.clockDomain.assertReset()
+      sleep(2)
+      dut.clockDomain.deassertReset()
+    })
     
-    for(i <- 0 to 31){dut.intregFile.reggy.mem.setBigInt(i, BigInt("0"))}
-    sequences(10).zipWithIndex.foreach(e => dut.fetcher.mem.setBigInt(e._2, BigInt(e._1, 16)))
-    // sequences(10).zipWithIndex.foreach(e => println(e._1))
-    dut.clockDomain.waitSampling(200)
-    println(dut.intregFile.reggy.mem.getBigInt(5))
+    // for(i <- 0 to 31){dut.intregFile.reggy.mem.setBigInt(i, BigInt("0"))}
+    // sequences(10).zipWithIndex.foreach(e => dut.fetcher.mem.setBigInt(e._2, BigInt(e._1, 16)))
+    // // sequences(10).zipWithIndex.foreach(e => println(e._1))
+    // dut.clockDomain.waitSampling(200)
+    // println(dut.intregFile.reggy.mem.getBigInt(5))
 
     /// DO TO TEST 25
   }

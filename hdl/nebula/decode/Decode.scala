@@ -7,6 +7,8 @@ import spinal.lib.logic.Masked
 import spinal.lib.logic.DecodingSpec
 import scala.collection.mutable
 import nebula.decode.Decoder.{INSTRUCTION => INSTRUCTION}
+import nebula.decode.Decoder.{RD => RD}
+import spinal.lib.cpu.riscv.impl.Alu
 
 
 object Decoder extends AreaObject {
@@ -32,7 +34,7 @@ object Decoder extends AreaObject {
 }
 
 object ExecutionUnit extends SpinalEnum(binarySequential) {
-  val ALU, FPU, AGU, NA = newElement() 
+  val ALU, FPU, AGU, JUMP, BR,NA = newElement() 
 }
 
 object REGFILE {
@@ -47,7 +49,7 @@ object REGFILE {
   }
 }
 object Imm_Select extends SpinalEnum (binarySequential) {
-    val I_IMM, S_IMM ,N_IMM, B_IMM, U_IMM = newElement()
+    val N_IMM, I_IMM, S_IMM , B_IMM, U_IMM, J_IMM = newElement()
 }
 
 object YESNO extends SpinalEnum(binarySequential) {
@@ -58,6 +60,8 @@ object YESNO extends SpinalEnum(binarySequential) {
 object AluOp extends SpinalEnum(binarySequential) {
   val add, sub, sll, srl, sra, or, xor, slt, sltu, and, na, lui= newElement()
   val addw,sllw,sraw,srlw, subw = newElement()
+  val jal, jalr = newElement()
+  val beq, bne, bge, bgeu, blt, bltu = newElement()
 
 }
 
@@ -145,8 +149,6 @@ object DecodeTable {
   import REGFILE._
   import Imm_Select._
   import YESNO._
-  // val Y = (1,1)
-  // val N = (0,1)
   val default_decode =  Seq(N,N, ExecutionUnit.NA, RDTYPE.RD_NA, RSTYPE.RS_NA, RSTYPE.RS_NA, N, N_IMM, AluOp.na, N, N)
   val X_table: Seq[(MaskedLiteral, Seq[Any])] = Seq(
               //                                                             frs3_en
@@ -234,10 +236,16 @@ object DecodeTable {
   SRL                 -> List(Y, N, ExecutionUnit.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.RS_INT, N,N_IMM , AluOp.srl , N, N),
   
   // AUIPC   -> List(Y, N, X, uopAUIPC, IQT_INT, FU_JMP , RT_FIX, RT_X  , RT_X  , N, IS_U, N, N, N, N, N, M_X  , 1.U, N, N, N, N, N, CSR.N), // use BRU for the PC read
-  // JAL     -> List(Y, N, X, uopJAL  , IQT_INT, FU_JMP , RT_FIX, RT_X  , RT_X  , N, IS_J, N, N, N, N, N, M_X  , 1.U, N, N, N, N, N, CSR.N),
-  // JALR    -> List(Y, N, X, uopJALR , IQT_INT, FU_JMP , RT_FIX, RT_FIX, RT_X  , N, IS_I, N, N, N, N, N, M_X  , 1.U, N, N, N, N, N, CSR.N),
-  // BEQ     -> List(Y, N, X, uopBEQ  , IQT_INT, FU_ALU , RT_X  , RT_FIX, RT_FIX, N, IS_B, N, N, N, N, N, M_X  , 0.U, N, Y, N, N, N, CSR.N),
+  JAL                 -> List(Y, N, ExecutionUnit.JUMP, RDTYPE.RD_INT, RSTYPE.RS_NA , RSTYPE.RS_NA, N , J_IMM, AluOp.jal, N, N),
+  JALR                -> List(Y, N, ExecutionUnit.JUMP, RDTYPE.RD_INT, RSTYPE.RS_NA , RSTYPE.RS_NA, N , I_IMM, AluOp.jalr,N, N),
+  BEQ                 -> List(Y, N, ExecutionUnit.BR,   RDTYPE.RD_NA , RSTYPE.RS_NA , RSTYPE.RS_NA, N , B_IMM, AluOp.beq, N, N),
 
+  BNE                 -> List(Y, N, ExecutionUnit.BR,   RDTYPE.RD_NA , RSTYPE.RS_NA , RSTYPE.RS_NA, N , B_IMM, AluOp.bne ,N, N),
+  BGE                 -> List(Y, N, ExecutionUnit.BR,   RDTYPE.RD_NA , RSTYPE.RS_NA , RSTYPE.RS_NA, N , B_IMM, AluOp.bge ,N, N),
+  BGEU                -> List(Y, N, ExecutionUnit.BR,   RDTYPE.RD_NA , RSTYPE.RS_NA , RSTYPE.RS_NA, N , B_IMM, AluOp.bgeu,N, N),
+  BLT                 -> List(Y, N, ExecutionUnit.BR,   RDTYPE.RD_NA , RSTYPE.RS_NA , RSTYPE.RS_NA, N , B_IMM, AluOp.blt ,N, N),
+  BLTU                -> List(Y, N, ExecutionUnit.BR,   RDTYPE.RD_NA , RSTYPE.RS_NA , RSTYPE.RS_NA, N , B_IMM, AluOp.bltu,N, N),
+  
   // MUL     -> List(Y, N, X, uopMUL  , IQT_INT, FU_MUL , RT_FIX, RT_FIX, RT_FIX, N, IS_X, N, N, N, N, N, M_, NX  , 0.U, N, N, N, N, N, CSR.N),
   // MULH    -> List(Y, N, X, uopMULH , IQT_INT, FU_MUL , RT_FIX, RT_FIX, RT_FIX, N, IS_X, N, N, N, N, N, M_X  , 0.U, N, N, N, N, N, CSR.N),
   // MULHU   -> List(Y, N, X, uopMULHU, IQT_INT, FU_MUL , RT_FIX, RT_FIX, RT_FIX, N, IS_X, N, N, N, N, N, M_X  , 0.U, N, N, N, N, N, CSR.N),
@@ -254,11 +262,6 @@ object DecodeTable {
   // REMUW   -> List(Y, N, X, uopREMUW, IQT_INT, FU_DIV , RT_FIX, RT_FIX, RT_FIX, N, IS_X, N, N, N, N, N, M_X  , 0.U, N, N, N, N, N, CSR.N),
 
   
-  // BNE     -> List(N, ExecutionUnit.ALU, RDTYPE.RD_NA, RSTYPE.RS_INT, RSTYPE.RS_INT, N,B_IMM , AluOp.sub , Y, N),
-  // BGE     -> List(Y, N, X, uopBGE  , IQT_INT, FU_ALU , RT_X  , RT_FIX, RT_FIX, N, IS_B, N, N, N, N, N, M_X  , 0.U, N, Y, N, N, N, CSR.N),
-  // BGEU    -> List(Y, N, X, uopBGEU , IQT_INT, FU_ALU , RT_X  , RT_FIX, RT_FIX, N, IS_B, N, N, N, N, N, M_X  , 0.U, N, Y, N, N, N, CSR.N),
-  // BLT     -> List(Y, N, X, uopBLT  , IQT_INT, FU_ALU , RT_X  , RT_FIX, RT_FIX, N, IS_B, N, N, N, N, N, M_X  , 0.U, N, Y, N, N, N, CSR.N),
-  // BLTU    -> List(Y, N, X, uopBLTU , IQT_INT, FU_ALU , RT_X  , RT_FIX, RT_FIX, N, IS_B, N, N, N, N, N, M_X  , 0.U, N, Y, N, N, N, CSR.N),
 
  
   )

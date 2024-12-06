@@ -16,6 +16,7 @@ object SrcPlugin extends AreaObject {
 
   val RS1 = Payload(Bits (64 bits))
   val RS2 = Payload(Bits (64 bits))
+  val IMMED = Payload(Bits(64 bits))
 
 }
 
@@ -56,21 +57,35 @@ case class SrcPlugin(stage : CtrlLink) extends Area {
         Imm_Select.S_IMM -> imm.s_sext,
         Imm_Select.B_IMM -> imm.b_sext,
         Imm_Select.U_IMM -> imm.u_sext,
+        Imm_Select.J_IMM -> imm.j_sext,
       ).asBits
     }
+    val is3src = Bool()
+    is3src:= up(IMMSEL).mux(
+      Imm_Select.B_IMM -> True,
+      Imm_Select.S_IMM -> True,
+      default -> False
+    )
   }
 
   val selectRS = new stage.Area {
     RS1.assignDontCare()
     RS2.assignDontCare()
+    IMMED.assignDontCare()
     when(up.isValid) {
       down(RS1) := up(nebula.decode.Decoder.RS1TYPE).muxDc(
         nebula.decode.REGFILE.RSTYPE.RS_INT -> IntRegFile.RegFile_RS1.asBits,
       )
-      down(RS2) := up(nebula.decode.Decoder.RS2TYPE).muxDc(
-        nebula.decode.REGFILE.RSTYPE.RS_INT -> IntRegFile.RegFile_RS2.asBits,
-        nebula.decode.REGFILE.RSTYPE.IMMED  -> immsel.sext,
-      )
+      when(!immsel.is3src) {
+        down(RS2) := up(nebula.decode.Decoder.RS2TYPE).muxDc(
+          nebula.decode.REGFILE.RSTYPE.RS_INT -> IntRegFile.RegFile_RS2.asBits,
+          nebula.decode.REGFILE.RSTYPE.IMMED  -> immsel.sext,
+        )
+      }
+      when(immsel.is3src) {
+        down(RS2) := IntRegFile.RegFile_RS2.asBits
+      }
+      down(IMMED) := immsel.sext
     }
   }
 }

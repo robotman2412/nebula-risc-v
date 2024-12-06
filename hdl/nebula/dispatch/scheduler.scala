@@ -9,6 +9,8 @@ import spinal.lib.misc.pipeline._
 import nebula.decode.Decoder._
 import nebula.decode.Decoder
 import nebula.decode.ExecutionUnit
+import nebula.decode.AluOp
+import nebula.cache.PC
 
 
 // object Dispatch extends AreaObject {
@@ -37,6 +39,8 @@ How to detect RD->RSx hazards for a given candidate:
 3)  schedule to the implementation slot with the best priority
 
  */
+
+
 
 case class HazardChecker(hzRange : Seq[CtrlLink]) extends Area {
   // RAW Hazards
@@ -107,6 +111,7 @@ Schedule heuristic :
 
 object Dispatch extends AreaObject {
   val SENDTOALU = Payload(Bool())
+  val SENDTOBRANCH = Payload(Bool())
 }
 
 case class Dispatch(dispatchNode: CtrlLink) extends Area {
@@ -125,8 +130,12 @@ case class Dispatch(dispatchNode: CtrlLink) extends Area {
     //   eus.foreach(f => f.SEL := False) 
     // }
     down(SENDTOALU) := False
+    down(SENDTOBRANCH) := False
     when(up(Decoder.EXECUTION_UNIT) === ExecutionUnit.ALU && up.isValid) {
       down(SENDTOALU) := True
+    }
+    when(up(Decoder.EXECUTION_UNIT) === ExecutionUnit.JUMP && up.isValid) {
+      down(SENDTOBRANCH) := True
     }
 
   }
