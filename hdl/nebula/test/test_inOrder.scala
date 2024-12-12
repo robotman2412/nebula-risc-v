@@ -165,6 +165,9 @@ object test_addi_seq extends App {
     import test.unit_tests.test_addi._
     
     var testIndex =0
+    
+
+    /// THESE ARE RV32I SO NOT ALL TESTS PASS CAUSE THEY CHECK 32 BIT INT OVERFLOW
   
     
     sequences.foreach(e => {

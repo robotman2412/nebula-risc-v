@@ -28,7 +28,7 @@ class MainMemory(memSize: Int, wordWidth: Int) extends Component {
 }
 
 class ICacheTestbench extends Component {
-  val cache = new nebula.cache.ICache() // Assuming 'node' is optional
+  val cache = new nebula.LsuL1.ICache() // Assuming 'node' is optional
   val mainMemory = new MainMemory(1024, 32) // 1 KB memory, 32-bit words
 
   // Connect main memory to cache's RAM bus
@@ -68,6 +68,7 @@ class ICacheTestbench extends Component {
 }
 import spinal.core._
 import spinal.core.sim._
+import nebula.LsuL1.ICache
 
 object ICacheSim {
   def main(args: Array[String]): Unit = {

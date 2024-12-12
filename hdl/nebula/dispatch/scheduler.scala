@@ -10,7 +10,7 @@ import nebula.decode.Decoder._
 import nebula.decode.Decoder
 import nebula.decode.ExecutionUnit
 import nebula.decode.AluOp
-import nebula.cache.PC
+import nebula.LsuL1.PC
 
 
 // object Dispatch extends AreaObject {
@@ -134,7 +134,7 @@ case class Dispatch(dispatchNode: CtrlLink) extends Area {
     when(up(Decoder.EXECUTION_UNIT) === ExecutionUnit.ALU && up.isValid) {
       down(SENDTOALU) := True
     }
-    when(up(Decoder.EXECUTION_UNIT) === ExecutionUnit.JUMP && up.isValid) {
+    when(up(Decoder.EXECUTION_UNIT) === ExecutionUnit.BR && up.isValid) {
       down(SENDTOBRANCH) := True
     }
 

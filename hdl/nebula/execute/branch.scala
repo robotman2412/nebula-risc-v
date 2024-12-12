@@ -5,10 +5,11 @@ import spinal.core._
 import spinal.lib._
 import spinal.lib.misc.pipeline._
 import nebula.decode.AluOp
-import nebula.cache.PC
-import nebula.cache.JumpCmd
+import nebula.LsuL1.PC
+import nebula.LsuL1.JumpCmd
 import nebula.decode.Decoder.ALUOP
 import nebula.dispatch.SrcPlugin.IMMED
+import nebula.execute.Execute.RESULT
 
 
 
@@ -29,7 +30,8 @@ case class CtrlHazardThrowPipeline(decodeNode : CtrlLink, hzRange : Seq[CtrlLink
   }
 }
 
-case class Branch(node : CtrlLink) extends Area {
+case class Branch(node : CtrlLink) extends ExecutionUnit with Area {
+  import nebula.LsuL1.PC._
   
   val SRC1 = nebula.dispatch.SrcPlugin.RS1
   val SRC2 = nebula.dispatch.SrcPlugin.RS2
@@ -43,6 +45,9 @@ case class Branch(node : CtrlLink) extends Area {
     doJump := False
     when(up(nebula.decode.Decoder.ALUOP) === AluOp.jal || up(nebula.decode.Decoder.ALUOP) === AluOp.jalr) {
       doJump := True
+      jmpCmd.valid := True
+      jmpCmd.payload.address := IMMED.asUInt
+      RESULT := PCPLUS4.asBits
     }
 
   }

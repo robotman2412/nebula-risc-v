@@ -25,6 +25,8 @@ object Decoder extends AreaObject {
   val ALUOP          = Payload(AluOp())
   val IS_BR          = Payload(YESNO())
   val IS_W           = Payload(YESNO())
+  val USE_LDQ        = Payload(YESNO())
+  val USE_STQ        = Payload(YESNO())
   
   val RD = Payload(Bits(5 bits))
   val RS1 = Payload(Bits(5 bits))
@@ -34,7 +36,7 @@ object Decoder extends AreaObject {
 }
 
 object ExecutionUnit extends SpinalEnum(binarySequential) {
-  val ALU, FPU, AGU, JUMP, BR,NA = newElement() 
+  val ALU, FPU, AGU, BR,NA = newElement() 
 }
 
 object REGFILE {
@@ -67,8 +69,8 @@ object AluOp extends SpinalEnum(binarySequential) {
 
 case class Decoder(stage : CtrlLink) extends Area {
   import DecodeTable._
-  // import CtrlSigs._
   import ExecutionUnit._
+  import Decoder._
 
 
   
@@ -81,7 +83,6 @@ case class Decoder(stage : CtrlLink) extends Area {
 
   
   val all = mutable.LinkedHashSet[Masked]()
-  import Decoder._
   val payloads = Seq(LEGAL,IS_FP, EXECUTION_UNIT , RDTYPE, RS1TYPE, RS2TYPE, FSR3EN, IMMSEL, ALUOP , IS_BR , IS_W )
 
   val specs = payloads.map(k => new DecodingSpec(k)).zip(payloads)
@@ -143,129 +144,6 @@ case class Decoder(stage : CtrlLink) extends Area {
 }
 
 
-object DecodeTable {
-  import RV32I._
-  import RV64I._
-  import REGFILE._
-  import Imm_Select._
-  import YESNO._
-  val default_decode =  Seq(N,N, ExecutionUnit.NA, RDTYPE.RD_NA, RSTYPE.RS_NA, RSTYPE.RS_NA, N, N_IMM, AluOp.na, N, N)
-  val X_table: Seq[(MaskedLiteral, Seq[Any])] = Seq(
-              //                                                             frs3_en
-              //               is val inst?                                  |  imm sel
-              //               |  is fp inst?                                |  |     uses_ldq
-              //               |  |                          rs1 regtype     |  |     |  uses_stq        is unique? (clear pipeline for it)
-              //               |  |                          |       rs2 type|  |     |  |  is_amo       |  flush on commit
-              //               |  |  func unit               |       |       |  |     |  |  |            |  |  csr cmd
-              //               |  |  |                       |       |       |  |     |  |  |            |  |  |      fcn_dw                      swap12         fma
-              //               |  |  |               dst     |       |       |  |     |  |  |  mem       |  |  |      |       fcn_op              | swap32       | div
-              //               |  |  |               regtype |       |       |  |     |  |  |  cmd       |  |  |      |       |                   | | typeTagIn  | | sqrt
-              //               |  |  |               |       |       |       |  |     |  |  |  |         |  |  |      |       |        ldst       | | | typeTagOut | | wflags
-              //               |  |  |               |       |       |       |  |     |  |  |  |         |  |  |      |       |        | wen      | | | | from_int | | |
-              //               |  |  |               |       |       |       |  |     |  |  |  |         |  |  |      |       |        | | ren1   | | | | | to_int | | |
-              //               |  |  |               |       |       |       |  |     |  |  |  |         |  |  |      |       |        | | | ren2 | | | | | | fast | | |
-              //               |  |  |               |       |       |       |  |     |  |  |  |         |  |  |      |       |        | | | | ren3 | | | | | |  | | | |
-              //               |  |  |               |       |       |       |  |     |  |  |  |         |  |  |      |       |        | | | | |  | | | | | | |  | | | |
-    //                    List(N, N, DC(FC_SZ)     , RT_X  , DC(2) , DC(2) , X, IS_N, X, X, X, M_X,      N, X, CSR.X, DW_X  , FN_X   , X,X,X,X,X, X,X,X,X,X,X,X, X,X,X,X)
-
-              //                                                                                  frs3_en
-              //          valid?                                                                  |    imm sel       is_br
-              //             | is fp inst?                                                        |    |      fcn_op   |         uses_ldq
-              //             | |                                     rs1 regtype                  |    |        |      | is_w      |  uses_stq        is unique? (clear pipeline for it)
-              //             | |                                          |           rs2 type    |    |        |      |  |        |  |  is_amo       |  flush on commit
-              //             | |       func unit                          |               |       |    |        |      |  |        |  |  |            |  |  csr cmd
-              //             | |       |                                  |               |       |    |        |      |  |        |  |  |            |  |  |      fcn_dw                      swap12         fma
-              //             | |       |                  dst             |               |       |    |        |      |  |        |  |  |  mem       |  |  |      |       fcn_op              | swap32       | div
-              //             | |       |                  regtype         |               |       |    |        |      |  |        |  |  |  cmd       |  |  |      |       |                   | | typeTagIn  | | sqrt
-              //             | |       |                  |               |               |       |    |        |      |  |        |  |  |  |         |  |  |      |       |        ldst       | | | typeTagOut | | wflags
-              //             | |       |                  |               |               |       |    |        |      |  |        |  |  |  |         |  |  |      |       |        | wen      | | | | from_int | | |
-              //             | |       |                  |               |               |       |    |        |      |  |        |  |  |  |         |  |  |      |       |        | | ren1   | | | | | to_int | | |
-              //             | |       |                  |               |               |       |    |        |      |  |        |  |  |  |         |  |  |      |       |        | | | ren2 | | | | | | fast | | |
-              //             | |       |                  |               |               |       |    |        |      |  |        |  |  |  |         |  |  |      |       |        | | | | ren3 | | | | | |  | | | |
-              //             | |       |                  |               |               |       |    |        |      |  |        |  |  |  |         |  |  |      |       |        | | | | |  | | | | | | |  | | | |
-    //                  List(N,N, ExecutionUnit.FPU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.RS_INT, N, I_IMM, AluOp.ADD, N, N           X, X, X, M_X,      N, X, CSR.X, DW_X  , FN_X   , X,X,X,X,X, X,X,X,X,X,X,X, X,X,X,X)
-
-    // LD                 -> List(False, ExecutionUnit.NA, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.RS_INT, False, I_IMM, AluOp.SRA),
-  // LWU     -> List(Y, N, X, uopLD   , IQT_MEM, FU_MEM , RT_FIX, RT_FIX, RT_X  , N, IS_I, Y, N, N, N, N, M_XRD, 3.U, N, N, N, N, N, CSR.N),
-  // SD      -> List(Y, N, X, uopSTA  , IQT_MEM, FU_MEM , RT_X  , RT_FIX, RT_FIX, N, IS_S, N, Y, N, N, N, M_XWR, 0.U, N, N, N, N, N, CSR.N),
-
-  SLLI        ->       List(Y, N, ExecutionUnit.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.IMMED , N, I_IMM, AluOp.sll , N, N),
-  SRLI        ->       List(Y, N, ExecutionUnit.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.IMMED , N, I_IMM, AluOp.srl , N, N),
-  SRAI        ->       List(Y, N, ExecutionUnit.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.IMMED , N, I_IMM, AluOp.sra , N, N),
-                                                                                                                      
-  ADDIW       ->       List(Y, N, ExecutionUnit.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.IMMED , N, I_IMM, AluOp.addw, N, Y),
-  SLLIW       ->       List(Y, N, ExecutionUnit.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.IMMED , N, I_IMM, AluOp.sllw, N, Y),
-  SRAIW       ->       List(Y, N, ExecutionUnit.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.IMMED , N, I_IMM, AluOp.sraw, N, Y),
-  SRLIW       ->       List(Y, N, ExecutionUnit.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.IMMED , N, I_IMM, AluOp.srlw, N, Y),
-                                                                                                                      
-  ADDW        ->       List(Y, N, ExecutionUnit.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.RS_INT, N, N_IMM, AluOp.addw, N, Y),
-  SUBW        ->       List(Y, N, ExecutionUnit.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.RS_INT, N, N_IMM, AluOp.subw, N, Y),
-  SLLW        ->       List(Y, N, ExecutionUnit.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.RS_INT, N, N_IMM, AluOp.sllw, N, Y),
-  SRAW        ->       List(Y, N, ExecutionUnit.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.RS_INT, N, N_IMM, AluOp.sraw, N, Y),
-  SRLW        ->       List(Y, N, ExecutionUnit.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.RS_INT, N, N_IMM, AluOp.srlw, N, Y),
- 
-  LUI     ->           List(Y, N, ExecutionUnit.ALU, RDTYPE.RD_INT, RSTYPE.RS_NA , RSTYPE.IMMED , N, U_IMM, AluOp.lui , N, N),
-
-  // LW      -> List(False, ExecutionUnit.AGU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.RS_INT, False, NA   , AluOp.SLL),
-  // LH      -> List(Y, N, X, uopLD   , IQT_MEM, FU_MEM , RT_FIX, RT_FIX, RT_X  , N, IS_I, Y, N, N, N, N, M_XRD, 3.U, N, N, N, N, N, CSR.N),
-  // LHU     -> List(Y, N, X, uopLD   , IQT_MEM, FU_MEM , RT_FIX, RT_FIX, RT_X  , N, IS_I, Y, N, N, N, N, M_XRD, 3.U, N, N, N, N, N, CSR.N),
-  // LB      -> List(Y, N, X, uopLD   , IQT_MEM, FU_MEM , RT_FIX, RT_FIX, RT_X  , N, IS_I, Y, N, N, N, N, M_XRD, 3.U, N, N, N, N, N, CSR.N),
-  // LBU     -> List(Y, N, X, uopLD   , IQT_MEM, FU_MEM , RT_FIX, RT_FIX, RT_X  , N, IS_I, Y, N, N, N, N, M_XRD, 3.U, N, N, N, N, N, CSR.N),
-
-  // SW      -> List(Y, N, X, uopSTA  , IQT_MEM, FU_MEM , RT_X  , RT_FIX, RT_FIX, N, IS_S, N, Y, N, N, N, M_XWR, 0.U, N, N, N, N, N, CSR.N),
-  // SH      -> List(Y, N, X, uopSTA  , IQT_MEM, FU_MEM , RT_X  , RT_FIX, RT_FIX, N, IS_S, N, Y, N, N, N, M_XWR, 0.U, N, N, N, N, N, CSR.N),
-  // SB      -> List(Y, N, X, uopSTA  , IQT_MEM, FU_MEM , RT_X  , RT_FIX, RT_FIX, N, IS_S, N, Y, N, N, N, M_XWR, 0.U, N, N, N, N, N, CSR.N),
-
-
-  ADDI               -> List(Y, N, ExecutionUnit.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.IMMED , N, I_IMM, AluOp.add , N, N),
-  ANDI               -> List(Y, N, ExecutionUnit.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.IMMED , N, I_IMM, AluOp.and , N, N),
-  ORI                -> List(Y, N, ExecutionUnit.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.IMMED , N, I_IMM, AluOp.or  , N, N),
-  XORI               -> List(Y, N, ExecutionUnit.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.IMMED , N, I_IMM, AluOp.xor , N, N),
-  SLTI               -> List(Y, N, ExecutionUnit.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.IMMED , N, I_IMM, AluOp.slt , N, N),
-  SLTIU              -> List(Y, N, ExecutionUnit.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.IMMED , N, I_IMM, AluOp.sltu, N, N),
-
-  SLL                 -> List(Y, N, ExecutionUnit.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.RS_INT, N,N_IMM , AluOp.sll , N, N),
-  ADD                 -> List(Y, N, ExecutionUnit.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.RS_INT, N,N_IMM , AluOp.add , N, N),
-  SUB                 -> List(Y, N, ExecutionUnit.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.RS_INT, N,N_IMM , AluOp.sub , N, N),
-  SLT                 -> List(Y, N, ExecutionUnit.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.RS_INT, N,N_IMM , AluOp.slt , N, N),
-  SLTU                -> List(Y, N, ExecutionUnit.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.RS_INT, N,N_IMM , AluOp.sltu, N, N),
-  AND                 -> List(Y, N, ExecutionUnit.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.RS_INT, N,N_IMM , AluOp.and , N, N),
-  OR                  -> List(Y, N, ExecutionUnit.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.RS_INT, N,N_IMM , AluOp.or  , N, N),
-  XOR                 -> List(Y, N, ExecutionUnit.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.RS_INT, N,N_IMM , AluOp.xor , N, N),
-  SRA                 -> List(Y, N, ExecutionUnit.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.RS_INT, N,N_IMM , AluOp.sra , N, N),
-  SRL                 -> List(Y, N, ExecutionUnit.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.RS_INT, N,N_IMM , AluOp.srl , N, N),
-  
-  // AUIPC   -> List(Y, N, X, uopAUIPC, IQT_INT, FU_JMP , RT_FIX, RT_X  , RT_X  , N, IS_U, N, N, N, N, N, M_X  , 1.U, N, N, N, N, N, CSR.N), // use BRU for the PC read
-  JAL                 -> List(Y, N, ExecutionUnit.JUMP, RDTYPE.RD_INT, RSTYPE.RS_NA , RSTYPE.RS_NA, N , J_IMM, AluOp.jal, N, N),
-  JALR                -> List(Y, N, ExecutionUnit.JUMP, RDTYPE.RD_INT, RSTYPE.RS_NA , RSTYPE.RS_NA, N , I_IMM, AluOp.jalr,N, N),
-  BEQ                 -> List(Y, N, ExecutionUnit.BR,   RDTYPE.RD_NA , RSTYPE.RS_NA , RSTYPE.RS_NA, N , B_IMM, AluOp.beq, N, N),
-
-  BNE                 -> List(Y, N, ExecutionUnit.BR,   RDTYPE.RD_NA , RSTYPE.RS_NA , RSTYPE.RS_NA, N , B_IMM, AluOp.bne ,N, N),
-  BGE                 -> List(Y, N, ExecutionUnit.BR,   RDTYPE.RD_NA , RSTYPE.RS_NA , RSTYPE.RS_NA, N , B_IMM, AluOp.bge ,N, N),
-  BGEU                -> List(Y, N, ExecutionUnit.BR,   RDTYPE.RD_NA , RSTYPE.RS_NA , RSTYPE.RS_NA, N , B_IMM, AluOp.bgeu,N, N),
-  BLT                 -> List(Y, N, ExecutionUnit.BR,   RDTYPE.RD_NA , RSTYPE.RS_NA , RSTYPE.RS_NA, N , B_IMM, AluOp.blt ,N, N),
-  BLTU                -> List(Y, N, ExecutionUnit.BR,   RDTYPE.RD_NA , RSTYPE.RS_NA , RSTYPE.RS_NA, N , B_IMM, AluOp.bltu,N, N),
-  
-  // MUL     -> List(Y, N, X, uopMUL  , IQT_INT, FU_MUL , RT_FIX, RT_FIX, RT_FIX, N, IS_X, N, N, N, N, N, M_, NX  , 0.U, N, N, N, N, N, CSR.N),
-  // MULH    -> List(Y, N, X, uopMULH , IQT_INT, FU_MUL , RT_FIX, RT_FIX, RT_FIX, N, IS_X, N, N, N, N, N, M_X  , 0.U, N, N, N, N, N, CSR.N),
-  // MULHU   -> List(Y, N, X, uopMULHU, IQT_INT, FU_MUL , RT_FIX, RT_FIX, RT_FIX, N, IS_X, N, N, N, N, N, M_X  , 0.U, N, N, N, N, N, CSR.N),
-  // MULHSU  -> List(Y, N, X, uopMULHSU,IQT_INT, FU_MUL , RT_FIX, RT_FIX, RT_FIX, N, IS_X, N, N, N, N, N, M_X  , 0.U, N, N, N, N, N, CSR.N),
-  // MULW    -> List(Y, N, X, uopMULW , IQT_INT, FU_MUL , RT_FIX, RT_FIX, RT_FIX, N, IS_X, N, N, N, N, N, M_X  , 0.U, N, N, N, N, N, CSR.N),
-
-  // DIV     -> List(Y, N, X, uopDIV  , IQT_INT, FU_DIV , RT_FIX, RT_FIX, RT_FIX, N, IS_X, N, N, N, N, N, M_X  , 0.U, N, N, N, N, N, CSR.N),
-  // DIVU    -> List(Y, N, X, uopDIVU , IQT_INT, FU_DIV , RT_FIX, RT_FIX, RT_FIX, N, IS_X, N, N, N, N, N, M_X  , 0.U, N, N, N, N, N, CSR.N),
-  // REM     -> List(Y, N, X, uopREM  , IQT_INT, FU_DIV , RT_FIX, RT_FIX, RT_FIX, N, IS_X, N, N, N, N, N, M_X  , 0.U, N, N, N, N, N, CSR.N),
-  // REMU    -> List(Y, N, X, uopREMU , IQT_INT, FU_DIV , RT_FIX, RT_FIX, RT_FIX, N, IS_X, N, N, N, N, N, M_X  , 0.U, N, N, N, N, N, CSR.N),
-  // DIVW    -> List(Y, N, X, uopDIVW , IQT_INT, FU_DIV , RT_FIX, RT_FIX, RT_FIX, N, IS_X, N, N, N, N, N, M_X  , 0.U, N, N, N, N, N, CSR.N),
-  // DIVUW   -> List(Y, N, X, uopDIVUW, IQT_INT, FU_DIV , RT_FIX, RT_FIX, RT_FIX, N, IS_X, N, N, N, N, N, M_X  , 0.U, N, N, N, N, N, CSR.N),
-  // REMW    -> List(Y, N, X, uopREMW , IQT_INT, FU_DIV , RT_FIX, RT_FIX, RT_FIX, N, IS_X, N, N, N, N, N, M_X  , 0.U, N, N, N, N, N, CSR.N),
-  // REMUW   -> List(Y, N, X, uopREMUW, IQT_INT, FU_DIV , RT_FIX, RT_FIX, RT_FIX, N, IS_X, N, N, N, N, N, M_X  , 0.U, N, N, N, N, N, CSR.N),
-
-  
-
- 
-  )
-}
 
 
         

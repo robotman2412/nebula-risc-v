@@ -24,21 +24,21 @@ case class IntAlu(aluNode : CtrlLink) extends ExecutionUnit with Area {
       result.assignDontCare()
       when(up(nebula.dispatch.Dispatch.SENDTOALU) === True && aluNode.isValid) {
         result := up(ALUOP).muxDc(
-          AluOp.xor  -> ((SRC1) ^ (SRC2)),
-          AluOp.or   -> (SRC1 | SRC2),
-          AluOp.and  -> (SRC1 & SRC2),
+          AluOp.xor      -> (SRC1 ^ SRC2),
+          AluOp.or       -> (SRC1 | SRC2),
+          AluOp.and      -> (SRC1 & SRC2),
           AluOp.add      -> (SRC1.asSInt + SRC2.asSInt).asBits,
           AluOp.sll      -> (SRC1.asUInt |<< (SRC2(6 downto 0)).asUInt).asBits,
           AluOp.srl      -> (SRC1.asUInt |>> (SRC2(6 downto 0)).asUInt).asBits,
           AluOp.sra      -> (SRC1.asUInt  >> (SRC2(6 downto 0)).asUInt).asBits,
           AluOp.sub      -> (SRC1.asSInt - SRC2.asSInt).asBits,
 
-          AluOp.addw      -> (SRC1.asSInt + SRC2.asSInt)(31 downto 0).resize(64).asBits,
-          AluOp.sllw      -> (SRC1.asUInt |<< SRC2(4 downto 0).asUInt)(31 downto 0).resize(64).asBits,
-          AluOp.sraw      -> (SRC1.asUInt  >> SRC2(4 downto 0).asUInt)(31 downto 0).resize(64).asBits,
-          AluOp.srlw      -> (SRC1.asUInt |>> SRC2(4 downto 0).asUInt)(31 downto 0).resize(64).asBits,
-          AluOp.subw      -> (SRC1.asSInt - SRC2.asSInt)(31 downto 0).resize(64).asBits,
-          AluOp.lui       -> SRC2.asBits
+          AluOp.addw     -> (SRC1.asSInt + SRC2.asSInt)(31 downto 0).resize(64).asBits,
+          AluOp.sllw     -> (SRC1.asUInt |<< SRC2(4 downto 0).asUInt)(31 downto 0).resize(64).asBits,
+          AluOp.sraw     -> (SRC1.asUInt  >> SRC2(4 downto 0).asUInt)(31 downto 0).resize(64).asBits,
+          AluOp.srlw     -> (SRC1.asUInt |>> SRC2(4 downto 0).asUInt)(31 downto 0).resize(64).asBits,
+          AluOp.subw     -> (SRC1.asSInt - SRC2.asSInt)(31 downto 0).resize(64).asBits,
+          AluOp.lui      -> SRC2.asBits
         )
       }
       

@@ -1,8 +1,25 @@
 package test.unit_tests
 
+object testy_compy extends App {
+    import compile_rv._
+    
+    val bins = getCompiled("/home/mahir/fun/CPU/riscv-tests/isa/rv64ui-p-add")
+}
 
 object compile_rv {
-import scala.collection.mutable.ArrayBuffer
+  import scala.collection.mutable.ArrayBuffer
+  import java.nio.file.{Files, Paths}
+  
+    
+  def getCompiled(filename : String) = {
+    val binaryData = Files.readAllBytes(Paths.get(filename))
+    
+    val instructions = binaryData.grouped(4).map( bytes =>
+        java.nio.ByteBuffer.wrap(bytes.reverse).getInt().toHexString).toArray
+    instructions.foreach(e => println(e))
+  }
+  
+
   def compileProgram(test: ArrayBuffer[String]): Array[String] = {
     import scala.sys.process._
     import java.io.{PrintWriter, File}
@@ -43,6 +60,11 @@ import scala.collection.mutable.ArrayBuffer
     }
   }
 
+}
+
+object test_compy extends App {
+    import compile_rv._
+    
 }
 
 object test_addi {

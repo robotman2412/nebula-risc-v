@@ -1,4 +1,4 @@
-package nebula.cache
+package nebula.LsuL1
 
 
 import spinal.core._
@@ -6,20 +6,6 @@ import spinal.lib._
 import spinal.lib.misc.pipeline._
 
 
-case class RamFetchCmd() extends Bundle {
-  val address = UInt(64 bits)
-}
-case class RamFetchRsp() extends Bundle {
-  val address = UInt(64 bits)
-  val data = Bits(32 bits)
-}
-case class L1FetchCmd() extends Bundle {
-  val address = UInt(64 bits)
-}
-case class L1FetchRsp() extends Bundle {
-  val miss = Bool()
-  val data = Bits(32 bits)
-}
 
 
 class ICacheBus() extends Bundle with IMasterSlave {

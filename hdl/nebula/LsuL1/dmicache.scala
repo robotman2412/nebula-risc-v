@@ -1,4 +1,4 @@
-package nebula.cache
+package nebula.LsuL1
 
 
 import spinal.core._
@@ -70,7 +70,7 @@ case class DCache() extends Area {
     when(l1bus.cmd.valid) {
       when(hit) {
         l1bus.rsp.valid := True
-        mem.write(index, l1bus.cmd.payload.data)
+        // mem.write(index, l1bus.cmd.payload.data)
         val updatedTag = tagBank.readSync(index)
         updatedTag.dirty := True
         tagBank.write(index, updatedTag)
@@ -117,7 +117,7 @@ case class DCache() extends Area {
       when(tag.valid && tag.dirty) {
         dirtyWriteback := True
         evictData := mem.readSync(index)
-        evictAddr := tag.address ## index ## U"00" // Build full address for RAM write
+        // evictAddr := tag.address ## index ## U"00" // Build full address for RAM write
       }.otherwise {
         dirtyWriteback := False
       }
@@ -129,7 +129,7 @@ case class DCache() extends Area {
       when(dirtyWriteback) {
         ramBus.cmd.valid := True
         ramBus.cmd.payload.address := evictAddr
-        ramBus.cmd.payload.data := evictData
+        // ramBus.cmd.payload.data := evictData
       }.otherwise {
         ramBus.rsp.ready := True
       }
