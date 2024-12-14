@@ -7,7 +7,6 @@ import spinal.core._
 import spinal.lib.misc.pipeline._
 import spinal.lib._
 import nebula.cpu.fetch.FetchData
-import nebula.cpu.fetch.FetchFrag
 
 
 
@@ -105,10 +104,10 @@ case class NebulaCfg(
     val fetchChunks = if (isa.C) 2*frontendWidth else frontendWidth
     
     object payload {
-        /** Base address of current instruction or fetch packet. */
-        val PC = Payload(SInt(vaddrWidth bits))
+        /** Base address of fetch packet. */
+        val FETCH_PACKET_PC = Payload(SInt(vaddrWidth bits))
         /** Raw fetch packet data. */
-        val FETCH_PACKET = Payload(Vec.fill(fetchChunks)(Flow(FetchFrag(cfg))))
+        val FETCH_PACKET = Payload(Bits(32*frontendWidth + 16*isa.C.toInt bits))
         /** Raw instructions not compacted yet, used in fetch pipeline. */
         val UNPACKED_RAW_INSNS = Payload(Vec.fill(fetchChunks)(Flow(FetchData(cfg))))
         /** Raw instructions extracted from fetch packet. */

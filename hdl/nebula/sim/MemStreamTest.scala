@@ -35,7 +35,37 @@ object MemStreamTest extends App {
         dut.clockDomain.forkStimulus(period = 10)
         dut.io.dout.ready #= true
         
-        // Let it run for a little while
+        // Let it run for a little while.
+        dut.clockDomain.waitSampling(5)
+        
+        // Jump.
+        dut.io.jump #= true
+        dut.io.addr #= 2
+        dut.clockDomain.waitSampling(1)
+        dut.io.jump #= false
+        
+        // Run it linearly again.
         dut.clockDomain.waitSampling(10)
+        
+        // Jump erratically.
+        dut.io.jump #= true
+        dut.io.addr #= 7
+        dut.clockDomain.waitSampling(1)
+        dut.io.jump #= false
+        dut.clockDomain.waitSampling(2)
+        
+        dut.io.jump #= true
+        dut.io.addr #= 3
+        dut.clockDomain.waitSampling(1)
+        dut.io.jump #= false
+        dut.clockDomain.waitSampling(1)
+        
+        dut.io.jump #= true
+        dut.io.addr #= 7
+        dut.clockDomain.waitSampling(1)
+        dut.io.jump #= false
+        
+        // Run it 'till the end.
+        dut.clockDomain.waitSampling(20)
     }
 }
