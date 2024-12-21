@@ -19,6 +19,8 @@ import nebula.dispatch.Dispatch.SENDTOALU
 import nebula.dispatch.SrcPlugin.RS1
 import nebula.dispatch.SrcPlugin.RS2
 import nebula.execute.Execute.RESULT
+import nebula.decode.Decoder.LEGAL
+import nebula.LsuL1.PC.PCVal
 
 // fetcher area for now for simulation. icache and dcache will be added last
 //  rough core pipeline
@@ -37,24 +39,25 @@ class RVFIBundle extends Bundle {
   
   val rs1Addr = UInt(5 bits)
   val rs2Addr = UInt(5 bits)
-  val rs1Rdata = Bits(32 bits)
-  val rs2Rdata = Bits(32 bits)
+  val rs1Rdata = Bits(64 bits)
+  val rs2Rdata = Bits(64 bits)
   val rdAddr = UInt(5 bits)
-  val rdWdata = Bits(32 bits)
+  val rdWdata = Bits(64 bits)
 
 
-  val pcRdata = UInt(32 bits)
-  val pcWdata = UInt(32 bits)
+  val pcRdata = UInt(64 bits)
+  val pcWdata = UInt(64 bits)
   
-  val memAddr    = UInt(32 bits)           // Memory address accessed
-  val memRdata   = Bits(32 bits)           // Data read from memory
-  val memWdata   = Bits(32 bits)           // Data written to memory
+  val memAddr    = UInt(64 bits)           // Memory address accessed
+  val memRdata   = Bits(64 bits)           // Data read from memory
+  val memWdata   = Bits(64 bits)           // Data written to memory
   val memMask    = Bits(4 bits)            // Memory byte mask
 
 }
 class nebulaRVIO() extends Component  {
   
   
+  val pcNode = CtrlLink()
   val fetch = CtrlLink()
   val d0 = CtrlLink()
   val dis0 = CtrlLink()
@@ -62,36 +65,12 @@ class nebulaRVIO() extends Component  {
   val E1 = CtrlLink()
   val wbStage = CtrlLink()
   
-  val jumpTarget = UInt(64 bits)
-  val PC = Payload(UInt(6 bits)) 
-  val PCPLUS4 = Payload(UInt(64 bits))
-  val doJump = Bool()
-
-  val fetcher = new fetch.Area {
-    val pcReg = Reg(PC) init (0) simPublic()
-    up(PC) := pcReg
-    // PCPLUS4 := PC + 4
-    up.valid := True
-    when(up.isFiring) {
-      // pcReg := doJump ? (PC + 1) | jumpTarget
-      pcReg := PC + 1
-    }
-
-    val mem = Mem.fill(64)(Bits(32 bits)) init(Seq.fill(64)(B"0".resized)) simPublic()
-    haltWhen(PC === 15)
-    
-    val instrn = mem.readAsync(PC)
-
-    down(INSTRUCTION) := mem.readAsync(PC)
-  }
 
 
-  // val eus = List(intalu)
+  val hazards = Seq(pcNode, fetch,d0,dis0, rfread0, E1, wbStage)
 
-
-  val hazards = Seq(d0,dis0, rfread0, E1, wbStage)
-
-  // val PC = PC(pcNode)
+  val ProgramCounter = LsuL1.PC(pcNode)
+  val Icache = LsuL1.ICache(fetch)
   val decoder = Decoder(d0)
   val dispatch = Dispatch(dispatchNode = dis0)
   val intregFile = IntRegFile(rfread0, readSync = true, dataWidth = 64)
@@ -103,34 +82,38 @@ class nebulaRVIO() extends Component  {
   // PC.jumpCmd := jaller.jumpLocation
   val wb = IntWriteBackPlugin(wbStage, intregFile)
   
+  val order = new pcNode.Area {
+    val counter = CounterFreeRun(64 bits)
+    val ORDER = Payload(UInt(64 bits))
+    ORDER := counter
+  }
   
-  // val io = new Bundle {
-  //   val rvfi = out(new RVFIBundle)
-  // }
+  val io = new Bundle {
+    val rvfi = out(new RVFIBundle)
+    val icacheramfetchcmd = (Icache.ramBus.ramFetchCmd)
+    val icacheramfetchrsp = (Icache.ramBus.ramFetchRsp)
+  }
   
+  io.rvfi.valid := wbStage.isValid
+  io.rvfi.order := wbStage(order.ORDER)
+  io.rvfi.inst  := wbStage(INSTRUCTION)
+  io.rvfi.trap  := False
+  io.rvfi.halt  := False
   
-  // io.rvfi.valid := True
-  // io.rvfi.order := CounterFreeRun(64 bits).value
-  // io.rvfi.inst  := fetcher.instrn
-  // io.rvfi.trap  := ???
-  // io.rvfi.halt  := ???
+  io.rvfi.pcRdata := wbStage.up(PCVal)
+  io.rvfi.pcWdata := E1.up(PCVal)
   
-  // io.rvfi.pcRdata := wbStage.up(PC)
-  // io.rvfi.pcWdata := fetcher.pcReg
+  io.rvfi.rs1Addr := d0.down(Decoder.RS1).asUInt
+  io.rvfi.rs2Addr := d0.down(Decoder.RS2).asUInt
+  io.rvfi.rs1Rdata:= E1.up(RS1)
+  io.rvfi.rs2Rdata:= E1.up(RS2)
+  io.rvfi.rdAddr  := d0.down(Decoder.RD).asUInt
+  io.rvfi.rdWdata := wbStage.up(RESULT)
   
-  // io.rvfi.rs1Addr := d0.down(Decoder.RS1).asUInt
-  // io.rvfi.rs2Addr := d0.down(Decoder.RS2).asUInt
-  // io.rvfi.rs1Rdata:= E1.up(RS1)
-  // io.rvfi.rs2Rdata:= E1.up(RS2)
-  // io.rvfi.rdAddr  := d0.down(Decoder.RD).asUInt
-  // io.rvfi.rdWdata := wbStage.up(RESULT)
-  
-  // io.rvfi.memAddr := ???
-  // io.rvfi.memRdata :=
-  // io.rvfi.memWdata :=
-  // io.rvfi.memMask :=
-  
-
+  io.rvfi.memAddr := U"0".resized
+  io.rvfi.memRdata :=  B"0".resized
+  io.rvfi.memWdata :=  B"0".resized
+  io.rvfi.memMask :=  B"0".resized
 
   val f2d = StageLink(fetch.down, d0.up)
   val d2d = StageLink(d0.down, dis0.up)

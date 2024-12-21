@@ -69,7 +69,7 @@ case class IntRegFile(stage: CtrlLink, readSync: Boolean, dataWidth : Int) exten
   // val rfaRS1 = rfaKeys(RS1)
   // val rfaRS2 = rfaKeys(RS2)
 
-    val mem = Mem.fill(32)(Bits(64 bits)) init(Seq.fill(32)(B"0")) simPublic()
+    val mem = Mem.fill(32)(Bits(64 bits)) 
     //val readRS1 = mem.readSync(io.RS1_address, io.RS1_Enable)
     // val readRS1 = mem.readSync(rfaRS1.PHYS, accessIntRfRS1)
     // val readRS1 = mem.readSync(nebula.decode.Decoder.RS1.asUInt, accessIntRfRS1) 

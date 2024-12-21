@@ -1,4 +1,4 @@
-package nebula.test
+package test
 
 import spinal.core._
 import spinal.lib._
