@@ -29,12 +29,20 @@ case class ICache(node : CtrlLink) extends Area {
   val addressWidth = 64 // 64 bits
   val byteOffset = 2
   val nSets = 256
-  val setIndexWidth = log2Up(nSets)
-  val setIndexRange = (setIndexWidth + 1 downto 2)
+  val upper_lower_select = 1
+
+  val setIndexWidth = log2Up(nSets) 
+  val setIndexRange = (setIndexWidth + upper_lower_select + byteOffset -1 downto upper_lower_select + byteOffset)
   // val blockSize = 4  // in bytes
-  val tagWidth = addressWidth - setIndexWidth - byteOffset
-  val tagRange = 63 downto setIndexWidth + byteOffset
+  val tagWidth = addressWidth - setIndexWidth - upper_lower_select - byteOffset
+  val tagRange = 63 downto (64 - tagWidth)
   
+  println(setIndexWidth)
+  println(setIndexRange)
+  println(tagWidth)
+  println(tagRange)
+  println(tagWidth + setIndexWidth + upper_lower_select + byteOffset)
+
   import spinal.core.sim._
 
   val l1bus = new ICacheBus()
@@ -75,6 +83,8 @@ case class ICache(node : CtrlLink) extends Area {
     when(l1bus.cmd.valid) {
         when(hit) {
           l1bus.rsp.valid := True
+          val upper_lower = Bool() simPublic()
+          upper_lower := l1bus.cmd.payload.address(3)
           l1bus.rsp.payload.data := l1bus.cmd.payload.address(2) ? upperHalf | lowerHalf
           INSTRUCTION := l1bus.cmd.payload.address(2) ? upperHalf | lowerHalf
           l1bus.rsp.payload.miss := False
@@ -87,7 +97,7 @@ case class ICache(node : CtrlLink) extends Area {
           haltPc := True
 
           ramBus.ramFetchCmd.valid := True
-          ramBus.ramFetchCmd.payload.address := l1bus.cmd.payload.address
+          // ramBus.ramFetchCmd.payload.address := (l1bus.cmd.payload.address) / 2
         }
     }
   }
@@ -111,7 +121,7 @@ case class ICache(node : CtrlLink) extends Area {
     when(ramBus.ramFetchCmd.valid) {
       fetching := True
       ramBus.ramFetchRsp.ready := True
-      ramBus.ramFetchCmd.payload.address := l1bus.cmd.payload.address / 4
+      ramBus.ramFetchCmd.payload.address := l1bus.cmd.payload.address / 8
     }
 
   }

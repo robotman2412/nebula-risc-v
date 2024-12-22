@@ -57,13 +57,13 @@ object ICacheSim {
         // println(word.toString(16))
         val hexString = word.toString(16) // Convert BigInt to a hexadecimal string
         val paddedHexString = hexString.reverse.padTo((hexString.length + 7) / 8 * 8, '0').reverse // Pad to a multiple of 8 hex characters (32 bits)
-        println(addr)
-        println(paddedHexString)
+        // println(addr)
+        // println(paddedHexString)
         dut.mainMemory.memory.setBigInt(addr, BigInt(paddedHexString, 16))
       }
       // Run simulation
       dut.clockDomain.waitSampling()
-      println(dut.pc.pclogic.pcReg.toBigInt)
+      // println(dut.pc.pclogic.pcReg.toBigInt)
       dut.clockDomain.waitSampling(1000)
       
       // println(dut.pc.pclogic.pcReg.toBigInt)
@@ -78,10 +78,9 @@ object ICacheSim {
       // println(dut.mainMemory.memory.getBigInt(4).toString(16))
 
       // println(dut.mainMemory.resizedAddress.toInt)
-      for(i <- 0 until 100) {
-        println(dut.icache.mem.getBigInt(i).toString(16))
-
-      }
+      // for(i <- 0 until 100) {
+      //   println(dut.icache.mem.getBigInt(i).toString(16))
+      // }
       
 
       

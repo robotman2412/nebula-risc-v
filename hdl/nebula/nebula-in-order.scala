@@ -90,7 +90,8 @@ class nebulaRVIO() extends Component  {
   
   val io = new Bundle {
     val rvfi = out(new RVFIBundle)
-    val icacheramfetchcmd = (Icache.ramBus.ramFetchCmd)
+    val instruction = in port Bits(32 bits)
+    val iMem_rsp_instr = in port Bits(32 bits)
     val icacheramfetchrsp = (Icache.ramBus.ramFetchRsp)
   }
   
@@ -100,8 +101,8 @@ class nebulaRVIO() extends Component  {
   io.rvfi.trap  := False
   io.rvfi.halt  := False
   
-  io.rvfi.pcRdata := wbStage.up(PCVal)
-  io.rvfi.pcWdata := E1.up(PCVal)
+  io.rvfi.pcRdata := dis0.down(PCVal)
+  io.rvfi.pcWdata := E1.down(PCVal)
   
   io.rvfi.rs1Addr := d0.down(Decoder.RS1).asUInt
   io.rvfi.rs2Addr := d0.down(Decoder.RS2).asUInt
@@ -114,6 +115,14 @@ class nebulaRVIO() extends Component  {
   io.rvfi.memRdata :=  B"0".resized
   io.rvfi.memWdata :=  B"0".resized
   io.rvfi.memMask :=  B"0".resized
+
+  // io.rvfi.memAddr  := memoryAccessStage.up(ADDR) // Memory address being accessed
+  // io.rvfi.memRdata := memoryAccessStage.up(LOAD_DATA) // Data read from memory
+  // io.rvfi.memWdata := memoryAccessStage.up(STORE_DATA) // Data written to memory
+  // io.rvfi.memMask  := memoryAccessStage.up(MASK) // Byte-enable mask
+ 
+
+
 
   val f2d = StageLink(fetch.down, d0.up)
   val d2d = StageLink(d0.down, dis0.up)
