@@ -14,13 +14,13 @@ import nebula.decode._
 import nebula.dispatch._
 import nebula.execute._
 import spinal.lib.io.InOutWrapperPlayground.E
-import nebula.decode.Decoder.INSTRUCTION
+import nebula.decode.Decoder._
 import nebula.dispatch.Dispatch.SENDTOALU
 import nebula.dispatch.SrcPlugin.RS1
 import nebula.dispatch.SrcPlugin.RS2
 import nebula.execute.Execute.RESULT
-import nebula.decode.Decoder.LEGAL
 import nebula.LsuL1.PC.PCVal
+import nebula.LsuL1.PC.PCPLUS4
 
 // fetcher area for now for simulation. icache and dcache will be added last
 //  rough core pipeline
@@ -33,25 +33,29 @@ import nebula.LsuL1.PC.PCVal
 class RVFIBundle extends Bundle {
   val valid = Bool()
   val order = UInt(64 bits)
-  val inst = Bits(32 bits)
+  val insn = Bits(32 bits)
   val trap = Bool()
   val halt = Bool()
-  
-  val rs1Addr = UInt(5 bits)
-  val rs2Addr = UInt(5 bits)
-  val rs1Rdata = Bits(64 bits)
-  val rs2Rdata = Bits(64 bits)
-  val rdAddr = UInt(5 bits)
-  val rdWdata = Bits(64 bits)
+  val intr = UInt(64 bits)
+  val mode = UInt(2 bits)
+  val ixl  = UInt(1 bits)
+
+  val rs1_addr = UInt(5 bits)
+  val rs2_addr = UInt(5 bits)
+  val rs1_rdata = Bits(64 bits)
+  val rs2_rdata = Bits(64 bits)
+  val rd_addr = UInt(5 bits)
+  val rd_wdata = Bits(64 bits)
 
 
-  val pcRdata = UInt(64 bits)
-  val pcWdata = UInt(64 bits)
+  val pc_rdata = UInt(64 bits)
+  val pc_wdata = UInt(64 bits)
   
-  val memAddr    = UInt(64 bits)           // Memory address accessed
-  val memRdata   = Bits(64 bits)           // Data read from memory
-  val memWdata   = Bits(64 bits)           // Data written to memory
-  val memMask    = Bits(4 bits)            // Memory byte mask
+  val mem_addr    = UInt(64 bits)           // Memory address accessed
+  val mem_rmask    = Bits(64 bits)           // Memory address accessed
+  val mem_wmask    = Bits(64 bits)           // Memory address accessed
+  val mem_rdata   = Bits(64 bits)           // Data read from memory
+  val mem_wdata   = Bits(64 bits)           // Data written to memory
 
 }
 class nebulaRVIO() extends Component  {
@@ -67,7 +71,7 @@ class nebulaRVIO() extends Component  {
   
 
 
-  val hazards = Seq(pcNode, fetch,d0,dis0, rfread0, E1, wbStage)
+  val hazards = Seq(d0,dis0, rfread0, E1, wbStage)
 
   val ProgramCounter = LsuL1.PC(pcNode)
   val Icache = LsuL1.ICache(fetch)
@@ -88,33 +92,46 @@ class nebulaRVIO() extends Component  {
     ORDER := counter
   }
   
+  val rvfi = out(new RVFIBundle)
+
   val io = new Bundle {
-    val rvfi = out(new RVFIBundle)
-    val instruction = in port Bits(32 bits)
-    val iMem_rsp_instr = in port Bits(32 bits)
-    val icacheramfetchrsp = (Icache.ramBus.ramFetchRsp)
+    // val iMem_rsp_instr = in port Bits(32 bits)
+    val icacheramfetchrsp = slave Stream LsuL1.RamFetchRsp()
+    val icacheramfetchcmd = master Stream LsuL1.RamFetchCmd()
+    // val dcacheramfetchcmd = out port
+    // val dcacheramfetchrsp = in port
+    // val dcacheramstorecmd = out port
+    // val dcacheramstorersp = in port
   }
   
-  io.rvfi.valid := wbStage.isValid
-  io.rvfi.order := wbStage(order.ORDER)
-  io.rvfi.inst  := wbStage(INSTRUCTION)
-  io.rvfi.trap  := False
-  io.rvfi.halt  := False
+  Icache.ramBus.ramFetchRsp << io.icacheramfetchrsp
   
-  io.rvfi.pcRdata := dis0.down(PCVal)
-  io.rvfi.pcWdata := E1.down(PCVal)
+  io.icacheramfetchcmd << Icache.ramBus.ramFetchCmd
   
-  io.rvfi.rs1Addr := d0.down(Decoder.RS1).asUInt
-  io.rvfi.rs2Addr := d0.down(Decoder.RS2).asUInt
-  io.rvfi.rs1Rdata:= E1.up(RS1)
-  io.rvfi.rs2Rdata:= E1.up(RS2)
-  io.rvfi.rdAddr  := d0.down(Decoder.RD).asUInt
-  io.rvfi.rdWdata := wbStage.up(RESULT)
+  rvfi.valid := wbStage.isValid
+  rvfi.order := wbStage(order.ORDER)
+  rvfi.insn  := wbStage(INSTRUCTION)
+  rvfi.trap  := False
+  rvfi.halt  := False
+  rvfi.intr := U"0".resized
+  rvfi.mode := U"0".resized
+  rvfi.ixl  := 1
+
+  rvfi.pc_rdata := wbStage.down(PCVal)
+  rvfi.pc_wdata := wbStage.down(PCPLUS4)
   
-  io.rvfi.memAddr := U"0".resized
-  io.rvfi.memRdata :=  B"0".resized
-  io.rvfi.memWdata :=  B"0".resized
-  io.rvfi.memMask :=  B"0".resized
+  rvfi.rs1_addr := wbStage.down(Decoder.RS1).asUInt
+  rvfi.rs2_addr := wbStage.down(Decoder.RS2).asUInt
+  rvfi.rs1_rdata:= wbStage.down(RS1)
+  rvfi.rs2_rdata:= wbStage.down(RS2)
+  rvfi.rd_addr  := wbStage.down(Decoder.RD).asUInt
+  rvfi.rd_wdata := wbStage.down(RESULT)
+  
+  rvfi.mem_addr := U"0".resized
+  rvfi.mem_rdata :=  B"0".resized
+  rvfi.mem_rmask :=  B"0".resized
+  rvfi.mem_wdata :=  B"0".resized
+  rvfi.mem_wmask :=  B"0".resized
 
   // io.rvfi.memAddr  := memoryAccessStage.up(ADDR) // Memory address being accessed
   // io.rvfi.memRdata := memoryAccessStage.up(LOAD_DATA) // Data read from memory
@@ -124,11 +141,12 @@ class nebulaRVIO() extends Component  {
 
 
 
+  val pc2f = StageLink(pcNode.down, fetch.up)
   val f2d = StageLink(fetch.down, d0.up)
   val d2d = StageLink(d0.down, dis0.up)
   val dis2rf = StageLink(dis0.down, rfread0.up)
   val rf2e1 = StageLink(rfread0.down, E1.up)
   val e12wb = StageLink(E1.down, wbStage.up)
-  Builder(fetch, d0,dis0, rfread0,E1, wbStage, f2d,d2d, dis2rf, rf2e1, e12wb)
+  Builder(pcNode, fetch, d0,dis0, rfread0,E1, wbStage, pc2f, f2d,d2d, dis2rf, rf2e1, e12wb)
 
 }

@@ -7,6 +7,7 @@ import spinal.lib._
 import spinal.lib.misc.pipeline._
 // import nebula.decode.AccessKeys._
 import nebula.decode.Decoder._
+import spinal.lib.bus.regif.AccessType.RS
 
 case class RegFileWriteCmd() extends Bundle with IMasterSlave {
   
@@ -88,8 +89,14 @@ case class IntRegFile(stage: CtrlLink, readSync: Boolean, dataWidth : Int) exten
     when(accessIntRfRS1){
       (RegFile_RS1) := readRS1
     }
+    when(accessIntRfRS1 && RS1 === 0){
+      RegFile_RS1 := 0
+    }
     when(accessIntRfRS2) {
       (RegFile_RS2) := readRS2
+    }
+    when(accessIntRfRS2 && RS2 === 0) {
+      (RegFile_RS2) := 0
     }
   }
 }

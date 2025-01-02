@@ -10,9 +10,7 @@ import nebula.LsuL1.JumpCmd
 import nebula.decode.Decoder.ALUOP
 import nebula.dispatch.SrcPlugin.IMMED
 import nebula.execute.Execute.RESULT
-
-
-
+import nebula.decode.ExecutionUnitEnum
 
 case class CtrlHazardThrowPipeline(decodeNode : CtrlLink, hzRange : Seq[CtrlLink], pc : PC) extends Area {
   val logic = new decodeNode.Area {
@@ -30,9 +28,11 @@ case class CtrlHazardThrowPipeline(decodeNode : CtrlLink, hzRange : Seq[CtrlLink
   }
 }
 
-case class Branch(node : CtrlLink) extends ExecutionUnit with Area {
+case class Branch(node : CtrlLink) extends FunctionalUnit with Area {
   import nebula.LsuL1.PC._
   
+  override val FUType = ExecutionUnitEnum.BR
+
   val SRC1 = nebula.dispatch.SrcPlugin.RS1
   val SRC2 = nebula.dispatch.SrcPlugin.RS2
   
@@ -41,16 +41,17 @@ case class Branch(node : CtrlLink) extends ExecutionUnit with Area {
   
   val jmpCmd = Flow(JumpCmd())
   
-  val logic = new node.Area {
-    doJump := False
-    when(up(nebula.decode.Decoder.ALUOP) === AluOp.jal || up(nebula.decode.Decoder.ALUOP) === AluOp.jalr) {
-      doJump := True
-      jmpCmd.valid := True
-      jmpCmd.payload.address := IMMED.asUInt
-      RESULT := PCPLUS4.asBits
-    }
-
-  }
+  // val logic = new node.Area {
+  //   doJump := False
+  //   when(up(nebula.decode.Decoder.ALUOP) === AluOp.jal || up(nebula.decode.Decoder.ALUOP) === AluOp.jalr) {
+  //     doJump := True
+  //     jmpCmd.valid := True
+  //     jmpCmd.payload.address := IMMED.asUInt
+  //     RESULT := PCPLUS4.asBits
+  //   }
+  // }
+  
+  // val ctrlHz = CtrlHazardThrowPipeline(node, branchCtrlHzRange, pc)
   
   val branchlogic = new node.Area {
     doBranch := False
@@ -76,23 +77,4 @@ case class Branch(node : CtrlLink) extends ExecutionUnit with Area {
   
   
 
-}
-
-case class Jal(node : CtrlLink) extends Area {
-  val jumpLocation =  Flow(JumpCmd())
-  
-  
-  val SRC2 = nebula.dispatch.SrcPlugin.RS2
-  
-  val logic = new node.Area {
-    val validJump = Bool()
-    jumpLocation.address.assignDontCare()
-    jumpLocation.valid := False
-    
-    when(up(nebula.dispatch.Dispatch.SENDTOBRANCH) === True && up.isValid) {
-      // RESULT := PCPLUS4
-      jumpLocation.address := SRC2.asUInt
-      jumpLocation.valid := True
-    }
-  }
 }

@@ -26,11 +26,11 @@ case class IntWriteBackPlugin(stage : CtrlLink, regfile : IntRegFile) extends Ar
   regfile.io.RD_data := io.RD_data
 
   import spinal.core.sim._
-  val instrReg = Reg(INSTRUCTION) simPublic()
+  // val instrReg = Reg(INSTRUCTION) simPublic()
 
   val logic = new stage.Area {
     import nebula.decode.REGFILE._
-    instrReg := INSTRUCTION
+    // instrReg := INSTRUCTION
     io.RD_Enable := False
     io.RD_address.assignDontCare()
     io.RD_data.assignDontCare()

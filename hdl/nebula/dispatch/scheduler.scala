@@ -8,7 +8,7 @@ import spinal.lib.misc.pipeline._
 
 import nebula.decode.Decoder._
 import nebula.decode.Decoder
-import nebula.decode.ExecutionUnit
+import nebula.decode.ExecutionUnitEnum
 import nebula.decode.AluOp
 import nebula.LsuL1.PC
 
@@ -131,10 +131,10 @@ case class Dispatch(dispatchNode: CtrlLink) extends Area {
     // }
     down(SENDTOALU) := False
     down(SENDTOBRANCH) := False
-    when(up(Decoder.EXECUTION_UNIT) === ExecutionUnit.ALU && up.isValid) {
+    when(up(Decoder.EXECUTION_UNIT) === ExecutionUnitEnum.ALU && up.isValid) {
       down(SENDTOALU) := True
     }
-    when(up(Decoder.EXECUTION_UNIT) === ExecutionUnit.BR && up.isValid) {
+    when(up(Decoder.EXECUTION_UNIT) === ExecutionUnitEnum.BR && up.isValid) {
       down(SENDTOBRANCH) := True
     }
 

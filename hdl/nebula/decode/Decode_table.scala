@@ -48,18 +48,16 @@ object RV32I {
   val SH                 = M"-----------------001-----0100011"
   val SW                 = M"-----------------010-----0100011"
 
-  val EBREAK             = M"00000000000100000000000001110011"
-  val ECALL              = M"00000000000000000000000001110011"
-  val MRET               = M"00110000001000000000000001110011"
-  val SRET               = M"00010000001000000000000001110011"
-  val URET               = M"00000000001000000000000001110011"
-  val FENCEI             = M"00000000000000000001000000001111"
-  val WFI                = M"00010000010100000000000001110011"
-
   val FENCE              = M"-----------------000-----0001111"
-  val SFENCE_VMA         = M"0001001----------000000001110011"
+  val FENCEI             = M"00000000000000000001000000001111"
+  val ECALL              = M"00000000000000000000000001110011"
+  val EBREAK             = M"00000000000100000000000001110011"
 
-  val FLUSH_DATA         = M"-------00000-----101-----0001111"
+  // val CSRRW               = M""
+  // val CSRRS               = M""
+  // val CSRRC               = M""
+  // val CSRRWI              = M""
+  // val CSRRCI              = M""
  
 }
 
@@ -68,19 +66,84 @@ object RV64I {
   val LD                 = M"-----------------011-----0000011"
   val SD                 = M"-----------------011-----0100011"
   
-  val ADDW               = M"0000000----------000-----0111011"
-  val SUBW               = M"0100000----------000-----0111011"
+  // val SLLI               = M""
+  // val SRLI               = M""
+  // val SRAI               = M""
+  
   val ADDIW              = M"-----------------000-----0011011"
-
-  val SLLW               = M"0000000----------001-----0111011"
-  val SRLW               = M"0000000----------101-----0111011"
-  val SRAW               = M"0100000----------101-----0111011"
-
   val SLLIW              = M"000000-----------001-----0011011"
   val SRLIW              = M"000000-----------101-----0011011"
   val SRAIW              = M"010000-----------101-----0011011"
+
+  val ADDW               = M"0000000----------000-----0111011"
+  val SUBW               = M"0100000----------000-----0111011"
+
+  val SLLW               = M"0000000----------001-----0111011" 
+  val SRLW               = M"0000000----------101-----0111011" 
+  val SRAW               = M"0100000----------101-----0111011" 
 }
 
+object RV32M {
+  val MUL               = M"0000001----------000-----0110011"
+  val MULH              = M"0000001----------001-----0110011"
+  val MULHSU            = M"0000001----------010-----0110011"
+  val MULHU             = M"0000001----------011-----0110011"
+  val DIV               = M"0000001----------100-----0110011"
+  val DIVU              = M"0000001----------101-----0110011"
+  val REM               = M"0000001----------110-----0110011"
+  val REMU              = M"0000001----------111-----0110011"
+}
+object RV64M {
+  val MULW              = M"0000001----------000-----0111011"
+  val DIVW              = M"0000001----------100-----0111011"
+  val DIVUW             = M"0000001----------101-----0111011"
+  val REMW              = M"0000001----------110-----0111011"
+  val REMUW             = M"0000001----------111-----0111011"
+}
+
+object RV32A {
+ val LRW               = M"00010--00000-----010-----0101111"
+ val SCW               = M"00011------------010-----0101111"  
+ val AMOSWAPW          = M"00001------------010-----0101111"
+ val AMOADDW           = M"00000------------010-----0101111"
+ val AMOXORW           = M"00100------------010-----0101111"
+ val AMOANDW           = M"01100------------010-----0101111"
+ val AMOORW            = M"01000------------010-----0101111"
+ val AMOMINW           = M"10000------------010-----0101111"
+ val AMOMAXW           = M"10100------------010-----0101111"
+ val AMOMINUW          = M"11000------------010-----0101111"
+ val AMOMAXUW          = M"11100------------010-----0101111"
+}
+object RV64A {
+  val LRD              = M"00010--00000-----011-----0101111"
+  val SCD              = M"00011--00000-----011-----0101111"
+  val AMOSWAPD         = M"00001--00000-----011-----0101111"
+  val AMOADDD          = M"00000--00000-----011-----0101111"
+  val AMOXORD          = M"00100--00000-----011-----0101111"
+  val AMOANDD          = M"01100--00000-----011-----0101111"
+  val AMOORD           = M"01000--00000-----011-----0101111"
+  val AMOMIND          = M"10000--00000-----011-----0101111"
+  val AMOMAXD          = M"10100--00000-----011-----0101111"
+  val AMOMINUD         = M"11000--00000-----011-----0101111"
+  val AMOMAXUD         = M"11100--00000-----011-----0101111"
+
+}
+object RV32F {
+  
+  
+  
+}
+
+object RV64F {
+
+}
+
+object RV32D {
+  
+}
+object RV64D {
+
+}
 
 
 
@@ -90,7 +153,7 @@ object DecodeTable {
   import REGFILE._
   import Imm_Select._
   import YESNO._
-  val default_decode =  Seq(N,N, ExecutionUnit.NA, RDTYPE.RD_NA, RSTYPE.RS_NA, RSTYPE.RS_NA, N, N_IMM, AluOp.na, N, N)
+  val default_decode =  Seq(N,N, ExecutionUnitEnum.NA, RDTYPE.RD_NA, RSTYPE.RS_NA, RSTYPE.RS_NA, N, N_IMM, AluOp.na, N, N)
   val X_table: Seq[(MaskedLiteral, Seq[Any])] = Seq(
               //                                                             frs3_en
               //               is val inst?                                  |  imm sel
@@ -126,20 +189,20 @@ object DecodeTable {
               //            | |       |                  |               |               |        |    |        |        |  |  |  |  |  |         |  |  |      |       |        | | | | |  | | | | | | |  | | | |
     //                 List(N,N, ExecutionUnit.FPU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.RS_INT,  N, I_IMM, AluOp.ADD,   N, N  X, X, X, M_X,      N, X, CSR.X, DW_X  , FN_X   , X,X,X,X,X, X,X,X,X,X,X,X, X,X,X,X)
 
-  SLLI        ->       List(Y, N, ExecutionUnit.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.IMMED , N, I_IMM , AluOp.sll , N, N, N, N),
-  SRLI        ->       List(Y, N, ExecutionUnit.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.IMMED , N, I_IMM , AluOp.srl , N, N, N, N),
-  SRAI        ->       List(Y, N, ExecutionUnit.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.IMMED , N, I_IMM , AluOp.sra , N, N, N, N),
+  // SLLI        ->       List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.IMMED , N, I_IMM , AluOp.sll , N, N, N, N),
+  // SRLI        ->       List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.IMMED , N, I_IMM , AluOp.srl , N, N, N, N),
+//SRAI        ->       List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.IMMED , N, I_IMM , AluOp.sra , N, N, N, N),
                                                                                                                                    
-  ADDIW       ->       List(Y, N, ExecutionUnit.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.IMMED , N, I_IMM , AluOp.addw, N, Y, N, N),
-  SLLIW       ->       List(Y, N, ExecutionUnit.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.IMMED , N, I_IMM , AluOp.sllw, N, Y, N, N),
-  SRAIW       ->       List(Y, N, ExecutionUnit.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.IMMED , N, I_IMM , AluOp.sraw, N, Y, N, N),
-  SRLIW       ->       List(Y, N, ExecutionUnit.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.IMMED , N, I_IMM , AluOp.srlw, N, Y, N, N),
+  ADDIW       ->       List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.IMMED , N, I_IMM , AluOp.addw, N, Y, N, N),
+  SLLIW       ->       List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.IMMED , N, I_IMM , AluOp.sllw, N, Y, N, N),
+  SRAIW       ->       List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.IMMED , N, I_IMM , AluOp.sraw, N, Y, N, N),
+  SRLIW       ->       List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.IMMED , N, I_IMM , AluOp.srlw, N, Y, N, N),
                                                                                                                                    
-  ADDW        ->       List(Y, N, ExecutionUnit.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.RS_INT, N, N_IMM , AluOp.addw, N, Y, N, N),
-  SUBW        ->       List(Y, N, ExecutionUnit.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.RS_INT, N, N_IMM , AluOp.subw, N, Y, N, N),
-  SLLW        ->       List(Y, N, ExecutionUnit.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.RS_INT, N, N_IMM , AluOp.sllw, N, Y, N, N),
-  SRAW        ->       List(Y, N, ExecutionUnit.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.RS_INT, N, N_IMM , AluOp.sraw, N, Y, N, N),
-  SRLW        ->       List(Y, N, ExecutionUnit.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.RS_INT, N, N_IMM , AluOp.srlw, N, Y, N, N),
+  ADDW        ->       List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.RS_INT, N, N_IMM , AluOp.addw, N, Y, N, N),
+  SUBW        ->       List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.RS_INT, N, N_IMM , AluOp.subw, N, Y, N, N),
+  SLLW        ->       List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.RS_INT, N, N_IMM , AluOp.sllw, N, Y, N, N),
+  SRAW        ->       List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.RS_INT, N, N_IMM , AluOp.sraw, N, Y, N, N),
+  SRLW        ->       List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.RS_INT, N, N_IMM , AluOp.srlw, N, Y, N, N),
                                                                                                                                    
 
   // LD          ->       List(Y, N, ExecutionUnit.AGU, RDTYPE.RD_INT, RSTYPE.RS_NA , RSTYPE.IMMED , N, U_IMM , AluOp.lui , N, N, Y, N),
@@ -155,36 +218,36 @@ object DecodeTable {
   // SB          ->       List(Y, N, ExecutionUnit.AGU, RDTYPE.RD_INT, RSTYPE.RS_NA , RSTYPE.IMMED , N, U_IMM , AluOp.lui , N, N, N, Y),
   // SD          ->       List(Y, N, ExecutionUnit.AGU, RDTYPE.RD_INT, RSTYPE.RS_NA , RSTYPE.IMMED , N, U_IMM , AluOp.lui , N, N, N, Y),
 
-  LUI        ->        List(Y, N, ExecutionUnit.ALU, RDTYPE.RD_INT, RSTYPE.RS_NA , RSTYPE.IMMED , N, U_IMM , AluOp.lui , N, N, N, N),
+  // LUI        ->        List(Y, N, ExecutionUnit.ALU, RDTYPE.RD_INT, RSTYPE.RS_NA , RSTYPE.IMMED , N, U_IMM , AluOp.lui , N, N, N, N),
 
-  ADDI       ->        List(Y, N, ExecutionUnit.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.IMMED , N, I_IMM , AluOp.add , N, N, N, N),
-  ANDI       ->        List(Y, N, ExecutionUnit.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.IMMED , N, I_IMM , AluOp.and , N, N, N, N),
-  ORI        ->        List(Y, N, ExecutionUnit.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.IMMED , N, I_IMM , AluOp.or  , N, N, N, N),
-  XORI       ->        List(Y, N, ExecutionUnit.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.IMMED , N, I_IMM , AluOp.xor , N, N, N, N),
-  SLTI       ->        List(Y, N, ExecutionUnit.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.IMMED , N, I_IMM , AluOp.slt , N, N, N, N),
-  SLTIU      ->        List(Y, N, ExecutionUnit.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.IMMED , N, I_IMM , AluOp.sltu, N, N, N, N),
-                                                                                                                                  
-  SLL        ->        List(Y, N, ExecutionUnit.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.RS_INT, N, N_IMM , AluOp.sll , N, N, N, N),
-  ADD        ->        List(Y, N, ExecutionUnit.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.RS_INT, N, N_IMM , AluOp.add , N, N, N, N),
-  SUB        ->        List(Y, N, ExecutionUnit.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.RS_INT, N, N_IMM , AluOp.sub , N, N, N, N),
-  SLT        ->        List(Y, N, ExecutionUnit.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.RS_INT, N, N_IMM , AluOp.slt , N, N, N, N),
-  SLTU       ->        List(Y, N, ExecutionUnit.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.RS_INT, N, N_IMM , AluOp.sltu, N, N, N, N),
-  AND        ->        List(Y, N, ExecutionUnit.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.RS_INT, N, N_IMM , AluOp.and , N, N, N, N),
-  OR         ->        List(Y, N, ExecutionUnit.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.RS_INT, N, N_IMM , AluOp.or  , N, N, N, N),
-  XOR        ->        List(Y, N, ExecutionUnit.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.RS_INT, N, N_IMM , AluOp.xor , N, N, N, N),
-  SRA        ->        List(Y, N, ExecutionUnit.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.RS_INT, N, N_IMM , AluOp.sra , N, N, N, N),
-  SRL        ->        List(Y, N, ExecutionUnit.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.RS_INT, N, N_IMM , AluOp.srl , N, N, N, N),
+  ADDI       ->        List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.IMMED , N, I_IMM , AluOp.add , N, N, N, N),
+  ANDI       ->        List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.IMMED , N, I_IMM , AluOp.and , N, N, N, N),
+  ORI        ->        List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.IMMED , N, I_IMM , AluOp.or  , N, N, N, N),
+  XORI       ->        List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.IMMED , N, I_IMM , AluOp.xor , N, N, N, N),
+  SLTI       ->        List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.IMMED , N, I_IMM , AluOp.slt , N, N, N, N),
+  SLTIU      ->        List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.IMMED , N, I_IMM , AluOp.sltu, N, N, N, N),
+                                               
+  SLL        ->        List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.RS_INT, N, N_IMM , AluOp.sll , N, N, N, N),
+  ADD        ->        List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.RS_INT, N, N_IMM , AluOp.add , N, N, N, N),
+  SUB        ->        List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.RS_INT, N, N_IMM , AluOp.sub , N, N, N, N),
+  SLT        ->        List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.RS_INT, N, N_IMM , AluOp.slt , N, N, N, N),
+  SLTU       ->        List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.RS_INT, N, N_IMM , AluOp.sltu, N, N, N, N),
+  AND        ->        List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.RS_INT, N, N_IMM , AluOp.and , N, N, N, N),
+  OR         ->        List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.RS_INT, N, N_IMM , AluOp.or  , N, N, N, N),
+  XOR        ->        List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.RS_INT, N, N_IMM , AluOp.xor , N, N, N, N),
+  SRA        ->        List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.RS_INT, N, N_IMM , AluOp.sra , N, N, N, N),
+  SRL        ->        List(Y, N, ExecutionUnitEnum.ALU, RDTYPE.RD_INT, RSTYPE.RS_INT, RSTYPE.RS_INT, N, N_IMM , AluOp.srl , N, N, N, N),
                                                                                                                               
-  // AUIPC      ->        List(Y, N, ExecutionUnit.BR, RDTYPE.RD_INT, RSTYPE.RS_NA , RSTYPE.IMMED , N, U_IMM , AluOp.lui , N, N, N, N),
-  JAL        ->        List(Y, N, ExecutionUnit.BR,  RDTYPE.RD_INT, RSTYPE.RS_NA , RSTYPE.RS_NA , N, J_IMM , AluOp.jal , N, N, N, N),
-  JALR       ->        List(Y, N, ExecutionUnit.BR,  RDTYPE.RD_INT, RSTYPE.RS_NA , RSTYPE.RS_NA , N, I_IMM , AluOp.jalr, N, N, N, N),
-  BEQ        ->        List(Y, N, ExecutionUnit.BR,  RDTYPE.RD_NA , RSTYPE.RS_NA , RSTYPE.RS_NA , N, B_IMM , AluOp.beq , N, N, N, N),
+  // AUIPC      ->        List(Y, N, ExecutionUnit.BR,  RDTYPE.RD_INT, RSTYPE.RS_NA , RSTYPE.IMMED , N, U_IMM , AluOp.lui , N, N, N, N),
+  // JAL        ->        List(Y, N, ExecutionUnit.BR,  RDTYPE.RD_INT, RSTYPE.RS_NA , RSTYPE.RS_NA , N, J_IMM , AluOp.jal , N, N, N, N),
+  // JALR       ->        List(Y, N, ExecutionUnit.BR,  RDTYPE.RD_INT, RSTYPE.RS_NA , RSTYPE.RS_NA , N, I_IMM , AluOp.jalr, N, N, N, N),
+  // BEQ        ->        List(Y, N, ExecutionUnit.BR,  RDTYPE.RD_NA , RSTYPE.RS_NA , RSTYPE.RS_NA , N, B_IMM , AluOp.beq , N, N, N, N),
 
-  BNE        ->        List(Y, N, ExecutionUnit.BR,  RDTYPE.RD_NA , RSTYPE.RS_NA , RSTYPE.RS_NA , N, B_IMM , AluOp.bne , Y, N, N, N),
-  BGE        ->        List(Y, N, ExecutionUnit.BR,  RDTYPE.RD_NA , RSTYPE.RS_NA , RSTYPE.RS_NA , N, B_IMM , AluOp.bge , Y, N, N, N),
-  BGEU       ->        List(Y, N, ExecutionUnit.BR,  RDTYPE.RD_NA , RSTYPE.RS_NA , RSTYPE.RS_NA , N, B_IMM , AluOp.bgeu, Y, N, N, N),
-  BLT        ->        List(Y, N, ExecutionUnit.BR,  RDTYPE.RD_NA , RSTYPE.RS_NA , RSTYPE.RS_NA , N, B_IMM , AluOp.blt , Y, N, N, N),
-  BLTU       ->        List(Y, N, ExecutionUnit.BR,  RDTYPE.RD_NA , RSTYPE.RS_NA , RSTYPE.RS_NA , N, B_IMM , AluOp.bltu, Y, N, N, N),
+  // BNE        ->        List(Y, N, ExecutionUnit.BR,  RDTYPE.RD_NA , RSTYPE.RS_NA , RSTYPE.RS_NA , N, B_IMM , AluOp.bne , Y, N, N, N),
+  // BGE        ->        List(Y, N, ExecutionUnit.BR,  RDTYPE.RD_NA , RSTYPE.RS_NA , RSTYPE.RS_NA , N, B_IMM , AluOp.bge , Y, N, N, N),
+  // BGEU       ->        List(Y, N, ExecutionUnit.BR,  RDTYPE.RD_NA , RSTYPE.RS_NA , RSTYPE.RS_NA , N, B_IMM , AluOp.bgeu, Y, N, N, N),
+  // BLT        ->        List(Y, N, ExecutionUnit.BR,  RDTYPE.RD_NA , RSTYPE.RS_NA , RSTYPE.RS_NA , N, B_IMM , AluOp.blt , Y, N, N, N),
+  // BLTU       ->        List(Y, N, ExecutionUnit.BR,  RDTYPE.RD_NA , RSTYPE.RS_NA , RSTYPE.RS_NA , N, B_IMM , AluOp.bltu, Y, N, N, N),
                                                                                                                               
   // MUL     -> List(Y, N, X, uopMUL  , IQT_INT, FU_MUL , RT_FIX, RT_FIX, RT_FIX, N, IS_X, N, N, N, N, N, M_, NX  , 0.U, N, N, N, N, N, CSR.N),
   // MULH    -> List(Y, N, X, uopMULH , IQT_INT, FU_MUL , RT_FIX, RT_FIX, RT_FIX, N, IS_X, N, N, N, N, N, M_X  , 0.U, N, N, N, N, N, CSR.N),

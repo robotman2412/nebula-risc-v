@@ -3,9 +3,12 @@ package  nebula.execute
 import spinal.core._
 import spinal.lib._
 import spinal.lib.misc.pipeline._
+import scala.collection.mutable.ArrayBuffer
+import nebula.decode.ExecutionUnitEnum
+import nebula.decode.AluOp
 
 
-object ExecutionUnit{
+// object ExecutionUnit{
   // class Api(layer: LaneLayer, val srcPlugin: SrcPlugin, val SEL : Payload[Bool], val rsUnsignedPlugin: RsUnsignedPlugin = null) {
   //   var iwbpp = Option.empty[(IntFormatPlugin, Flow[Bits])]
 
@@ -56,16 +59,31 @@ object ExecutionUnit{
   //     }
   //   }
   // }
+// }
+
+
+
+
+abstract class FunctionalUnit {
+  // import nebula.execute.MicroOp
+  val SEL = Payload(Bool())
+  
+  val FUType : ExecutionUnitEnum.E
+  def returnFUType = FUType
+
+  val supportedUOPS = ArrayBuffer[AluOp.E]()
+  def add(uop : AluOp.E) = supportedUOPS += uop
+  def getUOPs  = supportedUOPS
 }
 
-abstract class ExecutionUnit() {
-  // val SEL = Payload(Bool())
-  
-  // def supportedUOPS = rv32i.add
-  
-  // withPrefix(layer.name)
 
-  // val SEL = Payload(Bool())
+abstract class ExecutionUnit() {
+  val SEL = Payload(Bool())
+  
+  val FUs : ArrayBuffer[FunctionalUnit]
+
+  def getFUs = FUs
+  def add(fu : FunctionalUnit) = FUs += fu
 
   // class Logic extends ExecutionUnit.Api(layer, host.find[SrcPlugin](_.layer == layer), SEL, rsUnsignedPlugin = host.get[RsUnsignedPlugin].getOrElse(null)) with Area  with PostInitCallback {
   //   val el = layer.lane
@@ -81,4 +99,8 @@ abstract class ExecutionUnit() {
   //     this
   //   }
   // }
+  
+
+  // writeback Plugin
 }
+

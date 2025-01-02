@@ -10,7 +10,7 @@ object nebula_inOrder_Verilog {
     // SpinalVerilog(new nebulaRVIO())
     SpinalConfig(
       mode = Verilog,
-      targetDirectory = "hdl/formal/riscv-formal/cores/nebula/"
+      targetDirectory = "hdl/formal/riscv-formal/cores/nebulaRVIO/"
       // targetDirectory = "core"
     ).generate(new nebulaRVIO())
   }

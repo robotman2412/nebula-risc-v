@@ -11,7 +11,7 @@ import nebula.LsuL1.RamStoreCmd
 
 
 
-case class AGU(node : CtrlLink) extends ExecutionUnit with Area {
+case class AGU(node : CtrlLink) extends FunctionalUnit with Area {
   import nebula.dispatch.SrcPlugin._
   
 

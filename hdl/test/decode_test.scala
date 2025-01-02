@@ -29,7 +29,7 @@ class decoderForTest() extends Component {
     io.is_int:= False
 
     when(up.isFiring){
-      io.is_int := (EXECUTION_UNIT === ExecutionUnit.ALU)
+      io.is_int := (EXECUTION_UNIT === ExecutionUnitEnum.ALU)
     }
     // up(IS_INT) := False
     // println(IS_INT)

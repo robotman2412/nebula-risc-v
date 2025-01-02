@@ -37,11 +37,11 @@ case class ICache(node : CtrlLink) extends Area {
   val tagWidth = addressWidth - setIndexWidth - upper_lower_select - byteOffset
   val tagRange = 63 downto (64 - tagWidth)
   
-  println(setIndexWidth)
-  println(setIndexRange)
-  println(tagWidth)
-  println(tagRange)
-  println(tagWidth + setIndexWidth + upper_lower_select + byteOffset)
+  // println(setIndexWidth)
+  // println(setIndexRange)
+  // println(tagWidth)
+  // println(tagRange)
+  // println(tagWidth + setIndexWidth + upper_lower_select + byteOffset)
 
   import spinal.core.sim._
 
