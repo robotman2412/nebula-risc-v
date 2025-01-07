@@ -80,15 +80,18 @@ class nebulaRVIO() extends Component  {
   val intregFile = IntRegFile(rfread0, readSync = true, dataWidth = 64)
   val hazardChecker= HazardChecker(hazards)
   val srcPlugin = SrcPlugin(rfread0)
-  // val intalu = IntAlu(E1)
-  val executePipeline = ExecutePipeline(E1)
-  // PC.jumpCmd << executePipeline.jal.jumpLocation
-  // PC.jumpCmd := jaller.jumpLocation
+  val intalu = IntAlu(E1)
+  // val agu = AGU(E1)
+  val branch = Branch(E1, ProgramCounter)
   val wb = IntWriteBackPlugin(wbStage, intregFile)
   
+  
+
+  
   val order = new pcNode.Area {
-    val counter = CounterFreeRun(64 bits)
+    val counter = Counter(64 bits)
     val ORDER = Payload(UInt(64 bits))
+    
     ORDER := counter
   }
   
@@ -108,7 +111,7 @@ class nebulaRVIO() extends Component  {
   
   io.icacheramfetchcmd << Icache.ramBus.ramFetchCmd
   
-  rvfi.valid := wbStage.isValid
+  rvfi.valid := wbStage(nebula.decode.Decoder.VALID)
   rvfi.order := wbStage(order.ORDER)
   rvfi.insn  := wbStage(INSTRUCTION)
   rvfi.trap  := False
@@ -120,12 +123,12 @@ class nebulaRVIO() extends Component  {
   rvfi.pc_rdata := wbStage.down(PCVal)
   rvfi.pc_wdata := wbStage.down(PCPLUS4)
   
-  rvfi.rs1_addr := wbStage.down(Decoder.RS1).asUInt
-  rvfi.rs2_addr := wbStage.down(Decoder.RS2).asUInt
-  rvfi.rs1_rdata:= wbStage.down(RS1)
-  rvfi.rs2_rdata:= wbStage.down(RS2)
-  rvfi.rd_addr  := wbStage.down(Decoder.RD).asUInt
-  rvfi.rd_wdata := wbStage.down(RESULT)
+  rvfi.rs1_addr := (wbStage.up(Decoder.RS1TYPE) === nebula.decode.REGFILE.RSTYPE.RS_INT) ?  wbStage.down(Decoder.RS1).asUInt | U"0".resize(5)
+  rvfi.rs2_addr := (wbStage.up(Decoder.RS2TYPE) === nebula.decode.REGFILE.RSTYPE.RS_INT) ?  wbStage.down(Decoder.RS2).asUInt | U"0".resize(5)
+  rvfi.rs1_rdata:=  (wbStage.up(Decoder.RS1TYPE) === nebula.decode.REGFILE.RSTYPE.RS_INT)? wbStage.down(RS1) | B"0".resize(64)
+  rvfi.rs2_rdata:=  (wbStage.up(Decoder.RS2TYPE) === nebula.decode.REGFILE.RSTYPE.RS_INT)? wbStage.down(RS2) | B"0".resize(64)
+  rvfi.rd_addr  := (wbStage.up(Decoder.RDTYPE) === nebula.decode.REGFILE.RDTYPE.RD_INT) ? wbStage.down(Decoder.RD).asUInt | U"0".resize(5)
+  rvfi.rd_wdata := (wbStage.up(Decoder.RDTYPE) === nebula.decode.REGFILE.RDTYPE.RD_INT) ?  wbStage.down(RESULT) | B"0".resize(64)
   
   rvfi.mem_addr := U"0".resized
   rvfi.mem_rdata :=  B"0".resized

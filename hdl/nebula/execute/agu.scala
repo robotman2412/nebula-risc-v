@@ -7,13 +7,15 @@ import nebula.decode.Decoder.USE_STQ
 import nebula.decode.YESNO.{Y => Y}
 import nebula.decode.Decoder.USE_LDQ
 import nebula.LsuL1.RamStoreCmd
+import nebula.decode.ExecutionUnitEnum
 
 
 
 
-case class AGU(node : CtrlLink) extends FunctionalUnit with Area {
+case class AGU(node : CtrlLink) extends Area with FunctionalUnit{
   import nebula.dispatch.SrcPlugin._
   
+  override val FUType = ExecutionUnitEnum.AGU
 
   val logic = new node.Area {
     // while(!loaded) {

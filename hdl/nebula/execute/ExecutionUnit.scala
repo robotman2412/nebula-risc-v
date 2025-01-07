@@ -64,9 +64,9 @@ import nebula.decode.AluOp
 
 
 
-abstract class FunctionalUnit {
+trait FunctionalUnit {
   // import nebula.execute.MicroOp
-  val SEL = Payload(Bool())
+  // val SEL = Payload(Bool())
   
   val FUType : ExecutionUnitEnum.E
   def returnFUType = FUType
@@ -77,8 +77,8 @@ abstract class FunctionalUnit {
 }
 
 
-abstract class ExecutionUnit() {
-  val SEL = Payload(Bool())
+trait ExecutionUnit {
+  // val SEL = Payload(Bool())
   
   val FUs : ArrayBuffer[FunctionalUnit]
 

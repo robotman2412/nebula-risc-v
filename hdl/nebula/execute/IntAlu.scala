@@ -10,20 +10,20 @@ import nebula.decode.ExecutionUnitEnum.ALU
 import nebula.dispatch.SrcPlugin.IMMED
 
 
-case class IntAlu(aluNode : CtrlLink) extends FunctionalUnit with Area {
+case class IntAlu(aluNode : CtrlLink) extends Area with FunctionalUnit{
   val SRC1 = nebula.dispatch.SrcPlugin.RS1
   val SRC2 = nebula.dispatch.SrcPlugin.RS2
   
   override val FUType = nebula.decode.ExecutionUnitEnum.ALU
   import nebula.execute.Execute._
+  import nebula.LsuL1.PC.PCVal
   
   val aluNodeStage = new aluNode.Area {
       import nebula.dispatch.Dispatch._
       import nebula.decode.AluOp
-      
       val result = Bits(64 bits)
       result.assignDontCare()
-      when(up(nebula.dispatch.Dispatch.SENDTOALU) === True && aluNode.isValid && up(SEL)) {
+      when(up(nebula.dispatch.Dispatch.SENDTOALU) === True && up.isFiring) {
         result := up(ALUOP).muxDc(
           AluOp.xor      -> (SRC1 ^ SRC2),
           AluOp.or       -> (SRC1 | SRC2),
@@ -39,7 +39,9 @@ case class IntAlu(aluNode : CtrlLink) extends FunctionalUnit with Area {
           AluOp.sraw     -> (SRC1.asUInt  >> SRC2(4 downto 0).asUInt)(31 downto 0).resize(64).asBits,
           AluOp.srlw     -> (SRC1.asUInt |>> SRC2(4 downto 0).asUInt)(31 downto 0).resize(64).asBits,
           AluOp.subw     -> (SRC1.asSInt - SRC2.asSInt)(31 downto 0).resize(64).asBits,
-          AluOp.lui      -> SRC2.asBits
+          
+          AluOp.lui      -> SRC2.asBits,
+          AluOp.auipc    -> (SRC2.asUInt + PCVal).asBits
         )
       }
       
@@ -54,13 +56,8 @@ case class IntAlu(aluNode : CtrlLink) extends FunctionalUnit with Area {
         result := sltu.asBits.resize(64)
       }
       down(RESULT).assignDontCare()
-      import YESNO._
       when(up.isFiring) {
-        when(up(nebula.decode.Decoder.IS_W) === Y) {
-          down(RESULT) := result(31 downto 0).resize(64).asBits
-        } otherwise {
-          down(RESULT) := result.asBits
-        }
+        down(RESULT) := result.asBits
       }
   }
 }

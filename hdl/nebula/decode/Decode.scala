@@ -8,9 +8,11 @@ import spinal.lib.logic.DecodingSpec
 import scala.collection.mutable
 // import nebula.decode.Decoder._
 import spinal.lib.cpu.riscv.impl.Alu
+import spinal.lib.logic.Symplify
 
 
 object Decoder extends AreaObject {
+
   val INSTRUCTION = Payload(Bits(32 bits))
 
   val LEGAL          = Payload(YESNO())
@@ -18,7 +20,7 @@ object Decoder extends AreaObject {
   val EXECUTION_UNIT = Payload(ExecutionUnitEnum())
   val RDTYPE         = Payload(REGFILE.RDTYPE())
   val RS1TYPE        = Payload(REGFILE.RSTYPE())
-  val RS2TYPE        = Payload(REGFILE.RSTYPE())
+  val RS2TYPE        = Payload(REGFILE.RSTYPE()) 
   val FSR3EN         = Payload(YESNO())
   val IMMSEL         = Payload(Imm_Select())
   val ALUOP          = Payload(AluOp())
@@ -32,6 +34,7 @@ object Decoder extends AreaObject {
   val RS2 = Payload(Bits(5 bits))
 
 
+  val VALID = Payload(Bool())
 }
 
 object ExecutionUnitEnum extends SpinalEnum {
@@ -58,11 +61,13 @@ object YESNO extends SpinalEnum {
 }
 
 
-object AluOp extends SpinalEnum {
+object AluOp extends SpinalEnum(binarySequential) {
   val add, sub, sll, srl, sra, or, xor, slt, sltu, and, na, lui= newElement()
   val addw,sllw,sraw,srlw, subw = newElement()
   val jal, jalr = newElement()
   val beq, bne, bge, bgeu, blt, bltu = newElement()
+  val auipc = newElement()
+  
 
 }
 
@@ -72,26 +77,13 @@ case class Decoder(stage : CtrlLink) extends Area {
   import ExecutionUnitEnum._
   import Decoder._
 
-
-  
-  // every instr to be mapped to ctrlSigs, through decoder
-  // for every ctrlsig, associated value and MaskedLiteral
-  // every ctrlsig has a decodingSpec
-  // for every instruction, ctrlSig decoding spec gets value
-  // then for every ctrlSig build decoder
-  // val sigs = Seq(execution_unit, rdtype, rs1type, rs2type)
-
   
   val all = mutable.LinkedHashSet[Masked]()
-  val payloads = Seq(LEGAL,IS_FP, EXECUTION_UNIT , RDTYPE, RS1TYPE, RS2TYPE, FSR3EN, IMMSEL, ALUOP , IS_BR , IS_W )
+  val payloads = Seq(LEGAL, IS_FP, EXECUTION_UNIT , RDTYPE, RS1TYPE, RS2TYPE, FSR3EN, IMMSEL, ALUOP , IS_BR , IS_W, USE_LDQ, USE_STQ )
 
   val specs = payloads.map(k => new DecodingSpec(k)).zip(payloads)
 
-
-
-  // CREATE DEFAULT DECODE
-  
-  assert(payloads.length == specs.length)
+  assert(payloads.length == DecodeTable.X_table(0)._2.length)
   for((instr, vals) <- DecodeTable.X_table) {
     all += Masked(instr)
     for (((spec,signal),i) <- specs.zipWithIndex) {
@@ -99,40 +91,20 @@ case class Decoder(stage : CtrlLink) extends Area {
       spec.addNeeds(Masked(instr),Masked(vals(i)))
     }
   }
-  // for ((vals,i) <- default_decode.zipWithIndex) {
-  //   specs(i)._1.setDefault(Masked(vals))
-  // }
-  // for (vals <- default_decode) {
-
-  // }
-  // println(default_decode.zipWithIndex.size)
-  // for((vals,i) <- default_decode.zipWithIndex) {
-  //   specs(i)._1.setDefault(Masked(vals))
-  // }
-  // specs(0)._1.setDefault(Masked(default_decode(0)))
-
-
-  // specs(0)._1.setDefault(Masked(YESNO.N))
-
-  val validDecode = new DecodingSpec(Bool())
-  all.foreach(e => validDecode.addNeeds(e, Masked(True)))
-  validDecode.setDefault(Masked(False))
+  
   import spinal.core.sim._
   val trap = new stage.Area {
-    val shouldHalt = Bool() simPublic()
-
-    shouldHalt := validDecode.build(INSTRUCTION, all)
-    // haltWhen(down(Decoder.IS_VAL_INSTR) === YESNO.N)
   }
-  // println(all.contains(Masked(M"-------------------------0110111")))
 
   val decodeLane = new stage.Area {
+      VALID := Symplify(INSTRUCTION, all)
     for (spec <- specs) {
       down(spec._2).assignDontCare()
       when(up.isFiring) {
         down(spec._2).assignFromBits(spec._1.build(up(INSTRUCTION),all).asBits)
       }
     }
+
   }
    
   val logic = new stage.Area {
@@ -144,22 +116,14 @@ case class Decoder(stage : CtrlLink) extends Area {
 }
 
 
-
-// object rvc extends Area {
-
 // case class DecompressedInstruction() extends Bundle{
 //  val inst = Bits(32 bits)
 //  val illegal = Bool()
 // }
 
-// // object RvcDecompressor{
-// //  def main(args: Array[String]): Unit = {
-// //    SpinalVerilog(new Component{
-// //      out(Delay((apply(Delay(in Bits(16 bits),2), false, false, 32)),2))
-// //    }.setDefinitionName("Decompressor"))
-// //  }
+// object  RVC extends Area {
 
-//  def apply(i : Bits, rvf : Boolean = true, rvd : Boolean = true, xlen : Int = 64): DecompressedInstruction ={
+//  def apply(i : Bits, rvf : Boolean = false, rvd : Boolean = false, xlen : Int = 64): DecompressedInstruction ={
 //    val ret = DecompressedInstruction()
 //    ret.inst.assignDontCare()
 //    ret.illegal := False

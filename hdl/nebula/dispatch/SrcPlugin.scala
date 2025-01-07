@@ -38,7 +38,17 @@ case class IMM(instruction  : Bits) extends Area{
   def b_sext = S(b ## False).resize(64)
   def j_sext = S(j ## False).resize(64)
   def u_sext = S(u).resize(64) simPublic()
+  val i_sext_pub = SInt(64 bits) simPublic()
+  val h_sext_pub = SInt(64 bits) simPublic()
+  val s_sext_pub = SInt(64 bits) simPublic()
+  val b_sext_pub = SInt(64 bits) simPublic()
+  val j_sext_pub = SInt(64 bits) simPublic()
   val u_sext_pub = SInt(64 bits) simPublic()
+  i_sext_pub := i_sext
+  h_sext_pub := h_sext
+  s_sext_pub := s_sext
+  b_sext_pub := b_sext
+  j_sext_pub := j_sext
   u_sext_pub := u_sext
 }
 
@@ -47,45 +57,41 @@ case class IMM(instruction  : Bits) extends Area{
 case class SrcPlugin(stage : CtrlLink) extends Area {
   import SrcPlugin._
 
+  import spinal.core.sim._
   val immsel = new stage.Area {
-    val sext = Bits(64 bits)
+    val sext = Bits(64 bits) simPublic()
     sext.assignDontCare()
     val imm = new IMM(nebula.decode.Decoder.INSTRUCTION)
-    when(up.isValid) {
-      sext := up(IMMSEL).muxDc(
+    when(up.isFiring) {
+      sext := up(IMMSEL).mux(
         Imm_Select.I_IMM -> imm.i_sext,
         Imm_Select.S_IMM -> imm.s_sext,
         Imm_Select.B_IMM -> imm.b_sext,
         Imm_Select.U_IMM -> imm.u_sext,
         Imm_Select.J_IMM -> imm.j_sext,
+        default -> imm.i_sext
       ).asBits
     }
-    val is3src = Bool()
-    is3src:= up(IMMSEL).mux(
-      Imm_Select.B_IMM -> True,
-      Imm_Select.S_IMM -> True,
-      default -> False
-    )
-  }
-
-  val selectRS = new stage.Area {
+    
     RS1.assignDontCare()
     RS2.assignDontCare()
     IMMED.assignDontCare()
-    when(up.isValid) {
-      down(RS1) := up(nebula.decode.Decoder.RS1TYPE).muxDc(
+    when(up.isFiring) {
+      down(RS1) := up(nebula.decode.Decoder.RS1TYPE).mux(
         nebula.decode.REGFILE.RSTYPE.RS_INT -> IntRegFile.RegFile_RS1.asBits,
+        default -> B(0).resize(64)
       )
-      when(!immsel.is3src) {
-        down(RS2) := up(nebula.decode.Decoder.RS2TYPE).muxDc(
-          nebula.decode.REGFILE.RSTYPE.RS_INT -> IntRegFile.RegFile_RS2.asBits,
-          nebula.decode.REGFILE.RSTYPE.IMMED  -> immsel.sext,
-        )
-      }
-      when(immsel.is3src) {
-        down(RS2) := IntRegFile.RegFile_RS2.asBits
-      }
-      down(IMMED) := immsel.sext
+      down(RS2) := up(nebula.decode.Decoder.RS2TYPE).mux(
+        nebula.decode.REGFILE.RSTYPE.IMMED  -> sext,
+        nebula.decode.REGFILE.RSTYPE.RS_INT -> IntRegFile.RegFile_RS2.asBits,
+        default -> B(0).resize(64)
+      )
+      down(IMMED) := sext
     }
+
+
+  }
+
+  val selectRS = new stage.Area {
   }
 }

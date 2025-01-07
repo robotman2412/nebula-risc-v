@@ -8,9 +8,11 @@ import spinal.lib.misc.pipeline._
 case class JumpCmd() extends Bundle {
   val address = UInt(64 bits)
 }
-trait throwPipe extends AreaObject {
-  val jumpCmd = Flow(JumpCmd())
+trait Jumper {
+  def jumpCmd : Flow[JumpCmd]
 }
+
+
 
 import spinal.core.sim._
 
@@ -21,11 +23,11 @@ object PC extends AreaObject {
 }
 
 
-case class PC(node : CtrlLink) extends Area with throwPipe {
+case class PC(node : CtrlLink) extends Area {
   import PC._
   
-  val jumpcmd = Flow(JumpCmd())
-  jumpcmd.setIdle()
+  val jumpCmd = Flow(JumpCmd())
+  // jumpCmd.setIdle()
   
   // val cacheReadCmd = Stream(L1FetchCmd())
 
@@ -40,7 +42,7 @@ case class PC(node : CtrlLink) extends Area with throwPipe {
 
     VALIDCACHEREAD := False
     when(up.isFiring) {
-      pcReg := jumpcmd.valid ? jumpcmd.payload.address | (PCVal + 4)
+      pcReg := jumpCmd.valid ? jumpCmd.payload.address | (PCVal + 4)
       VALIDCACHEREAD := True
 
     }

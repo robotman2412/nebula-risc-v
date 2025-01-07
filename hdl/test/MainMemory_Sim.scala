@@ -15,7 +15,7 @@ class MainMemory(memSize: Int) extends Area {
   
   val bus = new RamBus()
 
-  val memory = Mem(Bits(wordWidth bits), memSize / (wordWidth / 8)) simPublic()
+  val memory = Mem(Bits(wordWidth bits), memSize ) simPublic()
  
   val resizedAddress = bus.ramFetchCmd.payload.address(log2Up(memSize / (wordWidth / 8)) - 1 downto 0) simPublic()
   bus.ramFetchCmd.ready := False

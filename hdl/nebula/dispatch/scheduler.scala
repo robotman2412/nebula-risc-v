@@ -131,10 +131,10 @@ case class Dispatch(dispatchNode: CtrlLink) extends Area {
     // }
     down(SENDTOALU) := False
     down(SENDTOBRANCH) := False
-    when(up(Decoder.EXECUTION_UNIT) === ExecutionUnitEnum.ALU && up.isValid) {
+    when(up(Decoder.EXECUTION_UNIT) === ExecutionUnitEnum.ALU) {
       down(SENDTOALU) := True
     }
-    when(up(Decoder.EXECUTION_UNIT) === ExecutionUnitEnum.BR && up.isValid) {
+    when(up(Decoder.EXECUTION_UNIT) === ExecutionUnitEnum.BR) {
       down(SENDTOBRANCH) := True
     }
 

@@ -19,14 +19,12 @@ case class IntWriteBackPlugin(stage : CtrlLink, regfile : IntRegFile) extends Ar
     val RD_data = Bits(64 bits)
   }
   
-  // io <> regfile.returnIO
   
   regfile.io.RD_Enable := io.RD_Enable
   regfile.io.RD_address := io.RD_address
   regfile.io.RD_data := io.RD_data
 
   import spinal.core.sim._
-  // val instrReg = Reg(INSTRUCTION) simPublic()
 
   val logic = new stage.Area {
     import nebula.decode.REGFILE._
@@ -34,7 +32,7 @@ case class IntWriteBackPlugin(stage : CtrlLink, regfile : IntRegFile) extends Ar
     io.RD_Enable := False
     io.RD_address.assignDontCare()
     io.RD_data.assignDontCare()
-    when(up.isValid) {
+    when(up.isFiring) {
       io.RD_address := up(RD).asUInt
       io.RD_Enable  := (up(nebula.decode.Decoder.RDTYPE) === (RDTYPE.RD_INT))
       io.RD_data    := up(nebula.execute.Execute.RESULT).asBits
